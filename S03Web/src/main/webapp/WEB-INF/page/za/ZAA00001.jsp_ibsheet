@@ -1,0 +1,158 @@
+<%--
+ -===============================================================================================================
+ - 아래 프로그램에 대한 저작권을 포함한 지적재산권은 APPz에 있으며,
+ - APPz가 명시적으로 허용하지 않은 사용, 복사, 변경, 제3자에의 공개, 배포는 엄격히 금지되며,
+ - APPz의 지적재산권 침해에 해당됩니다.
+ - (Copyright ⓒ APPz Co., Ltd. All Rights Reserved| Confidential)
+ -===============================================================================================================
+ - 시스템관리 - 보안관리 - 사용자관리
+ -===============================================================================================================
+  - 2022/08/19 - 이호성 - 최종수정
+ -===============================================================================================================
+--%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title></title>
+<script type="text/javascript">
+
+$(document).ready(function(){
+	LoadPage();
+});
+
+
+function LoadPage() {
+// 전달된 제품관련 값 세팅
+	var cfg = {SearchMode:smLazyLoad,Page:30,MergeSheet:msNone, FrozenCol:5};
+	mySheet1.SetConfig(cfg);
+
+	var headers = [ {Text:"No|STS.|DEL|System Code|System Name|Display ORD.|Open Y/N|Use Y/N|DB ID|DB PASS|DB Server|Idle Time|DEV Tool|Rem A|Rem B|Rem C|Rem D|Rem E|Rem|System Info|Login Log Y/B|Autogrant Y/N"} ];
+	var info = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
+	mySheet1.InitHeaders(headers,info);
+	var cols = [
+			{Type:"Seq",Width:45,Align:"center"},
+			{Type:"Status",Hidden:"1", Width:60,SaveName:"sStatus"},
+        	{Type:"DelCheck",Width:60},
+  			{Type:"Text", Width:80,SaveName:"SYS_CD", KeyField:1},
+  			{Type:"Text",Width:100,SaveName:"SYS_NM", KeyField:1},
+  			{Type:"Text",Width:200,SaveName:"DISP_ORD", KeyField:1},
+  			{Type:"Combo",Width:60,SaveName:"USE_OPEN_YN",ComboText:"Y|N",ComboCode:"Y|N",PopupText:"Y|N",PopupCode:"Y|N"},
+  			{Type:"Combo",Width:60,SaveName:"USE_PREVENT_YN",ComboText:"Y|N",ComboCode:"Y|N",PopupText:"Y|N",PopupCode:"Y|N"},
+  			{Type:"Text",Width:200,SaveName:"DB_USER_ID"},
+  			{Type:"Text",Width:200,SaveName:"DB_USER_PASSWD"},
+  			{Type:"Text",Width:200,SaveName:"DB_SVR_NM"},
+  			{Type:"Text",Width:200,SaveName:"IDLE_TIME"},
+  			{Type:"Combo",Width:60,SaveName:"DEV_TOOL",ComboText:"WEB|CS",ComboCode:"W|C",PopupText:"WEB|CS",PopupCode:"W|C"},
+  			{Type:"Text",Width:200,SaveName:"A_REM"},
+  			{Type:"Text",Width:200,SaveName:"B_REM"},
+  			{Type:"Text",Width:200,SaveName:"C_REM"},
+  			{Type:"Text",Width:200,SaveName:"D_REM"},
+  			{Type:"Text",Width:200,SaveName:"E_REM"},
+  			{Type:"Text",Width:200,SaveName:"REM"},
+  			{Type:"Text",Width:200,SaveName:"SYS_INFO"},
+  			{Type:"Combo",Width:60,SaveName:"LOGIN_INFO_YN",ComboText:"Y|N",ComboCode:"Y|N",PopupText:"Y|N",PopupCode:"Y|N"},
+  			{Type:"Combo",Width:60,SaveName:"AUTO_ROLE",ComboText:"Y|N",ComboCode:"Y|N",PopupText:"Y|N",PopupCode:"Y|N"}
+	];
+	mySheet1.InitColumns(cols);
+	mySheet1.FitSize(false, true);
+	mySheet1.SetExtendLastCol(1);
+	//건수정보 표시
+	mySheet1.SetCountPosition(4);
+}
+
+function doAction(sAction)
+{
+	switch(sAction)
+	{
+		//조회
+		case "Search":
+			//retName("crud").value = "R_MainR"; 
+			//mySheet1.DoSearch("/api/za/zaa/getSystemList.do", APPz.ui.convertFormToJson(document.forms[0]));
+       		//mySheet1.DoSearch("${pageContext.request.contextPath}/api/za/zaa/getSystemList.do"
+       		//		, APPz.ui.convertFormToJson("frm01"), {ReqHeader : {"Content-Type":"application/json"}});
+       		jsonParam = { param : $("form.schform").inputValues() };
+       		jSYS.co.ApiRequest("${pageContext.request.contextPath}/api/ac/aca/ACA100/getSystemList.do",jsonParam,true,($result)=>{
+           		AUIGrid.setGridData(grid1, $result.systemList);//데이타매핑
+           		AUIGrid.setSelectionByIndex(grid1, 0,0);//행선택
+           	});
+			break;
+			
+		case "Save":
+			var SaveJson = JSON.stringify(mySheet1.GetSaveJson(0));
+			retName("mySheet1Val").value = SaveJson;
+			retName("crud").value = "U"; 
+			mySheet1.DoSave("../../page/data/ZAC",FormQueryString(document.forms[0]));
+			break;
+
+		//적용 
+		case "Add":
+			var row = mySheet1.DataInsert(-1);
+			var rowcnt = mySheet1.RowCount()+'';
+			mySheet1.SetCellValue(row, "DISP_ORD", rowcnt.LPad(2, "0"));
+			break;
+	}
+}
+
+function ChangeSize1(size){
+	mySheet1.FitSize(false, true);
+}
+
+function mySheet1_OnSearchEnd(code,msg){
+	if(code<0){
+		alert(msg);
+	}else{
+		//CodeMSheet.FitColWidth();
+		mySheet1.FitSize(false, true);
+	}
+}
+
+function mySheet1_OnSaveEnd(code, msg) {
+	if(code<0){
+		alert(msg);
+	}else{
+		mySheet1.FitSize(0,1);
+	}
+}
+var windowHeight = $(window).height()-100;
+//-->
+</script>
+
+	
+<!--조회함수를 이용하여 조회 완료되었을때 발생하는 이벤트-->
+
+
+<body class="main">
+<form id="frm01" name="frm01" method="post">
+<input type="hidden" name="crud" value="">
+<input type="hidden" name="classCd" value="">
+<input type="hidden" name="classNm" value="">
+<input type="hidden" name="classDtlCd" value="">
+<input type="hidden" name="classDtlNm" value="">
+<input type="hidden" id="mySheet1Val" name="mySheet1Val" value="" readonly="readonly"/>
+
+<!-- (wrapper) -->
+<div id="wrapper">
+	<!-- (content) -->
+	<div class="content">
+		<div class="align both vm">
+			<h2 class="h2">목록</h2>
+			<div>
+			<a href="javascript:doAction('Search');" class="btn blue regular">조회</a>
+			<a href="javascript:doAction('Add');" class="btn blue regular">추가</a>
+			<a href="javascript:doAction('Save');" class="btn blue regular">추가</a>
+			</div>
+		</div>
+		<div>
+					<script>createIBSheet("mySheet1", "100%", windowHeight+"px","kr");</script>
+		</div>
+	</div>
+	<!-- //(content) -->
+
+</div>
+<!-- //(wrapper) -->
+
+</form>
+</body>
+</html>

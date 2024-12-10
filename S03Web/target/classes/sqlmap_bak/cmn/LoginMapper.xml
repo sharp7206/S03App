@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cmn.Login">
+
+	<select id="selectUser" resultType="com.app.s03.cmn.security.ComUserDetails">
+		/* cmn.Login.selectUser - 사용자
+		*/ 
+		SELECT
+		        A.USER_ID                                                                              /*USER ID EQ EMPNO*/
+		      , A.USER_NM                                                                              /*USER NAME*/
+		      , A.PASSWORD                                                                             /*패스워드*/
+		      , A.ENABLED                                                                              /*사용유무*/
+		      , A.ACCOUNTNONEXPIRED                                                                    /*Accountnonexpired*/
+		      , A.CREDENTIALSNONEXPIRED                                                                /*Credentialsnonexpired*/
+		      , A.ACCOUNTNONLOCKED                                                                     /*Accountnonlocked*/
+		      , A.PWSETYN                                                                              /*Pwsetyn*/
+		      , A.PWSETDTTM                                                                            /*Pwsetdttm*/
+		      , A.PWFAILCNT                                                                            /*Pwfailcnt*/
+		      , A.LASTLOGINDTTM                                                                        /*Lastlogindttm*/
+		      , A.MAIL                                                                                 /*Mail*/
+		      , A.EX_MAIL                                                                              /*ExMail*/
+		      , A.TEL                                                                                  /*Tel*/
+		      , A.MOBILE                                                                               /*Mobile*/
+		      , A.POST                                                                                 /*Post*/
+		      , A.ADDRESS                                                                              /*Address*/
+		      , A.SSO_FG                            AS SSOFG                                           /*SsoFg*/
+		      , A.LANG_CD                                                                              /*LangCd*/
+		      , A.GMT_CD                            AS GMTCD                                           /*GmtCd*/
+		      , A.OTP_SECR_KEY                      AS OTPSECRKEY                                      /*OTP_SECR_KEY*/
+		  FROM Z01_USER A
+		 WHERE UPPER(A.USER_ID) = UPPER(#{ userid })
+		   AND A.ENABLED = 'Y'
+	</select>
+
+	<select id="selectUserAuthorityList" resultType="commonMap">
+		/* cmn.Login.selectUserAuthorityList - 사용자권한목록 */
+		SELECT USER_ITEM AS USERID
+		     , ROLE_CD AS  AUTHORITY
+		  FROM Z01_SYS_USER -- 권한사용자
+		 WHERE USER_ITEM = #{userId}
+		   AND SYS_CD    = #{syscd}
+	</select>
+
+	<select id="selectUserSystemList" resultType="commonMap">
+		/* cmn.Login.selectUserSystemList - 사용자권한시스템목록 */
+		SELECT
+		      , A.SYS_CD                                                                 AS                //SYSTEM CODE
+		      , A.ROLE_CD                                                                AS                //ROLE CODE
+		      , A.ITEM_CLSS                                                              AS                //ITEM CLSS
+		      , A.USER_ITEM                                                              AS                //USER ITEM
+		      , A.INCL_CLSS                                                              AS                //INCL CLSS
+		      , A.SYS_STAFF_YN                                                           AS                //SYS STAFF YN
+		      , A.REM                                                                    AS                //REMARK
+		      , A.REG_ID                                                                 AS                //RegId
+		      , A.REG_TM                                                                 AS                //RegTm
+		      , A.UPT_ID                                                                 AS                //UptId
+		      , A.UPT_TM                                                                 AS                //UptTm
+		  FROM Z01_SYS_USER A
+		 WHERE A.SYS_CD    = #{ syscd }
+		   AND A.USER_ITEM = #{ userid }
+		 ORDER BY ORDNO
+	</select>
+
+	<select id="selectUserMenuTreeDataList" resultType="commonMap">
+		/* cmn.Login.selectUserMenuTreeDataList - 사용자 권한 트리메뉴 */
+		WITH RECURSIVE MENU_HIERARCHY AS (
+		    SELECT A.MENU_CD, A.MENU_NM, A.UP_MENU_CD, 0 AS LEVEL
+		      FROM Z01_MENU A
+		     INNER JOIN Z01_ROLE_ITEM B
+		        ON (A.MENU_CD = B.ROLE_ITEM OR A.MENU_CD = '00000000')
+		       AND A.SYS_CD = B.SYS_CD
+			   AND B.ROLE_CD IN (  
+                        SELECT A.ROLE_CD 
+                           FROM Z01_SYS_USER A, Z01_ROLE B 
+                          WHERE A.SYS_CD = B.SYS_CD 
+                            AND A.ROLE_CD = B.ROLE_CD 
+                            AND A.SYS_CD = #{ syscd }
+                            AND A.USER_ITEM IN (
+                              #{ userid }
+                              ) 
+                          )
+		    WHERE A.SYS_CD = #{ syscd }
+		      AND A.USE_YN = 'Y'
+		      AND A.POP_YN = 'N'
+		      AND A.MENU_CD = '00000000'
+		    UNION ALL
+		    SELECT A.MENU_CD, A.MENU_NM, A.UP_MENU_CD, MH.LEVEL + 1
+		      FROM Z01_MENU A
+		     INNER JOIN MENU_HIERARCHY MH
+		        ON A.UP_MENU_CD = MH.MENU_CD
+		     WHERE A.SYS_CD = #{ syscd }
+		       AND A.USE_YN = 'Y'
+		       AND A.POP_YN = 'N'        
+		)
+		SELECT LEVEL AS MENULVL,
+		       LPAD(' ', 2 * LEVEL) || MENU_NM AS MENU_NM,
+		       CASE WHEN EXISTS (SELECT 1 FROM Z01_MENU WHERE UP_MENU_CD = MH.MENU_CD) THEN 'Y' ELSE 'N' END AS LEAF_YN,
+		       CASE WHEN EXISTS (SELECT 1 FROM Z01_MENU WHERE UP_MENU_CD = MH.MENU_CD) THEN '' ELSE '/page/' || LOWER(SUBSTRING(MENU_CD, 1, 2)) || '/' || MENU_CD || '.do' END AS VIEWURL,
+		       MENU_CD,
+		       UP_MENU_CD
+		  FROM MENU_HIERARCHY MH
+		 GROUP BY MENU_CD, UP_MENU_CD, LEVEL, MENU_NM
+		 ORDER BY MENU_CD		             
+	</select>
+
+	<select id="selectProgramAuthority" resultType="string">
+		/*
+		cmn.Login.selectProgramAuthority - 프로그램 권한 */
+		SELECT STRING_AGG(ROLE_CD, ',') AS RESULT
+		FROM Z01_ROLE_ITEM A
+		WHERE 1=1
+		  AND A.SYS_CD = #{syscd}
+		  AND A.ROLE_ITEM = #{prgmcd}		
+	</select>
+
+	<select id="selectAllAuthority" resultType="string">
+		/*cmn.Login.selectAllAuthority - 프로그램 권한 */
+		SELECT LISTAGG(ROLE_CD, ',') WITHIN GROUP(ORDER BY ROLE_CD) AS AUTHIDS
+		FROM Z01_ROLE
+		WHERE SYS_CD = #{ syscd }
+	</select>
+	
+	<insert id="insertAccesslog">
+	/* cmn.Login.insertAccesslog - 접근기록저장  */
+	INSERT INTO Z01_ACCESS_LOG
+	       (
+	       	ACCESS_SEQ  -- 접속SEQ
+	       ,REQ_URL  	-- 접근URL
+	       ,SYS_CD
+           ,USER_ID  	-- 사용자ID
+           ,USER_IP  	-- 사용자IP
+           ,PRGMCD  	-- 프로그램코드
+           ,REG_DT      -- 접근일시
+	       )
+	VALUES (
+	        NEXTVAL('ACCESS_SEQ')
+	       ,#{ accessurl }
+	       ,#{ syscd }
+	       ,#{ userid }
+	       ,#{ userip }
+	       ,#{ prgmcd }
+	       ,CURRENT_TIMESTAMP
+	       )
+	</insert>	
+	
+	<update id="updatePwdFailureClear" parameterType="string">
+	/* cmn.Login.updatePwdFailureClear - 사용자의 비번실패회수 초기화 */
+	UPDATE  Z01_USER
+	   SET  PWFAILCNT = 0
+	       ,LASTLOGINDTTM = CURRENT_TIMESTAMP
+     WHERE  USER_ID = #{ username }
+	</update>	
+
+	<update id="updatePwdFailureCnt" parameterType="string">
+	/* cmn.Login.updatePwdFailureCnt - 사용자의 비번실패회수 추가 */
+	UPDATE  Z01_USER
+	   SET  PWFAILCNT = PWFAILCNT + 1	-- 실패건수
+	       ,ACCOUNTNONLOCKED = CASE WHEN PWFAILCNT + 1 > 6 THEN 'N' ELSE 'Y' END
+     WHERE  USER_ID = #{ username }
+	</update>
+
+	<update id="updateUserPassword">
+	/* cmn.Login.updateUserPassword - 사용자비번저장 */
+	UPDATE  Z01_USER
+	   SET  PASSWORD = #{ password }	-- 비번
+	       ,PWSETYN = 'Y'				-- 비번설정여부
+	       ,PWSETDTTM = CURRENT_TIMESTAMP		-- 비번세팅일시
+     WHERE  USER_ID = #{ userid }
+	</update>
+
+	<insert id="insertLoginhist">
+	/* cmn.Login.insertLoginhist - 로그인기록저장 */
+	INSERT INTO Z01_LOGIN_HIST
+	       (
+	        LOGIN_SEQ
+	       , SYS_CD
+	       , USER_ID
+	       , USER_IP
+	       , LOGIN_DT 
+	       )
+	VALUES (
+			NEXTVAL('LOGIN_SEQ')
+	       ,#{syscd}
+	       ,#{userid}
+	       ,#{userip}
+	       ,CURRENT_TIMESTAMP
+	       )
+	</insert>
+
+</mapper>

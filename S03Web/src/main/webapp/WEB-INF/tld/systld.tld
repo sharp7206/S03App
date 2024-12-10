@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib version="2.0">
+
+	<description>APP common tag</description>
+  	<display-name>APP common tag</display-name>
+  	<tlib-version>1.0</tlib-version>
+  	<short-name>s03</short-name>
+
+    <tag>
+        <name>headinfo</name>
+        <tag-class>com.app.s03.cmn.ui.tag.ComHeaderInfoTag</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>prgmcd</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>jsptitle</name>
+        <tag-class>com.app.s03.cmn.ui.tag.ComTitleTag</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>prgmcd</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+<!-- 
+    <tag>
+        <name>buttonauth</name>
+        <tag-class>com.app.s03.cmn.ui.tag.ComButtonAuthTag</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>prgmcd</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>prefix</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>viewbtns</name>
+            <required>true</required>
+        </attribute>
+    </tag>
+ -->
+    <tag>
+        <name>hasauth</name>
+        <tag-class>com.app.s03.cmn.ui.tag.ComHasAuthTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>prgmcd</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>authcd</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+</taglib>

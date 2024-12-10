@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+ 
+<tiles-definitions>
+	<definition name="layouts-login" template="/WEB-INF/page/tiles/default.jsp">
+		<put-attribute name="content" value="" />
+	</definition>
+	
+	<definition name="layouts-none" template="/WEB-INF/page/tiles/default.jsp">
+		<put-attribute name="header" value="/WEB-INF/page/tiles/header.jsp" />
+		<put-attribute name="content" value="" />
+	</definition>
+	
+	<definition name="layouts-tiles" template="/WEB-INF/page/tiles/layouts.jsp">
+		<put-attribute name="header" value="/WEB-INF/page/tiles/header.jsp" />
+		<put-attribute name="content" value="" />
+	</definition>	
+	  
+	<definition name="layouts-popup" template="/WEB-INF/page/tiles/layouts.jsp">
+		<put-attribute name="header" value="/WEB-INF/page/tiles/header.jsp" />
+		<put-attribute name="content" value="" />
+	</definition>	
+	  
+	<definition name="/login" extends="layouts-login">
+		<put-attribute name="content" value="/WEB-INF/page/co/login/login.jsp" />
+	</definition>
+	
+	<definition name="*/*/*" extends="layouts-tiles">
+		<put-attribute name="content" value="/WEB-INF/page/{1}/{2}/{3}.jsp" />
+	</definition>  
+<!-- 	
+	<definition name="*/*/*" extends="layouts-popup">
+		<put-attribute name="content" value="/WEB-INF/page/popup/{1}.jsp" />
+	</definition>   -->
+	
+	<!--   
+	<definition name="*/*/*" extends="layouts-tiles">
+		<put-attribute name="content" value="/WEB-INF/page/{1}/{2}/{3}.jsp" />
+	</definition>
+ -->		
+</tiles-definitions>

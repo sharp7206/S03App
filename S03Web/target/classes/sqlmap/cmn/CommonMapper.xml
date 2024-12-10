@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="cmn.Common">
+ 
+	<select id="selectCodeAllList" resultType="commonMap">
+	/* cmn.Common.selectCodeAllList- 코드목록 */
+    SELECT A.SYS_CD, A.CLASS_CD, B.CLASS_NM, B.CLASS_E_NM, B.CLASS_C_NM, A.CLASS_DTL_CD, A.CLASS_DTL_NM, A.CLASS_DTL_ENM, A.CLASS_DTL_CNM, A.ORDER_NO,
+           A.ETC_CD1, A.ETC_CD2, A.ETC_CD3, A.ETC_CD4, NVL(A.USE_YN, 'Y') USE_YN
+      FROM Z01_CODE_DETAIL A
+      LEFT OUTER JOIN Z01_CODE_MASTER B
+        ON A.SYS_CD = B.SYS_CD
+       AND A.CLASS_CD = B.CLASS_CD
+     WHERE 1=1
+       AND A.SYS_CD = #{syscd}
+     ORDER BY A.CLASS_CD, TO_NUMBER(A.ORDER_NO)
+	</select>  	  
+	
+	<select id="selectMsgAllList" resultType="commonMap">
+        /* SQL_ID: cmn.Common.selectMsgAllList */
+        SELECT  
+              , A.SYS_CD                                                                         /*SysCd*/
+              , A.MSSG_ID                                                                        /*MssgId*/
+              , A.NTN_CD                                                                         /*NtnCd*/
+              , A.MSSG_CN                                                                        /*MssgCn*/
+              , A.MSSG_CLSS_CD                                                                   /*MssgClssCd*/
+              , A.ORDER_NO                                                                       /*OrderNo*/
+              , A.ETC_CD1                                                                        /*EtcCd1*/
+              , A.ETC_CD2                                                                        /*EtcCd2*/
+              , A.ETC_CD3                                                                        /*EtcCd3*/
+              , A.ETC_CD4                                                                        /*EtcCd4*/
+              , A.USE_YN                                                                         /*UseYn*/
+              , A.REG_ID                                                                         /*RegId*/
+              , A.REG_TM                                                                         /*RegTm*/
+              , A.UPDATE_ID                                                                      /*UpdateId*/
+              , A.UPDATE_TM                                                                      /*UpdateTm*/
+          FROM Z01_MSSG_I  A
+         WHERE 1=1
+         WHERE 1 = 1 
+           AND A.SYS_CD =  = #{SYS_CD}                /*SysCd*/
+           AND A.USE_YN =  = 'Y'                     /*UseYn*/
+	</select>	
+
+
+	<!-- 시스템오류발생시 저장 -->
+	<insert id="insertSystemLog" parameterType="map">
+        /* SQL_ID: cmn.Common.insertS01SystemLog  */
+        INSERT INTO 
+             Z01_SYSTEM_LOG
+             ( 
+               , SYS_CD                                                           /*SYSTEM CODE  */
+               , CREATE_DT                                                        /*CREATE DATE  */
+               , MODE_CLSS                                                        /*MODE CLSS  */
+               , PROGRAM                                                          /*PROGRAM  */
+               , MSG_CD                                                           /*MSG CD  */
+               , MSG_TXT                                                          /*MSG TEXT  */
+               , A_REM                                                            /*A REMARK  */
+               , B_REM                                                            /*B REMARK  */
+               , C_REM                                                            /*C REMARK  */
+             ) VALUES ( 
+               , #{sysCd}
+               , #{createDt}
+               , #{modeClss}
+               , #{program}
+               , #{msgCd}
+               , #{msgTxt}
+               , #{aRem}
+               , #{bRem}
+               , #{cRem}
+               ) 
+	</insert>
+	
+	<select id="selectZ01MybatisInfo" resultType="commonMap">
+        /* SQL_ID: cmn.Common.selectZ01MybatisInfo */
+        SELECT
+               , A.SYS_CD                                                        /*시스템코드*/
+               , A.NAMESPC                                                       /*NAMESPACE*/
+               , A.PATH                                                          /*파일경로*/
+               , A.FILE_NM                                                       /*파일명*/
+               , A.CONTENT                                                       /*내용*/
+               , A.APPLY_YMD                                                     /*적용일*/
+               , A.APPLY_HM                                                      /*적용시분*/
+               , A.APPLY_YN                                                      /*적용대상(Y)*/
+               , A.USE_YN                                                        /*사용유무*/
+               , A.REG_ID                                                        /*등록자*/
+               , A.REG_TM                                                        /*등록시간*/
+               , A.UPDATE_ID                                                     /*수정자*/
+                A.UPDATE_TM                                                      /*수정시간*/
+          FROM Z01_MYBATIS_INFO  A
+         WHERE 1 = 1 
+               AND A.SYS_CD                   = #{sysCd}                         /*시스템코드*/
+               AND A.USE_YN                   = 'Y'
+	</select>
+
+	<insert id="insertZ01MybatisInfo" parameterType="map">
+        /* SQL_ID: cmn.Common.insertZ01MybatisInfo  */
+        INSERT 
+          INTO Z01_MYBATIS_INFO
+             ( 
+                 SYS_CD                                                           /*시스템코드  */
+               , NAMESPC                                                          /*NAMESPACE  */
+               , PATH                                                             /*파일경로  */
+               , FILE_NM                                                          /*파일명  */
+               , CONTENT                                                          /*내용  */
+               , APPLY_YMD                                                        /*적용일  */
+               , APPLY_HM                                                         /*적용시분  */
+               , APPLY_YN                                                         /*적용대상(Y)  */
+               , USE_YN                                                           /*사용유무  */
+               , REG_ID                                                           /*등록자  */
+               , REG_TM                                                           /*등록시간  */
+             ) VALUES ( 
+               #{sysCd}
+               ,#{namespc}
+               ,#{path}
+               ,#{fileNm}
+               ,#{content}
+               ,#{applyYmd}
+               ,#{applyHm}
+               ,#{applyYn}
+               ,#{useYn}
+               ,'SYSTEM'
+               ,SYSDATE
+               ) 
+	</insert>
+	
+	<update id="updateZ01MybatisInfo" parameterType="map">
+        /* SQL_ID: cmn.Common.updateZ01MybatisInfo  */
+        UPDATE Z01_MYBATIS_INFO A
+           SET
+               A.APPLY_YMD                                                       = #{applyYmd}                      /*적용일*/
+               , A.APPLY_HM                                                      = #{applyHm}                       /*적용시분*/
+               , A.APPLY_YN                                                      = #{applyYn}                       /*적용대상(Y)*/
+               , A.REG_ID                                                        = #{_SES.username} 
+               , A.REG_TM                                                        = SYSDATE                          /*등록시간*/
+               , A.UPDATE_ID                                                     = #{_SES.username} 
+               , A.UPDATE_TM                                                     = SYSDATE                          /*수정시간*/
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*시스템코드*/
+           AND A.NAMESPC                                                         = #{namespc}                       /*NAMESPACE*/
+	</update>	
+</mapper>

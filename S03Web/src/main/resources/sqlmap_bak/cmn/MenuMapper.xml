@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+-===============================================================================================================
+
+-===============================================================================================================
+-
+-===============================================================================================================
+-->
+<mapper namespace="cmn.Menu">
+
+	<select id="selectMenuTree" resultType="commonMap">
+	/* cmn.Menu.selectMenuTree - 메뉴목록 */
+		WITH MENU_INFO AS
+		(  
+		SELECT DISTINCT A.SYS_CD, A.MENU_CD, A.MENU_NM, A.MENU_ENM, A.MENU_CNM, A.UP_MENU_CD, A.ETC1, A.ETC2, A.ETC3
+		     , A.USE_YN, A.URL, A.IMG_SRC, A.ORDER_NO
+		 FROM Z01_MENU A
+		INNER JOIN Z01_ROLE_ITEM B 
+		   ON (A.MENU_CD = B.ROLE_ITEM OR A.MENU_CD = '00000000')
+		  AND A.SYS_CD = B.SYS_CD 
+		  AND B.ROLE_CD IN (  
+                        SELECT A.ROLE_CD 
+                           FROM Z01_SYS_USER A, Z01_ROLE B 
+                          WHERE A.SYS_CD = B.SYS_CD 
+                            AND A.ROLE_CD = B.ROLE_CD 
+                            AND A.SYS_CD = #{ syscd }
+                            AND A.USER_ITEM IN (
+                              #{ userid }
+                              ) 
+                          ) 		  
+		WHERE A.SYS_CD = #{ syscd }
+		  AND A.USE_YN = 'Y'
+		ORDER BY A.MENU_CD 
+		)
+		SELECT TO_CHAR(LEVEL) AS CLEVEL, LPAD(' ', 2*(LEVEL-1)) || MENU_NM AS PATH_M,
+				       LPAD(' ', 2*LEVEL-1) || SYS_CONNECT_BY_PATH(MENU_NM, '>>') PATH, CONNECT_BY_ISLEAF AS LEAF_YN,
+				       MENU_CD, UP_MENU_CD
+				  FROM MENU_INFO
+				 START WITH MENU_CD = '00000000'
+		       CONNECT BY PRIOR MENU_CD = UP_MENU_CD      
+	</select>
+
+	<insert id="insertZ01Menu">
+        /* SQL_ID: cmn.Menu.insertMenu */
+        INSERT 
+          INTO Z01_MENU
+             ( 
+                 SYS_CD                                                           /*SYSTEM CODE  */
+               , MENU_CD                                                          /*MENU CODE  */
+               , MENU_NM                                                          /*MENU NAME  */
+               , MENU_ENM                                                         /*MENU ENG NAME  */
+               , MENU_CNM                                                         /*MENU CHA NAME  */
+               , UP_MENU_CD                                                       /*상위메뉴  */
+               , ETC1                                                             /*기타1  */
+               , ETC2                                                             /*기타2  */
+               , ETC3                                                             /*기타3  */
+               , USE_YN                                                           /*USE_YN  */
+               , URL                                                              /*URL  */
+               , LEAF_YN                                                          /*최종유무  */
+               , MW_CLSS                                                          /*MENU OR WINDOW CLSS  */
+               , IMG_SRC                                                          /*LINK IMAGE URL  */
+               , POP_YN                                                           /*PopYn  */
+               , ORDER_NO                                                         /*ORDER_NO  */
+               , REG_ID                                                           /*RegId  */
+               , REG_TM                                                           /*RegTm  */
+             ) VALUES ( 
+               #{sysCd}
+               ,#{menuCd}
+               ,#{menuNm}
+               ,#{menuEnm}
+               ,#{menuCnm}
+               ,#{upMenuCd}
+               ,#{etc1}
+               ,#{etc2}
+               ,#{etc3}
+               ,#{useYn}
+               ,#{url}
+               ,#{leafYn}
+               ,#{mwClss}
+               ,#{imgSrc}
+               ,#{popYn}
+               ,#{orderNo}
+               ,#{_SES.username}
+               ,SYSDATE
+               ) 
+	</insert>
+
+	<update id="updateZ01Menu">
+        /* SQL_ID:cmn.Menu.updateZ01Menu - 메뉴수정  */
+        UPDATE Z01_MENU A
+           SET
+               A.MENU_NM                                                         = #{menuNm}                        /*MENU NAME*/
+               , A.MENU_ENM                                                      = #{menuEnm}                       /*MENU ENG NAME*/
+               , A.MENU_CNM                                                      = #{menuCnm}                       /*MENU CHA NAME*/
+               , A.UP_MENU_CD                                                    = #{upMenuCd}                      /*상위메뉴*/
+               , A.ETC1                                                          = #{etc1}                          /*기타1*/
+               , A.ETC2                                                          = #{etc2}                          /*기타2*/
+               , A.ETC3                                                          = #{etc3}                          /*기타3*/
+               , A.USE_YN                                                        = #{useYn}                         /*USE_YN*/
+               , A.URL                                                           = #{url}                           /*URL*/
+               , A.LEAF_YN                                                       = #{leafYn}                        /*최종유무*/
+               , A.MW_CLSS                                                       = #{mwClss}                        /*MENU OR WINDOW CLSS*/
+               , A.IMG_SRC                                                       = #{imgSrc}                        /*LINK IMAGE URL*/
+               , A.POP_YN                                                        = #{popYn}                         /*PopYn*/
+               , A.ORDER_NO                                                      = #{orderNo}                       /*ORDER_NO*/
+               , A.UPT_ID                                                        = #{uptId}                         /*UptId*/
+               , A.UPT_TM                                                        = SYSDATE                          /*UptTm*/
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*SYSTEM CODE*/
+           AND A.MENU_CD                                                         = #{menuCd}                        /*MENU CODE*/
+	</update>
+
+	<delete id="deleteZ01Menu">
+        /* SQL_ID: cmn.Menu.deleteZ01Menu - 메뉴삭제 */
+        DELETE 
+          FROM Z01_MENU A
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*SYSTEM CODE*/
+           AND A.MENU_CD                                                         = #{menuCd}                        /*MENU CODE*/
+	</delete>
+
+
+	<select id="selectHeadInfo" resultType="commonMap">
+	/* cmn.Menu.selectHeadInfo - Breadcrumb  정보조회 */
+		WITH RECURSIVE MENU_HIERARCHY AS (
+		    SELECT A.MENU_CD, A.MENU_NM, A.UP_MENU_CD, 0 AS LEVEL
+		      FROM Z01_MENU A
+		     INNER JOIN Z01_ROLE_ITEM B
+		        ON (A.MENU_CD = B.ROLE_ITEM OR A.MENU_CD = '00000000')
+		       AND A.SYS_CD = B.SYS_CD
+			   AND B.ROLE_CD IN (  
+                        SELECT A.ROLE_CD 
+                           FROM Z01_SYS_USER A, Z01_ROLE B 
+                          WHERE A.SYS_CD = B.SYS_CD 
+                            AND A.ROLE_CD = B.ROLE_CD 
+                            AND A.SYS_CD = #{ syscd }
+                            AND A.ROLE_CD = #{ roleCd }
+                          )
+		    WHERE A.SYS_CD = #{ syscd }
+		      AND A.USE_YN = 'Y'
+		      AND A.POP_YN = 'N'
+		      AND A.MENU_CD = '00000000'
+		    UNION ALL
+		    SELECT A.MENU_CD, A.MENU_NM, A.UP_MENU_CD, MH.LEVEL + 1
+		      FROM Z01_MENU A
+		     INNER JOIN MENU_HIERARCHY MH
+		        ON A.UP_MENU_CD = MH.MENU_CD
+		     WHERE A.SYS_CD = #{ syscd }
+		       AND A.USE_YN = 'Y'
+		       AND A.POP_YN = 'N'        
+		)
+		SELECT LEVEL AS MENULVL,
+		       LPAD(' ', 2 * LEVEL) || MENU_NM AS MENU_NM,
+		       CASE WHEN EXISTS (SELECT 1 FROM Z01_MENU WHERE UP_MENU_CD = MH.MENU_CD) THEN 'Y' ELSE 'N' END AS LEAF_YN,
+		       CASE WHEN EXISTS (SELECT 1 FROM Z01_MENU WHERE UP_MENU_CD = MH.MENU_CD) THEN '' ELSE '/page/' || LOWER(SUBSTRING(MENU_CD, 1, 2)) || '/' || MENU_CD || '.do' END AS VIEWURL,
+		       MENU_CD,
+		       UP_MENU_CD
+		  FROM MENU_HIERARCHY MH
+		 WHERE MENU_CD = #{ prgmcd } 
+		 GROUP BY MENU_CD, UP_MENU_CD, LEVEL, MENU_NM
+		 ORDER BY MENU_CD			 	           
+	</select>
+</mapper>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cmn.System">
+
+	<select id="selectSystemList" resultType="commonMap">
+        /* SQL_ID: cmn.System.selectSystemList - 시스템코드목록 */
+        SELECT
+                A.SYS_CD                                                         /*SYSTEM CODE*/
+               , A.SYS_NM                                                        /*SYSTEM NAME*/
+               , A.DISP_ORD                                                      /*ORDER NO*/
+               , A.USE_YN                                                        /*OPEN Y/N*/
+               , A.USE_PREVENT_YN                                                /*PREVENT Y/N*/
+               , A.DB_USER_ID                                                    /*DB USER ID*/
+               , A.DB_USER_PASSWD                                                /*DB PWD*/
+               , A.DB_SVR_NM                                                     /*DB SERVER 이름*/
+               , A.IDLE_TIME                                                     /*IDLE TIME*/
+               , A.MAP_LOC                                                       /*SQL MAPPER LOCATION*/
+               , A.WAS_IP_ADDR                                                   /*WAS IP ADDRESS*/
+               , A.WAS_DOMAIN                                                    /*WAS DOMAIN*/
+               , A.UPLOAD_PATH                                                   /*FILE UPLOAD 경로*/
+               , A.CNNT_IP                                                       /*CLIENT IP ADDRESS*/
+               , A.M_ADDR                                                        /*CLIENT MAC ADDRESS*/
+               , A.FST_RGPR_ID                                                   /*최초등록자*/
+               , A.FST_REG_ONCE                                                  /*최초등록일시*/
+               , A.LT_CHPR_ID                                                    /*최종수정자*/
+               , A.LT_CHPR_ONCE                                                  /*최종수정일시*/
+          FROM TB_APL_SYS  A
+         WHERE 1 = 1 
+ 		<if test="sysCd != null and sysCd !=''">
+               AND A.SYS_CD                   = #{sysCd}                         /*SYSTEM CODE*/
+    	</if>
+     ORDER  BY A.DISP_ORD
+	</select>
+
+	<insert id="insertSystem">
+        /* SQL_ID: cmn.System.insertSystem - 시스템코드추가 */
+        INSERT 
+          INTO TB_APL_SYS
+             ( 
+                 SYS_CD                                                           /*SYSTEM CODE  */
+               , SYS_NM                                                           /*SYSTEM NAME  */
+               , DISP_ORD                                                         /*ORDER NO  */
+               , USE_YN                                                           /*OPEN Y/N  */
+               , USE_PREVENT_YN                                                   /*PREVENT Y/N  */
+               , DB_USER_ID                                                       /*DB USER ID  */
+               , DB_USER_PASSWD                                                   /*DB PWD  */
+               , DB_SVR_NM                                                        /*DB SERVER 이름  */
+               , IDLE_TIME                                                        /*IDLE TIME  */
+               , MAP_LOC                                                          /*SQL MAPPER LOCATION  */
+               , WAS_IP_ADDR                                                      /*WAS IP ADDRESS  */
+               , WAS_DOMAIN                                                       /*WAS DOMAIN  */
+               , UPLOAD_PATH                                                      /*FILE UPLOAD 경로  */
+               , CNNT_IP                                                          /*CLIENT IP ADDRESS  */
+               , M_ADDR                                                           /*CLIENT MAC ADDRESS  */
+               , FST_RGPR_ID                                                      /*최초등록자  */
+               , FST_REG_ONCE                                                     /*최초등록일시  */
+             ) VALUES ( 
+               #{sysCd}
+               ,#{sysNm}
+               ,#{dispOrd}
+               ,#{useYn}
+               ,#{usePreventYn}
+               ,#{dbUserId}
+               ,#{dbUserPasswd}
+               ,#{dbSvrNm}
+               ,#{idleTime}
+               ,#{mapLoc}
+               ,#{wasIpAddr}
+               ,#{wasDomain}
+               ,#{uploadPath}
+               ,#{cnntIp}
+               ,#{mAddr}
+               ,#{_SES.username}
+               ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+               ) 
+	</insert>
+	
+	<update id="updateSystem">
+        /* SQL_ID: cmn.System.updateSystem - 시스템수정 */
+        UPDATE TB_APL_SYS A
+           SET
+               A.DB_USER_ID                                                      = #{dbUserId}                      /*DB USER ID*/
+               , A.DB_USER_PASSWD                                                = #{dbUserPasswd}                  /*DB PWD*/
+               , A.DB_SVR_NM                                                     = #{dbSvrNm}                       /*DB SERVER 이름*/
+               , A.IDLE_TIME                                                     = #{idleTime}                      /*IDLE TIME*/
+               , A.MAP_LOC                                                       = #{mapLoc}                        /*SQL MAPPER LOCATION*/
+               , A.WAS_IP_ADDR                                                   = #{wasIpAddr}                     /*WAS IP ADDRESS*/
+               , A.WAS_DOMAIN                                                    = #{wasDomain}                     /*WAS DOMAIN*/
+               , A.UPLOAD_PATH                                                   = #{uploadPath}                    /*FILE UPLOAD 경로*/
+               , A.CNNT_IP                                                       = #{cnntIp}                        /*CLIENT IP ADDRESS*/
+               , A.M_ADDR                                                        = #{mAddr}                         /*CLIENT MAC ADDRESS*/
+               , A.LT_CHPR_ID                                                    = #{_SES.username} 
+               , A.LT_CHPR_ONCE                                                 TO_CHAR(SYSDATE, YYYYMMDDHH24MISS)
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*SYSTEM CODE*/
+	</update>
+	
+	<delete id="deleteSystem">
+        /* SQL_ID: cmn.System.deleteSystem - 시스템삭제 */
+        DELETE 
+          FROM TB_APL_SYS A
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*SYSTEM CODE*/
+	</delete>
+
+
+</mapper>

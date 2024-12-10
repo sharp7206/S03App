@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+	<display-name>s03</display-name>
+	<context-param>
+		<param-name>SYSTEM_CODE</param-name>
+		<param-value>s03</param-value>
+	</context-param>	
+	<!-- error page define  -->
+	<error-page>
+		<error-code>400</error-code>
+		<location>/WEB-INF/page/co/error/400.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/WEB-INF/page/co/error/403.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/page/co/error/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/WEB-INF/page/co/error/405.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/page/co/error/500.jsp</location>
+	</error-page>
+</web-app>

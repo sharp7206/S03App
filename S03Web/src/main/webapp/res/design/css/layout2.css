@@ -1,0 +1,107 @@
+#aside2_txt {margin-top:40px; position:absolute; width:199px; border-right:1px solid #d3d6d9; background:#f2f2f2; z-index:90; height:86%;} 
+#aside2_txt .lnb_top2{height:10px; width:100%; background :url("../images/lnb_top_back.jpg") repeat-x;}
+
+.menu_tree .snb6.txt li a { text-indent:10px; background:none; font-size:12px; color:#8d8d8d; background:url(../images/snb_onoff.gif) no-repeat right 0; text-decoration:none;}
+.menu_tree .snb6.txt li a:hover {color:#fff; background-position:left 0; text-indent:21px;}
+
+
+.snb6 { width:200px;}
+.snb6 li { height:32px;}
+.snb6 li a { display:block; height:32px; line-height:32px; text-indent:-1000px; font-size:13px;}
+
+.menu_tree dl { position:relative; padding:17px 0 0 67px; height:64px; background:url(../images/bg_leftbtm.gif) no-repeat;}
+.menu_tree dl dt { height:15px; font-size:11px;}
+.menu_tree dl dd.txt { padding:0 0 2px 0;}
+.menu_tree dl dd.img { position:absolute; left:10px; top:17px;}
+
+
+
+body { background: none !important;}
+
+#L_aside .path { padding: 0 !important;}
+div.path.txt h2 {
+    background: none !important;
+    color: #4A4A4A;
+    font-size: 17px;font-weight:bold;
+    text-indent: 0 !important;
+}
+
+.snb6 li a {
+	height: auto !important;
+}
+
+.snb6 li { height: auto !important;}
+
+.menu_tree .snb6.txt li .depth_3 li a:hover {
+    background: url("../images/lnb/3depth_on.gif") no-repeat scroll left 0 transparent;
+    color: #fff;
+    font-size: 12px;
+    font-weight:bold;
+    text-decoration: none;
+    text-indent: 21px;
+}
+
+.menu_tree .snb6.txt li .depth_3 li a {
+    background: url("../images/lnb/3depth_on.gif") no-repeat scroll right 0 transparent;
+    color: #666;
+    font-size: 12px;
+    font-weight:bold;
+    text-decoration: none;
+    text-indent: 10px;
+}
+
+.menu_tree .snb6.txt li .currunt:hover {
+    background: url("../images/lnb/2depth_on.gif") no-repeat scroll left 0 transparent;
+    color: #666;
+    font-size: 12px;
+    text-decoration: none;
+    text-indent: 10px;
+	font-weight: bold;
+}
+
+.menu_tree .snb6.txt li .currunt {
+    background: url("../images/lnb/2depth_on.gif") no-repeat scroll left 0 transparent;
+    color: #666;
+    font-size: 12px;
+    font-weight:bold;
+    text-decoration: none;
+    text-indent: 10px;
+}
+
+.menu_tree .snb1.txt li .depth_3 li a.currunt {
+    background: url("../images/lnb/3depth_on.gif") no-repeat scroll left 0 transparent;
+    color: #fff;
+    font-size: 12px;
+    font-weight:bold;
+    text-decoration: none;
+    text-indent: 21px;
+    
+}
+
+.menu_tree .snb1.txt li.snb1_depth a.currunt {
+    background: url("../images/snb_onoff.gif") no-repeat scroll left 0 transparent !important;
+    color: #fff;
+    font-size: 12px;
+    font-weight:bold;
+    text-decoration: none;
+    text-indent: 20px;
+}
+
+.menu_tree .snb6.txt li.snb1_depth a.currunt {
+    background: url("../images/snb_onoff.gif") no-repeat scroll left 0 transparent !important;
+    color: #fff;
+    font-size: 12px;
+    font-weight:bold;
+    text-decoration: none;
+    text-indent: 20px;
+}
+
+.menu_tree .snb6.txt li .depth_3 li a.currunt {
+    background: url("../images/lnb/3depth_on.gif") no-repeat scroll left 0 transparent;
+    color: #fff;
+    font-size: 12px;
+    font-weight:bold;
+    text-decoration: none;
+    text-indent: 21px;
+}
+

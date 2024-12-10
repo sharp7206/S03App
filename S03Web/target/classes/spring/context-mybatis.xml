@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<context:property-placeholder location="classpath:application.properties"/>
+
+ 	<!-- HikariCP -->
+    <bean id="hikariConfg" class="com.zaxxer.hikari.HikariConfig">
+    	<property name="driverClassName" value="${db.driverClassName}"></property>
+    	<property name="jdbcUrl"	value="${db.url}"></property>
+    	<property name="username" 	value="${db.username}"></property>
+        <property name="password" 	value="${db.password}"></property>
+        <property name="dataSourceProperties">
+        	<props>
+        		<prop key="cachePrepStmts">true</prop>
+        		<prop key="prepStmtCacheSize">250</prop>
+        		<prop key="prepStmtCacheSqlLimit">2048</prop>
+        	</props>
+        </property>
+    </bean>
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+    	<constructor-arg ref="hikariConfg"/>
+    </bean>
+
+	<bean id="sqlSessionFactory" class="com.app.s03.cmn.mapper.RefreshableSqlSessionFactoryBean">
+		<property name="configLocation"  value="classpath:/spring/mybatis-config.xml" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations">
+			<list>
+				<value>${db.mapperLocations}</value>
+			</list>
+		</property>
+		<property name="interval" value="1000" />
+	</bean>
+
+	<bean id="commonMapper" name="commonMapper" class="com.app.s03.cmn.mapper.CommonMapper">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- JTA 지원 하는 WAS 경우
+	<bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager"/>
+	-->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="log*" propagation="REQUIRES_NEW" />
+			<tx:method name="*" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- Transaction -->
+	<aop:config proxy-target-class="true" expose-proxy="true">
+		<aop:pointcut id="serviceMethods" expression="execution(* com.app.*..*Service.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods" />
+	</aop:config>
+
+	<context:component-scan base-package="com.app.s03">
+    	<context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    	<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    	<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+
+</beans>

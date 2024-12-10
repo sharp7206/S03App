@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cmn.UserAuthority">
+
+	<select id="selectUserMenuTreeDataList" resultType="commonMap">
+	/* cmn.UserAuthority.selectUserMenuTreeDataList - 사용자 권한 트리메뉴  */
+		WITH MENU_INFO AS
+		(
+		SELECT DISTINCT A.SYS_CD, A.MENU_CD, A.MENU_NM, A.MENU_ENM, A.MENU_CNM, A.UP_MENU_CD, A.ETC1, A.ETC2, A.ETC3
+		     , A.USE_YN, A.URL, A.IMG_SRC, A.ORDER_NO
+		 FROM Z01_MENU A
+		INNER JOIN Z01_ROLE_ITEM B 
+		   ON (A.MENU_CD = B.ROLE_ITEM OR A.MENU_CD = '00000000')
+		  AND A.SYS_CD = B.SYS_CD 
+		  AND B.ROLE_CD IN   
+		 <foreach collection="authorities" item="roleCd" index="index"  open="(" close=")" separator=",">
+            #{roleCd}
+         </foreach> 		  
+		WHERE A.SYS_CD = #{ syscd }
+		  AND A.USE_YN = 'Y'
+		  AND A.POP_YN = 'N'
+		ORDER BY A.MENU_CD 
+		)
+		SELECT TO_CHAR(LEVEL-1) AS MENULVL, LPAD(' ', 2*(LEVEL-1)) || MENU_NM AS MENU_NM,
+				       LPAD(' ', 2*LEVEL-1) || SYS_CONNECT_BY_PATH(MENU_NM, '>>') PATH, 
+					   CASE WHEN CONNECT_BY_ISLEAF = 0 THEN 'Y' ELSE 'N' END AS LEAF_YN,
+				       CASE WHEN CONNECT_BY_ISLEAF = 1 THEN '/page/'||LOWER(SUBSTR(MENU_CD,1,2))||'/'||MENU_CD||'.do' ELSE '' END	AS VIEWURL,
+				       MENU_CD, UP_MENU_CD
+				  FROM MENU_INFO
+				 START WITH MENU_CD = '00000000'
+		       CONNECT BY PRIOR MENU_CD = UP_MENU_CD 
+	</select>
+
+	<select id="selectUserSideMenuTreeDataList" resultType="commonMap">
+	/* cmn.UserAuthority.selectUserMenuTreeDataList - 사용자 권한 트리메뉴  */
+		WITH MENU_INFO AS
+		(
+		SELECT DISTINCT A.SYS_CD, A.MENU_CD, A.MENU_NM, A.MENU_ENM, A.MENU_CNM, A.UP_MENU_CD, A.ETC1, A.ETC2, A.ETC3
+		     , A.USE_YN, A.URL, A.IMG_SRC, A.ORDER_NO
+		 FROM Z01_MENU A
+		INNER JOIN Z01_ROLE_ITEM B 
+		   ON (A.MENU_CD = B.ROLE_ITEM OR A.MENU_CD = '00000000')
+		  AND A.SYS_CD = B.SYS_CD 
+		  AND B.ROLE_CD IN   
+		 <foreach collection="authorities" item="roleCd" index="index"  open="(" close=")" separator=",">
+            #{roleCd}
+         </foreach> 		  
+		WHERE A.SYS_CD = #{ syscd }
+		  AND A.USE_YN = 'Y'
+		  AND A.POP_YN = 'N'
+		ORDER BY A.MENU_CD 
+		)
+		SELECT TO_CHAR(LEVEL-1) AS MENULVL, LPAD(' ', 2*(LEVEL-1)) || MENU_NM AS MENU_NM,
+				       LPAD(' ', 2*LEVEL-1) || SYS_CONNECT_BY_PATH(MENU_NM, '>>') PATH, 
+					   CASE WHEN CONNECT_BY_ISLEAF = 0 THEN 'Y' ELSE 'N' END AS LEAF_YN,
+				       CASE WHEN CONNECT_BY_ISLEAF = 1 THEN '/page/'||LOWER(SUBSTR(MENU_CD,1,2))||'/'||MENU_CD||'.do' ELSE '' END	AS VIEWURL,
+				       MENU_CD, UP_MENU_CD
+				  FROM MENU_INFO
+				 START WITH MENU_CD = #{ upMenuCd }
+		       CONNECT BY PRIOR MENU_CD = UP_MENU_CD 
+	</select>
+	<select id="selectUserProgramAuthority" resultType="string">
+	/* cmn.Authority.selectUserProgramAuthority - 프로그램권한 'CUDEPVWXYZ' AS PRGMAUTH */
+    SELECT WIN_PRIV 
+      FROM Z01_ROLE_ITEM 
+     WHERE SYS_CD = #{ syscd }
+       AND ROLE_ITEM IN (#{ prgmcd }) 
+       AND ROLE_CD IN  
+                        <foreach collection="authorities" item="roleCd" index="index"  open="(" close=")" separator=",">
+            #{roleCd}
+         </foreach>                       
+	</select>
+
+	<select id="selectProgramAuthority" resultType="string">
+		/* cmn.UserAuthority.selectProgramAuthority - 프로그램 권한 */
+		SELECT LISTAGG(ROLE_CD, ',') WITHIN GROUP(ORDER BY ROLE_CD) AS AUTHIDS
+	      FROM  Z01_ROLE_ITEM  A	-- 권한화면
+	     WHERE  A.ROLE_ITEM LIKE CONCAT(#{ prgmcd },'%')
+	</select>
+
+	<select id="selectAllAuthority" resultType="string">
+		/*cmn.UserAuthority.selectAllAuthority - 프로그램 권한 */
+		SELECT LISTAGG(ROLE_CD, ',') WITHIN GROUP(ORDER BY ROLE_CD) AS AUTHIDS
+		  FROM Z01_ROLE
+		 WHERE SYS_CD = #{ syscd }
+	</select>
+	
+	<select id="searchGoogleOptInfoByuserid" resultType="commonMap">
+		/*cmn.UserAuthority.searchGoogleOptInfoByuserid - 프로그램 권한 */
+		SELECT USER_ID, OTP_SECR_KEY
+		FROM Z01_USER
+		WHERE USER_ID = #{ userid }
+	</select>
+	
+	<update id="updateOtpSecKey">
+		/*cmn.UserAuthority.updateOtpSecKey - 프로그램 권한 */
+		UPDATE Z01_USER
+		   SET OTP_SECR_KEY = #{ otpSecrKey }
+		WHERE USER_ID = #{ userid }
+	</update>	
+	
+	
+	<select id="searchZ01TokenInfo" resultType="map">
+        /* SQL_ID: cmn.UserAuthority.searchZ01TokenInfo */
+        SELECT
+                A.SYS_CD                                                         /*시스템CD*/
+               , A.USER_ID                                                       /*USER ID*/
+               , A.TOKEN                                                         /*JWT정보*/
+               , A.REG_TM                                                        /*등록시간*/
+          FROM Z01_TOKEN_INFO  A
+         WHERE 1 = 1 
+               AND A.SYS_CD                   = #{SYS_CD}                        /*시스템CD*/
+               AND A.USER_ID                  = #{USER_ID}                       /*USER ID*/
+	</select>
+	
+	<insert id="insertZ01TokenInfo">
+        /* SQL_ID: cmn.UserAuthority.insertZ01TokenInfo */
+        INSERT 
+          INTO Z01_TOKEN_INFO
+             ( 
+                 SYS_CD                                           /*시스템CD  */
+               , USER_ID                                          /*USER ID  */
+               , TOKEN                                            /*JWT정보  */
+               , REG_TM                                           /*등록시간  */
+             ) VALUES ( 
+                #{SYS_CD}
+               ,#{USER_ID}
+               ,#{TOKEN}
+               ,SYSDATE
+               ) 	
+	</insert>
+	
+	<delete id="deleteZ01TokenInfo">
+        /* SQL_ID: cmn.UserAuthority.deleteZ01TokenInfo */
+        DELETE 
+          FROM Z01_TOKEN_INFO A
+         WHERE 1 = 1 
+           AND A.SYS_CD        = #{SYS_CD}                        /*시스템CD*/
+           AND A.USER_ID       = #{USER_ID}                       /*USER ID*/
+	</delete>	
+</mapper>

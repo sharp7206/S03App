@@ -1,0 +1,57 @@
+@charset "UTF-8";
+
+#main_content {width:990px;}
+.con_title { margin-top:7px;}
+
+/*
+.to_do_listbox { width:986px; overflow:hidden; margin-top:px; border:2px solid #1286d6; }
+.to_do_listbox div { float:left; width:328px; padding:0; }
+.to_do_listbox div p { margin-top:0px; font-weight:bold; color:#68bcf6; text-align:center; }
+.to_do_listbox div p.num { margin-top:0; font-style:normal; font-size:16px;  color:#1286d6; text-decoration:underline;  }
+.to_do_listbox div.last { border-right:none; }
+*/
+
+.to_do_listbox {width:986px; overflow:hidden; margin-top:5px; border:1px solid #ffffff; }
+.to_do_listbox div { background:#3b8cbf; float:left; width:328px; padding:17px 0; border-right:1px solid #ffffff; }
+.to_do_listbox div.co2{ background:#68bcf6; float:left; width:328px; padding:17px 0; border-right:1px solid #ffffff; }
+.to_do_listbox div p { margin-top:10px; font-weight:bold; color:#ffffff; text-align:center; }
+.to_do_listbox div p.num { margin-top:0; font-style:normal; font-size:16px;  color:#ffffff; text-decoration:underline;  }
+.to_do_listbox div.last { border-right:none; }
+
+
+
+.to_do_list { width:990px; overflow:hidden; margin-top:17px; }
+.to_do_list dl { width:237px; float:left; margin-right:14px; }
+.to_do_list dl dt { font-size: 0; line-height:0; }
+.to_do_list dl dd ul li { width:217px; padding:7px 10px; overflow:hidden; border-bottom:1px solid #d6d6d6; background: url(../images/main_to_do_list_bar.gif) 200px bottom no-repeat; }
+.to_do_list dl dd ul li p { float:left; color:#8d8d8d; }
+.to_do_list dl dd ul li p a { color:#8d8d8d; }
+.to_do_list dl dd ul li p.num { float:right; color:#479aee; font-weight:bold; }
+.to_do_list table { width:100%; min-width:972px; }
+.to_do_list table td { vertical-align:top; }
+
+
+/* 추가 2012.07.30  5개의 타이틀이 나타날경우*/
+.to_do { width:100%; overflow:hidden; margin-top:17px; }
+.to_do dl { width:186px; margin:0 auto; }
+.to_do dl dt { font-size: 0; line-height:0; }
+.to_do dl dd ul li { width:186px; padding:5px 0px;  overflow:hidden; border-bottom:1px solid #d6d6d6; background: url(../images/main_to_do_list_bar.gif)150px bottom no-repeat; }
+.to_do dl dd ul li p { float:left; color:#8d8d8d; }
+.to_do dl dd ul li p a { color:#8d8d8d; }
+.to_do dl dd ul li p.num { float:right; color:#479aee; font-weight:bold; }
+.to_do table { width:100%; min-width:972px; }
+.to_do table td { vertical-align:top; }
+/*  종료 */
+
+.in_tranist_box { width:992px; margin:15px auto 0; }
+.in_tranist_box:after { content:""; display:block; height:0; clear:both; }
+.in_tranist_box li { position:relative; float:left; width:248px; height:101px; padding-top:15px; background: url(../images/bg_shadow_blue.gif) 0 0 no-repeat; }
+.in_tranist_box li p { text-align:center; }
+.in_tranist_box li p.num { font-size:30px; color:#fff; font-weight:bold; }
+.in_tranist_box li .data_layer { display:none; position:absolute; left:0; top:116px; width:232px; padding:34px 15px 15px 15px; background:#3b8abf url(../images/bg_shadow_side.gif) right top no-repeat; }
+.in_tranist_box li .data_layer .btn_close { position:absolute; right:15px; top:15px; }
+.in_tranist_box li .data_layer table { width:100%; background:#fff; text-align:center; }
+.in_tranist_box li .data_layer table td {padding:4px 0; color:#fff; border-bottom:1px solid #3b8abf; color:#3b8abf; }
+.in_tranist_box li.sky_blue { width:248px; background: url(../images/bg_shadow_sky_blue.gif) 0 0 no-repeat; }
+.in_tranist_box li.sky_blue .data_layer { background:#68bcf6 url(../images/bg_shadow_side_sky.gif) right top no-repeat; }
+.in_tranist_box li.sky_blue .data_layer table td { border-bottom:1px solid #68bcf6; color:#68bcf6; }

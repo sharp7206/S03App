@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FETAL > ERROR > WARN > INFO > DEBUG > TRACE -->
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.padual.com/java/xsd">
+
+    <!-- Mapper Log Filter -->
+    <turboFilter class="com.app.s03.cmn.logging.MapperLogFilter" />
+
+    <property resource="application.properties" />
+    
+    <property name="console-pattern" value="%d{HH:mm:ss.SSS} %-5level [%t][%logger] \\(%F:%L\\)-%M [%mdc] - %replace(%msg){'[\r\n]',''}%n" />
+    <property name="sql-pattern" value="%d{HH:mm:ss.SSS} %-5level SQL: %msg%n%ex%n" />
+    <property name="file-pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t][%logger] \\(%F:%L\\) - %replace(%msg){'[\r\n]',''}%n" />
+    
+    <appender name="CONSOLE-SYS" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${console-pattern}</pattern>
+        </encoder>
+    </appender>
+    
+    <appender name="CONSOLE-SQL-SYS" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${sql-pattern}</pattern>
+        </encoder>
+    </appender>
+    
+    <appender name="FILE_SYS" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>jobId</key>
+            <defaultValue>undefined</defaultValue>
+        </discriminator>
+        <sift>
+            <appender name="FILE_SYS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${log.dir}/S03.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${log.dir}/%d{yyyyMMdd, aux}/S03-%d{yyyyMMdd}-%i.log</fileNamePattern>
+                    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <maxFileSize>3MB</maxFileSize>
+                    </timeBasedFileNamingAndTriggeringPolicy>
+                    <maxHistory>30</maxHistory>
+                </rollingPolicy>
+                <encoder>
+                    <pattern>${file-pattern}</pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+    
+    <root level="INFO">
+        <appender-ref ref="CONSOLE-SYS" />
+        <appender-ref ref="FILE_SYS" />
+    </root>
+    
+    <logger name="com.s03" level="DEBUG" additivity="false" >
+        <appender-ref ref="CONSOLE-SYS" />
+        <appender-ref ref="FILE_SYS" />
+    </logger>
+        <!-- SQL -->
+    <logger name="jdbc" level="OFF" />
+    <logger name="jdbc.sqlonly" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE-SQL-SYS" />
+    </logger>
+    <logger name="jdbc.resultsettable" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE-SQL-SYS" />
+    </logger>
+    <!-- SQL 
+    <logger name="jdbc.sqltiming" level="DEBUG" />
+	<logger name="jdbc.audit" level="OFF"/>
+	<logger name="jdbc.resultset" level="OFF"/>
+	<logger name="jdbc.resultsettable" level="DEBUG"/>
+	<logger name="jdbc.connection" level="OFF"/>
+    
+    <logger name="jdbc" level="OFF"/>
+    <logger name="jdbc.connection" level="OFF"/>
+    <logger name="jdbc.sqltiming" level="OFF"/>
+    <logger name="jdbc.audit" level="OFF"/>
+    <logger name="jdbc.resultset" level="OFF"/>
+    <logger name="jdbc.resultsettable" level="INFO"/>
+    <logger name="jdbc.sqlonly" level="INFO" />
+    <logger name="org.bgee.log4jdbc.Slf4JLogger" level="TRACE"/>
+    <logger name="org.bgee.log4jdbc.Slf4JLogger$Slf4JLoggerSet" level="TRACE"/>
+    -->
+<typeAliases></typeAliases>
+</configuration>

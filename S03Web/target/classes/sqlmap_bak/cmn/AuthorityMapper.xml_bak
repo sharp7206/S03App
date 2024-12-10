@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="co.Authority">
+  
+	<select id="selectAuthorityList" resultType="commonMap">
+	/* co.Authority.selectAuthorityList - 권한목록 */
+	SELECT  A.AUTHID AS ROW_ID
+	  	   ,A.AUTHID
+		   ,A.AUTHNM
+		   ,A.USEYN
+		   ,A.ORDNO
+		   ,CASE WHEN C.USERCNT IS NULL THEN 0
+		         ELSE C.USERCNT
+		    END 			AS USERCNT
+		   ,CASE WHEN D.PRGMCNT IS NULL THEN 0
+		         ELSE D.PRGMCNT
+		    END 			AS PRGMCNT
+		   ,A.CHGUSERID
+		   ,DATE_FORMAT(A.CHGDTTM,'%Y-%m-%d %H:%i:%s')	AS CHGDTTM
+		   ,B.USERNM 	AS CHGUSERNM
+      FROM  TAC_AUTH    A	-- 권한코드
+      JOIN  TAC_USER	B ON A.CHGUSERID = B.USERID -- 처리자
+ LEFT JOIN (
+ 		    SELECT  AUTHID
+ 		    	   ,COUNT(*) AS USERCNT
+ 		      FROM  TAC_AUTHUSER
+ 		     GROUP  BY AUTHID
+ 		   ) 			C ON A.AUTHID = C.AUTHID
+  LEFT JOIN (
+ 		    SELECT  AUTHID
+ 		    	   ,COUNT(*) AS PRGMCNT
+ 		      FROM  TAC_AUTHPRGM
+ 		     GROUP  BY AUTHID
+ 		   ) 			D ON A.AUTHID = D.AUTHID
+   	<where>
+ 		<if test="useyn != null">
+	   AND  A.USEYN = #{ useyn }
+	  	</if>
+   	</where>
+   	 ORDER  BY A.ORDNO
+	</select>
+
+	<insert id="insertAuthority">
+	/* co.Authority.insertAuthority - 권한코드추가 */
+	INSERT INTO TAC_AUTH
+		   (
+	 		AUTHID
+		   ,AUTHNM
+		   ,USEYN
+		   ,ORDNO
+		   ,REGUSERID
+		   ,REGDTTM
+		   ,CHGUSERID
+		   ,CHGDTTM
+		   )
+	VALUES (
+	        #{ authid }
+		   ,#{ authnm }
+		   ,#{ useyn }
+		   ,#{ ordno }
+		   ,#{ _SESSION_USER.username }
+		   ,SYSDATE(6)
+		   ,#{ _SESSION_USER.username }
+		   ,SYSDATE(6)
+		   )
+	</insert>
+
+	<update id="updateAuthority">
+	/* co.Authority.updateAuthority - 권한코드수정 */
+	UPDATE  TAC_AUTH
+	   SET	AUTHNM    = #{ authnm }
+		   ,USEYN 	  = #{ useyn }
+		   ,ORDNO	  = #{ ordno }
+		   ,CHGUSERID = #{ _SESSION_USER.username }
+		   ,CHGDTTM   = SYSDATE(6)
+	 WHERE  AUTHID = #{ authid }
+	</update>
+
+	<delete id="deleteAuthority">
+	/* co.Authority.deleteAuthority - 권한코드삭제 */
+	DELETE  FROM TAC_AUTH	-- 권한
+	 WHERE  AUTHID = #{ authid }
+	</delete>
+
+	<select id="selectAuthorityUserList" resultType="commonMap">
+	/* co.Authority.selectAuthorityUserList - 권한사용자목록 */
+	SELECT  A.AUTHID
+		   ,B.AUTHNM
+		   ,B.USEYN
+		   ,A.USERID
+		   ,C.USERNM
+		   ,C.DEPTCD
+		   ,E.DEPTNM
+		   ,F.CDNM	AS POSITNM
+		   ,A.CHGUSERID
+		   ,DATE_FORMAT(A.CHGDTTM,'%Y-%m-%d %H:%i:%s')	AS CHGDTTM
+		   ,D.USERNM 	AS CHGUSERNM
+      FROM  TAC_AUTHUSER	A	-- 권한사용자
+      JOIN  TAC_AUTH		B ON A.AUTHID = B.AUTHID	-- 권한코드
+      JOIN  TAC_USER		C ON A.USERID = C.USERID	-- 사용자
+      JOIN  TAC_USER		D ON A.CHGUSERID = D.USERID -- 처리자
+ LEFT JOIN  TAC_DEPT		E ON C.DEPTCD = E.DEPTCD	-- 부서
+ LEFT JOIN  TAC_CODE		F ON C.POSITCD = F.CD AND F.GRPCD = 'AC100100'	-- 직위
+     WHERE  A.AUTHID = #{ authid }
+    <if test="schname !=null and schname !=''">
+       AND  C.USERNM LIKE CONCAT('%',#{schname},'%')
+    </if>
+	</select>
+
+	<select id="selectAuthorityUserHistList" resultType="commonMap">
+	/* co.Authority.selectAuthorityUserHistList - 권한사용자이력목록 */
+	SELECT  A.HISTID
+		   ,A.GRANTTP
+		   ,E.CDNM AS GRANTTPNM
+		   ,A.AUTHID
+		   ,B.AUTHNM
+		   ,B.USEYN
+		   ,A.USERID
+		   ,C.USERNM
+		   ,C.DEPTCD
+		   ,A.HNDUSERID
+		   ,DATE_FORMAT(A.HNDDTTM,'%Y-%m-%d %H:%i:%s')	AS HNDDTTM
+		   ,D.USERNM 	AS HNDUSERNM
+      FROM  TAC_AUTHUSERHIST	A	-- 권한사용자
+      JOIN  TAC_AUTH			B ON A.AUTHID = B.AUTHID	-- 권한코드
+      JOIN  TAC_USER			C ON A.USERID = C.USERID	-- 사용자
+      JOIN  TAC_USER			D ON A.HNDUSERID = D.USERID -- 처리자
+  	  JOIN  TAC_CODE			E ON A.GRANTTP = E.CD AND E.GRPCD = 'AC200100'	-- 권한부여구분(AC200100)
+    <where>
+    <if test="userid !=null and userid !=''">
+       AND  A.USERID = #{ userid }
+    </if>
+    <if test="fromdate !=null and fromdate !=''">
+       AND  DATE_FORMAT(A.HNDDTTM,'%Y-%m-%d') >= #{ fromdate }
+    </if>
+    <if test="todate!=null and todate !=''">
+       AND  #{ todate } >= DATE_FORMAT(A.HNDDTTM,'%Y-%m-%d')
+    </if>
+    </where>
+     ORDER  BY A.HISTID DESC
+	</select>
+
+	<select id="selectNotAuthorityUserList" resultType="commonMap">
+	/* co.Authority.selectNotAuthorityUserList - 권한미부여사용자목록 */
+	SELECT  #{ authid } AS AUTHID
+		   ,A.USERID
+		   ,A.USERNM
+		   ,A.DEPTCD
+		   ,B.DEPTNM
+		   ,C.CDNM	AS POSITNM
+      FROM  TAC_USER    A	-- 사용자
+ LEFT JOIN  TAC_DEPT	B ON A.DEPTCD = B.DEPTCD	-- 부서
+ LEFT JOIN  TAC_CODE	C ON A.POSITCD = C.CD AND C.GRPCD = 'AC100100'	-- 직위
+     WHERE  A.USERID NOT IN
+           (
+     		SELECT  USERID
+     		  FROM  TAC_AUTHUSER
+     		 WHERE  AUTHID = #{ authid }
+     	   ) -- 해당권한미등록
+     <if test="schname !=null and schname !=''">
+        AND  A.USERNM LIKE CONCAT('%',#{schname},'%')
+    </if>
+	</select>
+
+	<insert id="insertAuthorityUser">
+	/* co.Authority.insertAuthorityUser - 권한사용자추가 */
+	INSERT  INTO TAC_AUTHUSER
+	       (
+	        AUTHID
+		   ,USERID
+		   ,REGUSERID
+		   ,REGDTTM
+		   ,CHGUSERID
+		   ,CHGDTTM
+		   )
+	VALUES (
+	        #{ authid }
+	       ,#{ userid }
+	       ,#{ _SESSION_USER.username }
+		   ,SYSDATE(6)
+		   ,#{ _SESSION_USER.username }
+		   ,SYSDATE(6)
+	       )
+	</insert>
+
+	<insert id="insertAuthorityUserHist">
+	/* co.Authority.insertAuthorityUserHist - 권한사용자이력추가 */
+	INSERT  INTO TAC_AUTHUSERHIST
+	       (
+	        GRANTTP 	-- 권한부여구분(AC200100)
+	       ,AUTHID 		-- 권한ID
+	       ,USERID 			-- 사용자ID
+	       ,HNDUSERID 		-- 처리자ID
+	       ,HNDDTTM 		-- 처리일시
+		   )
+	VALUES (
+	        #{ granttp }
+	       ,#{ authid }
+	       ,#{ userid }
+		   ,#{ _SESSION_USER.username }
+		   ,SYSDATE(6)
+	       )
+	</insert>
+
+	<delete id="deleteAuthorityUser">
+	/* co.Authority.deleteAuthorityUser - 권한사용자삭제 */
+	DELETE  FROM TAC_AUTHUSER
+	 WHERE  AUTHID = #{ authid }
+	   AND  USERID = #{ userid }
+	</delete>
+
+	<select id="selectMenuAuthList" resultType="commonMap">
+	/* co.Authority.selectMenuAuthList - 권한프로그램목록 */
+	SELECT  A.AUTHID
+		   ,B.AUTHNM
+		   ,B.USEYN
+		   ,A.RAUTHYN
+		   ,A.CAUTHYN
+		   ,A.UAUTHYN
+		   ,A.DAUTHYN
+		   ,A.EAUTHYN
+		   ,A.PAUTHYN
+		   ,A.VAUTHYN
+		   ,A.WAUTHYN
+		   ,A.XAUTHYN
+		   ,A.YAUTHYN
+		   ,A.ZAUTHYN
+		   ,A.PRGMCD
+		   ,C.PRGMNM
+		   ,C.VAUTHNM
+		   ,C.WAUTHNM
+		   ,C.XAUTHNM
+		   ,C.YAUTHNM
+		   ,C.ZAUTHNM
+		   ,C.VICONNM
+		   ,C.WICONNM
+		   ,C.XICONNM
+		   ,C.YICONNM
+		   ,C.ZICONNM
+		   ,A.CHGUSERID
+		   ,DATE_FORMAT(A.CHGDTTM,'%Y-%m-%d %H:%i:%s')	AS CHGDTTM
+		   ,D.USERNM 	AS CHGUSERNM
+      FROM  TAC_AUTHPRGM	A	-- 권한프로그램
+      JOIN  TAC_AUTH		B ON A.AUTHID = B.AUTHID	-- 권한
+      JOIN  TAC_PRGM		C ON A.PRGMCD = C.PRGMCD	-- 프로그램
+      JOIN  TAC_USER		D ON A.CHGUSERID = D.USERID -- 처리자
+	 WHERE  A.PRGMCD = #{ prgmcd }
+	 ORDER  BY B.ORDNO
+	</select>
+
+	<select id="selectAuthProgamHistList" resultType="commonMap">
+	/* co.Authority.selectAuthProgamHistList - 권한프로그램이력목록 */
+	SELECT  A.HISTID
+		   ,A.GRANTTP
+		   ,E.CDNM	AS GRANTTPNM
+		   ,A.AUTHID
+		   ,B.AUTHNM
+		   ,B.USEYN
+		   ,A.RAUTHYN
+		   ,A.CAUTHYN
+		   ,A.UAUTHYN
+		   ,A.DAUTHYN
+		   ,A.EAUTHYN
+		   ,A.PAUTHYN
+		   ,A.VAUTHYN
+		   ,A.WAUTHYN
+		   ,A.XAUTHYN
+		   ,A.YAUTHYN
+		   ,A.ZAUTHYN
+		   ,A.PRGMCD
+		   ,C.PRGMNM
+		   ,C.VAUTHNM
+		   ,C.WAUTHNM
+		   ,C.XAUTHNM
+		   ,C.YAUTHNM
+		   ,C.ZAUTHNM
+		   ,C.VICONNM
+		   ,C.WICONNM
+		   ,C.XICONNM
+		   ,C.YICONNM
+		   ,C.ZICONNM
+		   ,DATE_FORMAT(A.HNDDTTM,'%Y-%m-%d %H:%i:%s')	AS HNDDTTM
+		   ,D.USERNM 	AS HNDUSERNM
+      FROM  TAC_AUTHPRGMHIST	A	-- 권한프로그램이력
+      JOIN  TAC_AUTH			B ON A.AUTHID = B.AUTHID	-- 권한
+      JOIN  TAC_PRGM			C ON A.PRGMCD = C.PRGMCD	-- 프로그램
+      JOIN  TAC_USER			D ON A.HNDUSERID = D.USERID -- 처리자
+      JOIN  TAC_CODE			E ON A.GRANTTP = E.CD AND E.GRPCD = 'AC200100' -- 권한부여구분(AC200100)
+    <where>
+    <if test="granttp !=null and granttp !=''">
+       AND  A.GRANTTP = #{ granttp }
+    </if>
+    <if test="fromdate !=null and fromdate !=''">
+       AND  DATE_FORMAT(A.HNDDTTM,'%Y-%m-%d') >= #{ fromdate }
+    </if>
+    <if test="todate!=null and todate !=''">
+       AND  #{ todate } >= DATE_FORMAT(A.HNDDTTM,'%Y-%m-%d')
+    </if>
+    </where>
+     ORDER  BY A.HISTID DESC
+	</select>
+
+	<insert id="insertAuthorityProgram">
+	/* co.Authority.insertAuthorityProgram - 권한프로그램추가 */
+	INSERT  INTO TAC_AUTHPRGM
+	       (
+	        AUTHID
+		   ,PRGMCD
+		   ,RAUTHYN
+		   ,CAUTHYN
+		   ,UAUTHYN
+		   ,DAUTHYN
+		   ,EAUTHYN
+		   ,PAUTHYN
+		   ,VAUTHYN
+		   ,WAUTHYN
+		   ,XAUTHYN
+		   ,YAUTHYN
+		   ,ZAUTHYN
+		   ,REGUSERID
+		   ,REGDTTM
+		   ,CHGUSERID
+		   ,CHGDTTM
+		   )
+	VALUES (
+	        #{ authid }
+	       ,#{ prgmcd }
+		   ,'Y'
+		   ,#{ cauthyn }
+		   ,#{ uauthyn }
+		   ,#{ dauthyn }
+		   ,#{ eauthyn }
+		   ,#{ pauthyn }
+		   ,#{ vauthyn }
+		   ,#{ wauthyn }
+		   ,#{ xauthyn }
+		   ,#{ yauthyn }
+		   ,#{ zauthyn }
+		   ,#{ _SESSION_USER.username }
+		   ,SYSDATE(6)
+		   ,#{ _SESSION_USER.username }
+		   ,SYSDATE(6)
+	       )
+	</insert>
+
+	<insert id="insertAuthorityProgramHist">
+	/* co.Authority.insertAuthorityProgramHist - 권한프로그램이력추가 */
+	INSERT  INTO TAC_AUTHPRGMHIST
+	       (
+	        GRANTTP	-- 부여구분(AC200100)
+    	   ,AUTHID	-- 권한ID
+    	   ,PRGMCD	-- 프로그램코드
+    	   ,RAUTHYN	-- 조회권한여부
+    	   ,CAUTHYN	-- 추가권한여부
+    	   ,UAUTHYN	-- 수정권한여부
+    	   ,DAUTHYN	-- 삭제권한여부
+    	   ,EAUTHYN	-- 엑셀권한여부
+    	   ,PAUTHYN	-- 인쇄권한여부
+    	   ,VAUTHYN	-- V권한여부
+    	   ,WAUTHYN	-- W권한여부
+    	   ,XAUTHYN	-- X권한여부
+    	   ,YAUTHYN	-- Y권한여부
+    	   ,ZAUTHYN	-- Z권한여부
+     	   ,HNDUSERID	-- 처리자ID
+    	   ,HNDDTTM	-- 처리일시
+		   )
+	VALUES (
+	        #{ granttp }
+	       ,#{ authid }
+	       ,#{ prgmcd }
+		   ,'Y'
+		   ,#{ cauthyn }
+		   ,#{ uauthyn }
+		   ,#{ dauthyn }
+		   ,#{ eauthyn }
+		   ,#{ pauthyn }
+		   ,#{ vauthyn }
+		   ,#{ wauthyn }
+		   ,#{ xauthyn }
+		   ,#{ yauthyn }
+		   ,#{ zauthyn }
+		   ,#{ _SESSION_USER.username }
+		   ,SYSDATE(6)
+	       )
+	</insert>
+
+	<update id="updateAuthorityProgram">
+	/* co.Authority.updateAuthorityProgram - 권한프로그램저장 */
+	UPDATE  TAC_AUTHPRGM
+	   SET  CAUTHYN = #{ cauthyn }
+		   ,UAUTHYN = #{ uauthyn }
+		   ,DAUTHYN = #{ dauthyn }
+		   ,EAUTHYN = #{ eauthyn }
+		   ,PAUTHYN = #{ pauthyn }
+		   ,VAUTHYN = #{ vauthyn }
+		   ,WAUTHYN = #{ wauthyn }
+		   ,XAUTHYN = #{ xauthyn }
+		   ,YAUTHYN = #{ yauthyn }
+		   ,ZAUTHYN = #{ zauthyn }
+		   ,CHGUSERID = #{ _SESSION_USER.username }
+		   ,CHGDTTM = SYSDATE(6)
+	 WHERE  AUTHID = #{ authid }
+	   AND  PRGMCD = #{ prgmcd }
+	</update>
+
+	<delete id="deleteAuthorityProgram">
+	/* co.Authority.deleteAuthorityProgramList - 권한프로그램삭제 */
+	DELETE  FROM TAC_AUTHPRGM
+	 WHERE  AUTHID = #{ authid }
+	   AND  PRGMCD = #{ prgmcd }
+	</delete>
+
+	<select id="selectNotMenuAuthList" resultType="commonMap">
+	/* co.Authority.selectNotMenuAuthList - 권한미등록프로그램목록 */
+	SELECT  A.AUTHID
+		   ,#{prgmcd} 	AS PRGMCD
+		   ,A.AUTHNM
+		   ,CASE WHEN B.USERCNT IS NULL THEN 0
+		         ELSE B.USERCNT
+		    END 		AS USERCNT
+      FROM  TAC_AUTH	A
+ LEFT JOIN (
+ 		    SELECT  AUTHID
+ 		    	   ,COUNT(*) AS USERCNT
+ 		      FROM  TAC_AUTHUSER
+ 		     GROUP  BY AUTHID
+ 		   ) 			B ON A.AUTHID = B.AUTHID
+     WHERE  A.AUTHID NOT IN
+           (
+     		SELECT  AUTHID
+     	      FROM  TAC_AUTHPRGM
+     		 WHERE  PRGMCD = #{ prgmcd }
+     	   )
+       AND  A.USEYN = 'Y'
+     ORDER  BY A.ORDNO
+	</select>
+
+</mapper>

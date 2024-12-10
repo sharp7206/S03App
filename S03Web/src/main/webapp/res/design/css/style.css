@@ -1,0 +1,82 @@
+/* Menu Common */
+.menu{ float:left; position:relative; z-index:100; overflow:visible;font-size:12px; line-height:normal; *zoom:1; white-space:nowrap; font-family:Tahoma, Geneva, sans-serif;}
+.menu:after{ content:""; display:block; clear:both;}
+.menu .inset{ position:relative; overflow:visible; z-index:2; *zoom:1;}
+.menu .inset:after{ content:""; display:block; clear:both;}
+.menu ul{ float:left; list-style:none; margin:-1px 0; padding:0;}
+.menu ul:after{ content:""; display:block; clear:both;}
+.menu li{ position:relative; z-index:1; float:left;}
+.menu a{ position:relative; float:left; padding:10px 0 11px 0; *padding:10px 0 10px 0; margin-bottom:-1px; text-decoration:none !important; cursor:pointer;}
+.menu a span{ padding:0 20px; height:14px; color:#fff; font-weight:bold; vertical-align:top;}
+.menu a span .i{ display:inline-block; width:10px; height:10px; padding:0; margin:3px 0 0 7px; border:0 !important; font-size:0; line-height:0; overflow:hidden; vertical-align:top; background:url(iconSub.gif) no-repeat center top; opacity:.4; filter:alpha(opacity=40);}
+
+/* Menu Major */
+.menu .major{ position:relative; z-index:2; float:left;}
+.menu .major a{ overflow:hidden; text-indent:-1000px;}
+.menu .major span{ border-left:1px solid; border-right:1px solid; _zoom:1;}
+
+/* Menu Hover */
+.menu .major li a { display:block; height:47px; background:url(../../../images/bg_lnb.gif) no-repeat;}
+.menu .major li.active{ z-index:2;}
+.menu .major li a:hover,
+.menu .major li a:active,
+.menu .major li a:focus{}
+.menu .major li.active a{}
+.menu .major li.active .i{}
+
+/* Menu Active */
+.menu .major.m1 .m1,
+.menu .major.m2 .m2,
+.menu .major.m3 .m3,
+.menu .major.m4 .m4,
+.menu .major.m5 .m5,
+.menu .major.m6 .m6,
+.menu .major.m7 .m7,
+.menu .major.m8 .m8,
+.menu .major.m9 .m9,
+.menu .major.m10 .m10,
+.menu .major.m11 .m11,
+.menu .major.m12 .m12{ z-index:3; margin:0 -1px; border-left:1px solid; border-right:1px solid;}
+
+.menu .major.m1 .m1 a,
+.menu .major.m2 .m2 a,
+.menu .major.m3 .m3 a,
+.menu .major.m4 .m4 a,
+.menu .major.m5 .m5 a,
+.menu .major.m6 .m6 a,
+.menu .major.m7 .m7 a,
+.menu .major.m8 .m8 a,
+.menu .major.m9 .m9 a,
+.menu .major.m10 .m10 a,
+.menu .major.m11 .m11 a,
+.menu .major.m12 .m12 a{}
+
+.menu .major.m1 .m1 span,
+.menu .major.m2 .m2 span,
+.menu .major.m3 .m3 span,
+.menu .major.m4 .m4 span,
+.menu .major.m5 .m5 span,
+.menu .major.m6 .m6 span,
+.menu .major.m7 .m7 span,
+.menu .major.m8 .m8 span,
+.menu .major.m9 .m9 span,
+.menu .major.m10 .m10 span,
+.menu .major.m11 .m11 span,
+.menu .major.m12 .m12 span,
+.menu .major li.active span{ border:0;}
+
+.menu .major ul li.m1 { width:101px;}
+.menu .major ul li.m2 { width:102px;}
+.menu .major ul li.m3 { width:103px;}
+.menu .major ul li.m4 { width:124px;}
+.menu .major ul li.m5 { width:96px;}
+.menu .major ul li.m6 { width:74px;}
+
+/* Menu Sub */
+.menu .major .sub{ position:absolute; top:100%; left:-1px; margin:2px 0 0 0; display:none; width:300px; *width:auto;}
+.menu .major li.active .sub{ display:block;}
+.menu .major .sub ul{ margin:0; padding:1px; border:1px solid #878787; border-top:0; background:#fff;}
+.menu .major .sub li{ width:100%; *width:auto; float:none; clear:both; display:block; _display:inline; border:0; margin:0;}
+.menu .major .sub a{ width:100%; _width:auto; float:none; clear:both; display:block; padding:0 !important; margin:0; background-image:none !important; filter:none;}
+.menu .major .sub a span{ display:block; height:auto; padding:5px 20px; font-weight:normal; color:#767676; border:0; _zoom:0;}
+

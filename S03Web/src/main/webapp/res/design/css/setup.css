@@ -1,0 +1,6 @@
+@charset "UTF-8";
+.snb1 li { line-height:0; font-size: 0 ;}
+.snb1 li a { display: block; height: 32px;}
+.snb1 li a img { font-size: 0 !important; }
+.snb1 li ul li a { display: block; height: 32px;}
+.snb1 li ul li a img { font-size: 0 !important;}

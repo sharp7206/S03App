@@ -1,0 +1,62 @@
+<!-- td {font-family: 굴림,gulim,Arial; color: #4F401D; font-size: 9pt; line-height:19px;} -->
+
+A:link { color :274D77; font : 9pt 굴림,gulim,Arial,verdana; TEXT-DECORATION: none }
+A:visited {color :274D77 ; font : 9pt 굴림,gulim,Arial,verdana; TEXT-DECORATION: none}
+A:hover { color :709000; font : 9pt 굴림,gulim,Arial,verdana; TEXT-DECORATION:none }
+
+body {
+background-color :#FFFFFF;
+margin-top:0px;
+margin-left:0px;
+margin-right:0px;
+margin-bottom:0px;
+font-family : 굴림,gulim,Arial,verdana;
+font-size : 9pt;
+scrollbar-face-color:#FFFFFF;
+scrollbar-highlight-color: #999999;
+scrollbar-3dlight-color: #E8E8E8;
+scrollbar-shadow-color: #999999;
+scrollbar-darkshadow-color: #E8E8E8;
+scrollbar-track-color: #E8E8E8;
+scrollbar-arrow-color: #E8E8E8}
+}
+
+/* 테이블 정의 형식- <table class='TB' width='167' cellpadding="0" cellspacing="0">*/
+.TB {padding:0px; border-collapse:collapse};
+
+/* ----->  로그인정보 폰트설정 <-------- */
+.LF	  {font-size: 9pt; color: #7A9C09; font-weight: bold;}
+
+/* ----->  작은글씨 <-------- */
+.SF	  {font-size: 8pt; color: #FF6403;}
+
+/* ----->  게시판 영역관련 <-------- */
+
+/* 리스트타이틀 */
+.BT	{border-width:0; border-style: solid; text-align: center; background-color: #1279C4;}
+/* 리스트(중앙) */
+.BBR {border-width:0; height:26; border-style: solid; font-size: 9 pt; text-align: center; color: #6B6B6B;}
+/* 리스트(좌측) */
+.BBL {border-width:0; height:26; padding:0 0 0 5; border-style: solid; font-size: 9 pt; color: #6B6B6B;}
+/* 게시물현재페이지 */
+.BPG {font-size: 9pt; color: #19669D; font-weight: bold;}
+/* View 타이틀 배경 */
+.BVT {border-width:0; height:34; border-style: solid; font-size: 9 pt; background-image: url('../../img/board_view_tback.gif');}
+/* View 제목 영역 */
+.BVC {border-width:0; height:34; border-style: solid; padding:3 0 0 7; font-size: 9 pt; font-weight: bold;}
+/* View 제목외 영역 */
+.BVE {border-width:0; height:34; border-style: solid; padding:3 0 0 0; font-size: 9 pt; text-align: center;}
+/* View 내용 영역 */
+.BVM {border-width:0; border-style: solid; padding:15 0 15 7; font-size: 9 pt;}
+/* 지식답변타이틀 */
+.BVNT {border-width:0; height:28; padding:3 0 0 7; font-size: 9pt; font-weight: bold;}
+/* 지식답변정보 */
+.BVNE {border-width:0; height:28; padding:3 0 0 7; font-size: 8pt; text-align: right;}
+/* 1줄낙서내용 */
+.BVS{border-width:0; height:28; padding:3 0 0 7; font-size: 9pt;}
+/* 사용자이름 */
+.BVN2 {border-width:0; height:28; padding:3 5 0 0; font-size: 9pt; text-align: right;}
+/* input type=text */
+.outbox2{border-width:1; font-size: 9 pt; color : #000000; border-color: #BFBFBF; border-style: double;}
+/* input type=2 */
+.outbox3{border-width:1; font-size: 9 pt; color : #000000; border-color: #BFBFBF; border-style: double; background-color: #EBEEDA;}

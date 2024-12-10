@@ -1,0 +1,96 @@
+/**
+ * Copyright KOBC. All Rights Reserved.
+ */
+package com.app.s03.cmn.response;
+
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.MethodParameter;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import com.app.s03.cmn.constant.ComConstants.HeaderReqResType;
+import com.app.s03.cmn.context.ContextHolder;
+import com.app.s03.cmn.context.vo.ComContentsVO;
+import com.app.s03.cmn.dto.ComDTO;
+import com.app.s03.cmn.exception.ComSysException;
+import com.app.s03.cmn.properties.ReturnCode;
+import com.app.s03.cmn.type.SystemMessage;
+import com.app.s03.cmn.utils.ComStdMssgUtil;
+import com.app.s03.cmn.utils.DateTimeUtil;
+import com.app.s03.cmn.vo.HeaderVO;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * <pre>
+ * 패키지명: com.app.s03.cmn.response
+ * 클래스명: ResponseControllerAdvice
+ * 설명: Controller 후처리 Class (Context Area 값 설정 및 Response Header 작성)
+ *
+ * ==================================================================
+ * 변경일자       변경자      변경내용
+ * ------------------------------------------------------------------
+ * 2024.04.10     hslee      1.0 최초작성
+ * </pre>
+ */
+@Slf4j
+@RestControllerAdvice
+public class ResponseControllerAdvice implements ResponseBodyAdvice<Object> {
+
+    @Override
+    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+        return true;
+    }
+
+    @Override
+    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
+            Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
+            ServerHttpResponse response) {
+        // 정상 처리된 경우 Header 값 설정 (ErrorResDTO 인 경우 이미 Header 값 설정된 상태)
+        if (body instanceof ComDTO) {
+            try {
+                setContextAreaAfterHandling();
+                HeaderVO resHeader = ContextHolder.convertStdHeader(HeaderReqResType.RESPONSE);
+                ((ComDTO<?>) body).setHeader(resHeader);
+            } catch (Exception e) {
+                log.error(SystemMessage.SYS0021.getMessage(), e);
+                HeaderVO resHeader = ComStdMssgUtil.getErrHeader(new ComSysException(SystemMessage.SYS0021, e));
+                ((ComDTO<?>) body).setHeader(resHeader);
+            }
+        }
+        return body;
+    }
+
+    /**
+     * Context Area 값 설정
+     */
+    private void setContextAreaAfterHandling() {
+        ComContentsVO ctx = ContextHolder.get();
+        String endDt = DateTimeUtil.getCurrentTimestamp();
+
+        // 처리종료일시
+        ctx.setPrcsEndDt(endDt);
+        // 처리시간 (밀리세컨드단위)
+        ctx.setPrcsHr(DateTimeUtil.getDateTimeGap(ctx.getPrcsBgngDt(), endDt, TimeUnit.MILLISECONDS));
+
+        // 진행일련번호
+        ctx.setPrgrsSn(ctx.getPrgrsSn() + 1);
+
+        // 거래처리결과구분코드
+        ctx.setDlngPrcsRsltClssVal(ReturnCode.RTN_CODE);
+
+        // 응답메시지코드 값이 없는 경우 정상 처리로 설정
+        if (StringUtils.isBlank(ctx.getRspnsMssgCd())) {
+            ctx.setRspnsMssgCd(SystemMessage.SYS1000.name()); // 응답메시지코드
+            ctx.setRspnsMssgCn(SystemMessage.SYS1000.getMessage()); // 응답메시지내용
+        }
+    }
+
+    
+}

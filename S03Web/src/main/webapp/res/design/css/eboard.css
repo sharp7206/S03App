@@ -1,0 +1,107 @@
+﻿@charset "utf-8";
+
+html, body {}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,form,fieldset,p,button,table,th,td{margin:0;padding:0;}
+body,div,dl,dt,dd,h1,h2,h3,h4,form,fieldset,p,th,td,input{font-family:Arial;}
+body{font-size:12px; color:#898989; line-height:16px;}
+img{border:0; vertical-align:top;}
+fieldset {border:0; margin: 0;padding: 0;}
+legend { display:none; }
+textarea { border:1px solid #cccccc; font-family:돋움, dotum, verdana, sans-serif; font-size:11px; }
+select, input {font-family:Arial; vertical-align:middle; }
+ul, ol { list-style-type : none; }
+dt, dd, h1 ,h2, h3, h4 { padding:0px; margin:0px; }
+select{color:#636363; font-size:12px;}
+a, a:link { color:#636363; text-decoration:none; }
+a:hover, a:focus { color:#636363; text-decoration:underline;}
+legend,caption, hr	{position:absolute; left:-1000%; top:0; width:1px; height:1px; font-size:0; line-height:0; overflow:hidden; display:none;}
+em, address { font-style:normal;}
+button {background:transparent; border:0; font-family:돋움, dotum, verdana, sans-serif; font-size:0.75em; cursor:pointer; padding:0; overflow:visible; vertical-align:top;}
+table { border-collapse:collapse;}
+
+.mt10	{margin-top:10px !important;}
+.w50 { width:50% !important;}
+
+/* align */
+.al {text-align:left !important;}
+.ac {text-align:center !important;}
+.ar {text-align:right !important;}
+
+.blue1 { color:#81a7cd !important;}
+
+
+#warp { width:100%; margin:0px;}
+#warp p.search { width:70%; text-align:center; margin:0 auto; margin-top:15px;}
+h1 { text-align:center;}
+table.typeb1 th { height:26px; background:#e7ecf0; border:1px solid #81a7cd; font-family:Arial; font-size:12px; color:#617e9b;}
+table.typeb1 th.last { background-image:none;}
+table.typeb1 td { height:24px; border-top:1px solid #d6d6d6; text-align:center; padding-top:2px; _padding-top:2px;}
+table.typeb1 td a { font-size:12px; color:#454545;}
+table.typeb1 td.subject { text-align:left; padding-left:7px;}
+table.typeb1 tr.last td { border-bottom:1px solid #d6d6d6;}
+.list_btn_l {float:left;}
+.list_btn_r {float:right;}
+.pagging {text-align:center; margin:15px 0 0 0;}
+.pagging a { display:inline-block; padding:6px 0 0 0; width:23px; height:17px; border:1px solid #dddddd; color:#333; font-weight:bold; vertical-align:middle;}
+.pagging a.on { background:#57b2ff; border:none; color:#fff; width:25px; height:19px;}
+.pagging a:hover {text-decoration:none;}
+.search { clear:both; margin:20px 0 0 0; padding:10px 0 0 0; height:34px; border:1px solid #ddd; background:#fbfbfb; text-align:center;}
+.search input.type1 {color:#404348; width:240px;  font-size:12px; height:18px; padding-top:2px;}
+
+table.typeb2 th { height:28px; background:#e7ecf0; border:1px solid #81a7cd; font-family:Arial; font-size:12px; color:#617e9b; padding-top:2px;}  
+table.typeb2 th.last { background-image:none;}
+table.typeb2 th.subject { text-align:left; text-indent:10px;}
+table.typeb2 tr.file td { height:30px; padding:0 10px 0 0; background:#fbfbfb; border-bottom:1px solid #ececec; border-top:1px solid #fff; text-align:right;}
+table.typeb2 tr.last td { border-bottom:1px solid #afd3ef; padding:10px; font-family:arial; font-size:13px; line-height:21px;}
+table.typeb2 tr.last img { margin:10px;}
+
+.table_typeb3 { padding:10px; background:#f9f9f9;}
+.table_typeb3 tr.info td { padding:10px 0 0 0;}
+.table_typeb3 tr.info td strong { text-align:left; color:#2d7da5;}
+.table_typeb3 tr.info td a,
+.table_typeb3 tr.info td { color:#b4b4b4;}
+.table_typeb3 tr.info td a.reply { color:#5a5a5a;}
+.table_typeb3 tr.td_con td { padding:10px 0; color:#8e8e8e; border-bottom:1px solid #e4e4e4;}
+.table_typeb3 tr.reply td { padding:10px 0 10px 14px;}
+.table_typeb3 tr td span.reply2 { padding:0 0 0 14px;}
+.table_typeb3 tr.reply2 td { padding:10px 0 10px 28px;}
+.table_typeb3 tr td span.reply3 { padding:0 0 0 28px;}
+.table_typeb3 tr.reply3 td { padding:10px 0 10px 42px;}
+
+.table_typeb3 img { vertical-align:middle;}
+
+
+.table_typeb3 tr.reply_input1 td { padding:5px 0;}
+.table_typeb3 tr.reply_input2 td { vertical-align:top;}
+.table_typeb3 tr.reply_input2 textarea { width:100%; height:55px;}
+
+table.typeb4 { border-top:3px solid #81a7cd;}
+table.typeb4 tr th {background:#fbfbfb; font-size:12px; color:#617e9b; text-indent:15px; text-align:left; border:1px solid #d6d6d6;}
+table.typeb4 tr td { padding:0 5px; border:1px solid #d6d6d6;}
+table.typeb4 tr td { height:26px; border-bottom:1px solid #d6d6d6;}
+table.typeb4 tr.last th { text-indent:0 ;padding:10px 10px 10px 20px; }
+table.typeb4 tr.last th a {  vertical-align:middle;}
+table.typeb4 tr.last th,
+table.typeb4 tr.last td { border-bottom:1px solid #afd3ef; line-height:16px;text-indent:0;}
+table.typeb4 tr.last td { padding:10px;}
+table.typeb4 tr.last td table tr th, 
+table.typeb4 tr.last td table tr td { border:none; padding:0; height:auto; text-indent:0;}
+table.typeb4 tr td div.subject {border:1px solid #c8c8c8; margin:10px 0;}
+table.typeb4 tr td div.subject textarea { border:none; width:100%; height:240px;}
+table.typeb4 tr td div.file_top { height:25px;}
+table.typeb4 tr td div.file_top input,
+table.typeb4 tr td div.file_top div,
+table.typeb4 tr td div.file_top p { float:left; vertical-align:middle; letter-spacing:-1px;}
+table.typeb4 tr td div.file_top p { margin:0 0 0 10px;}
+table.typeb4 tr td div.file_top div p { margin:0;}
+table.typeb4 tr td div.file_top input { margin:0 5px 0 0;}
+table.typeb4 tr td div.file_top div.graph { position:relative; padding:0 6px; width:238px; border:1px solid #e5e5e5; background:#f7f7f7; font-size:10px; font-family:arial;}
+table.typeb4 tr td div.file_top div.graph p.graph_bg { float:left; position:relative; top:5px; width:149px; height:3px; background:#fff; border-top:1px solid #e5e5e5;}
+table.typeb4 tr td div.file_top div.graph p.graph_bg span { position:absolute; left:0; top:0; height:3px; display:block; background:url(../images/bg_filebar.gif) repeat-y; background-size:100%;}
+table.typeb4 tr td div.file_top div.graph p strong {color:#689200;}
+table.typeb4 tr td div.file_top div.graph p { float:right; text-align:right;}
+
+table.typeb5 {border:1px solid #cccccc; background:url(../images/bg_file.gif) repeat-x left top; }
+table.typeb5 tr th { height:20px !important;  background:url(../images/bg_file_th.gif) no-repeat right top; text-align:center; font-weight:normal; color:#66696a;}
+table.typeb5 tr td {padding:5px 0 !important;  background:none;}
+table.typeb5 tr th.last { background:none;}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+    updateCheck="false">
+
+<defaultCache
+    eternal="false"
+    maxElementsInMemory="100"
+    overflowToDisk="false"
+    diskPersistent="false"
+    timeToIdleSeconds="100"
+    timeToLiveSeconds="200"  
+    memoryStoreEvictionPolicy="LRU" />
+
+<cache
+    name="commonCodeCache"
+    maxElementsInMemory="5000"
+    timeToIdleSeconds="0"
+    timeToLiveSeconds="30"
+    overflowToDisk="false"
+    memoryStoreEvictionPolicy="LRU" />
+
+<cache
+    name="commonMessageCache"
+    maxElementsInMemory="5000"
+    timeToIdleSeconds="0"
+    timeToLiveSeconds="30"
+    overflowToDisk="false"
+    memoryStoreEvictionPolicy="LRU" />
+    
+<!-- maxElementsInMemory="0" (No Limit)
+<cache
+    name="cmcdCache"
+    maxElementsInMemory="5000"
+    timeToIdleSeconds="0"
+    timeToLiveSeconds="1"
+    overflowToDisk="false"
+    memoryStoreEvictionPolicy="LRU" />
+
+<cache
+    name="intfPortCache"
+    maxElementsInMemory="5000"
+    timeToIdleSeconds="0"
+    timeToLiveSeconds="30"
+    overflowToDisk="false"
+    memoryStoreEvictionPolicy="LRU" />
+ -->
+</ehcache>

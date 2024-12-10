@@ -1,0 +1,147 @@
+.bg-appz-body {
+	background-color: #f4f6f9;
+}
+
+.btn-group-xs > .btn, .btn-xs {
+  padding:.25rem .4rem;
+  font-size:.875rem;
+  line-height:.5;
+  border-radius:.2rem;
+}
+
+.btn-group-tab > .btn, .btn-tab {
+  padding:.55rem 1rem;
+  font-size:.875rem;
+  line-height:.5;
+}
+
+.btn-appz{
+	--bs-btn-padding-y: .04rem;
+	--bs-btn-padding-x: .3rem;
+	--bs-btn-font-size: .8rem;
+	--bs-btn-font-weight:700;
+	--bs-btn-border-radius: .3rem;
+}
+
+.input-xs {
+  height: 23px;
+  padding: 2px 5px;
+  font-size: 12px;
+  line-height: 1; /* If Placeholder of the input is moved up, rem/modify this. */
+  border-radius: 3px;
+  border-width: 1px;
+}
+
+.input-appz{
+	--bs-input-group-addon-padding-y: .5rem;
+   	--bs-input-group-addon-padding-x: .3rem;
+   	border-radius: .2rem;
+   	font-size: .75rem;
+}
+
+.table-xs > thead > tr > th,
+.table-xs > tbody > tr > th,
+.table-xs > tfoot > tr > th,
+.table-xs > thead > tr > td,
+.table-xs > tbody > tr > td,
+.table-xs > tfoot > tr > td {
+   padding: .1rem .3rem;
+}
+
+.topLoading{
+    position:fixed;
+    width:100%;
+    height:100%;
+    z-index:1051;
+    opacity:0;
+    top:-100%;
+    left:0;
+    visibility:hidden;
+    transition:opacity 200ms linear;
+    transition-delay:0;
+    background: rgba(0,0,0,0.4) url(../img/logo/logo_loading.png) no-repeat;
+    background-size: 110px;
+    background-position: center;
+}
+
+.topLoading.active{
+    transform:translate3d(0,100%,0);
+    opacity:1;
+    visibility:visible;
+    transition:opacity 200ms linear 300ms;
+    transition-delay: 200ms;
+}
+
+.topLoading::after{
+    content:'';
+    position:absolute;
+    top:50%;
+    left:50%;
+    width: 40px;
+    height: 40px;
+    margin-top: -80px;
+    margin-left: -20px;
+    border-radius: 60px;
+    border:4px solid rgba(0,0,0,0);
+    border-left: 4px solid #FFF;
+    border-right: 4px solid #FFF;
+}
+
+.topLoading.active::after{
+    content:'';
+    position:absolute;
+    top:50%;
+    left:50%;
+    width: 30px;
+    height: 30px;
+    margin-top: -70px;
+    margin-left: -20px;
+    border-radius: 30px;
+    border:3px solid rgba(0,0,0,0);
+    border-left:3px solid #FFF;
+    border-right:3px solid #FFF;
+    animation-name: loading-ani;
+    animation-duration: 800ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: cubic-bezier(0.11, 0.67, 0.62, 0.22);
+}
+
+@keyframes loading-ani {
+    0%   {transform:rotate(0deg);}
+    100% {transform:rotate(360deg);}
+}
+
+.error{
+	color:#0d6efd;
+	border-color:#0d6efd;
+    font-size:.75rem;
+    font-weight:bold;
+    margin-right:.75rem;
+}
+
+.jsmall {
+	font-size:.75rem;
+}
+
+.jmsg {
+	font-size:1.5rem;
+	color:red;
+	padding-right:.99rem;
+}
+
+#for auigrid
+.template_style {
+	font-weight: bold;
+	text-align:left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display:inline-block;
+}
+.left_style { text-align:left; }
+.right_style { text-align:right; }
+.law_left_style { text-align:left;color:red;font-weight: bold; }
+.link_left_style { text-align:left;color:blue;cursor:pointer; }
+.necessary_style { color:#FFA500;font-weight: bold; }
+.template_style { font-weight: bold;text-align:left;overflow: hidden;text-overflow: ellipsis;display:inline-block;}
+.aui-grid-default-header { vertical-align: middle; }
+.aui-grid-renderer-base { text-overflow: clip; }

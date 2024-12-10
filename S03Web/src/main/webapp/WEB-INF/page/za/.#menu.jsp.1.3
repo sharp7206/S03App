@@ -1,0 +1,417 @@
+<%@page import="s03.ZA.HelloLoginUser"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
+<%@page import="common.util.ConChar"%>
+<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%
+	List list = (List)request.getAttribute("menuList");
+/**
+Menu 구성 : 대메뉴 ArrayList menuAl = new ArrayList();
+                     소메뉴 ArrayList subMenuAl = new ArrayList();
+*/
+ArrayList menuAl = new ArrayList();
+ArrayList subMenuAl = new ArrayList();
+Map menuLMap = new HashMap();
+Map map = new HashMap();//대메뉴체크
+
+for(int i=0; i<list.size(); i++){
+	map = (Map)list.get(i);
+	if(!menuLMap.containsKey((String)map.get("MENU_CD"))){
+		menuAl.add(map);
+	}
+	menuLMap.put((String)map.get("MENU_CD"), "");
+	
+//	out.println(map.toString()+"<p>");
+}
+menuLMap = new HashMap(); 
+for(int i=0; i<list.size(); i++){
+	map = (Map)list.get(i);
+	if(!menuLMap.containsKey((String)map.get("MENU_CD"))){
+		subMenuAl = new ArrayList();
+	}
+	subMenuAl.add(map);
+	
+	menuLMap.put((String)map.get("MENU_CD"), subMenuAl);
+	
+//	out.println(map.toString()+"<p>");
+}
+
+HelloLoginUser user = (HelloLoginUser)request.getAttribute("HelloLoginUser");
+String roleCd = (String )request.getAttribute("roleCd");
+%>
+<html>
+<head>
+
+<link id="cssDefault" rel="stylesheet" href="/s03/com/menu/default.css" type="text/css" />
+<link id="cssTable" rel="stylesheet" href="/s03/com/menu/table.css" type="text/css" />
+ 
+<script src="/s03/com/ibsheet/comm_IBSheet.js"></script>
+</head>
+<body>
+
+<style type="text/css">
+body { background:url(/s03/com/menu/images/left_background.gif) repeat-y left;}
+
+#warp { width:100%; background:url(/s03/com/menu/images/mainmenu_background.gif) repeat-x top left;}
+#header { width:98%; height:40px;}
+#header h1 { float:left; padding:8px 17px 0 24px; }
+#lnb { float:right; margin:0 0 0 50px;width:80%; }
+#lnb li { float:left;}
+#lnb li a { display:block; height:40px; background-position:left top;font: bold 13px 돋움, dotum, verdana, sans-serif; margin:0; padding-top:14px;}
+#lnb li a:hover { display:block; }
+#lnb li a.active { display:block; height:40px; background-position:left top;font: bold 13px 돋움, dotum, verdana, sans-serif;color: 2156D4;}
+
+#lnb li.liLL a { width:100px; cursor:hand;} 
+<%
+for(int i=0; i<menuAl.size(); i++){
+	map = (Map)menuAl.get(i);
+	out.println("#lnb li.li"+map.get("MENU_CD")+" a { width:130px; cursor:hand;}");
+}
+%>
+</style> 
+<script language="JavaScript" type="text/JavaScript">
+<!--
+function MM_swapImgRestore() { //v3.0
+	var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+function MM_preloadImages() { //v3.0
+	var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  	var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  	if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  	for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+	if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+	var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+	if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+function regPrj(){
+	var url  = '../../page/f1/AAC?crud=R';
+	openPopNewWin(url,'newPop','','yes', '650','800');
+	hideAllMenu();
+}
+
+function goPage(url){
+	document.getElementById('tagetFrm').src= url;
+}
+//-->
+</script>
+	<style type="text/css">
+		body
+		{
+			background: url(/s03/com/menu/images/mainmenu_background.gif) repeat-x top left;
+		}
+		.select-free
+		{
+			position: absolute;
+			z-index: 10;
+			overflow: hidden; /*must have*/
+			width: 150px; /*must have for any value*/
+		}
+		<%
+		
+		for(int i=0; i<menuAl.size(); i++){
+			map = (Map)menuAl.get(i);
+			out.println("		.select-free .iframe"+map.get("MENU_CD"));
+			out.println("		{");
+			out.println("			display: none; /*sorry for IE5*/ ");
+			out.println("			display: /**/ block; /*sorry for IE5*/ ");
+			out.println("			position: absolute; /*must have*/ ");
+			out.println("			top: 0; /*must have*/ ");
+			out.println("			left: 0; /*must have*/ ");
+			out.println("			z-index: -1; /*must have*/ ");
+			out.println("			filter: mask(); /*must have*/ ");
+			out.println("			width: 150px; /*must have for any big value*/ ");
+			out.println("			height: 498px; /*must have for any big value262 (235 + 11) */ ");
+			out.println("		}");
+		}
+		%>
+
+
+		.select-free .bd
+		{
+			border: solid 1px #aaaaaa;
+			padding: 12px;
+		}
+		#showmenu
+		{
+			width: 200px;
+		}
+		#showmenu li
+		{
+			width: 200px;
+			padding: 10px 0 1px 1px;
+			_padding: 10px 0 1px 3px;
+			background: url(/s03/com/menu/images/downmenu_back.gif) repeat-y;
+		}
+		#showmenu li a
+		{
+			text-decoration: ;
+		}
+		#showmenu li.sb
+		{
+			font-family: 돋움;
+			font-weight: bold;
+			color: #8bd5ff;
+		}
+		#showmenu li.sb a
+		{
+			font-family: 돋움;
+			font-weight: bold;
+			color: #8bd5ff;
+		}
+		#showmenu li.st
+		{
+			font-size: 10px;
+			font-family: 돋움;
+			font-weight: bold;
+			color: #8bd5ff;
+		}
+		#showmenu li.st a
+		{
+			padding-left: 3px;
+			color: #fff;
+		}
+		#showmenu li.foot
+		{
+			background: none;
+			padding: 0;
+			_margin-top: -2px; *margin-top:-2px;}
+		</style>
+ 
+	<script language="javascript" type="text/javascript">
+		function getBoundsObject(obj) {
+			var locations = new Object();
+
+			if (obj != null && obj != undefined) {
+				if (obj.getBoundingClientRect) { //IE, FF3 
+					var rect = obj.getBoundingClientRect();
+
+					locations.left = rect.left + (document.documentElement.scrollLeft || document.body.scrollLeft);
+					locations.top = rect.top + (document.documentElement.scrollTop || document.body.scrollTop);
+					locations.width = rect.right - rect.left;
+					locations.height = rect.bottom - rect.top + 1;
+				}
+				else if (document.getBoxObjectFor) { // gecko 엔진 기반 FF3제외 
+					var boxObjectFor = document.getBoxObjectFor(obj);
+					locations.left = boxObjectFor.x;
+					locations.top = boxObjectFor.y;
+					locations.width = boxObjectFor.width;
+					locations.height = boxObjectFor.height;
+				}
+				else {
+					locations.left = obj.offsetLeft;
+					locations.top = obj.offsetTop;
+					locations.width = obj.offsetWidth;
+					locations.height = obj.offsetHeight + 3;
+	
+					var parent = obj.offsetParent;
+	
+					if (parent != obj) {
+						while (parent) {
+							locations.left += parent.offsetLeft;
+							locations.top += parent.offsetTop;
+							parent = parent.offsetParent;
+						}
+					}
+	
+					// 오페라와 사파리의 'absolute' postion의 경우 body의 offsetTop을 잘못 계산 보정 
+					var ua = navigator.userAgent.toLowerCase();
+	
+					if (ua.indexOf('opera') != -1 || (ua.indexOf('safari') != -1 && getStyle(obj, 'position') == 'absolute')) {
+						locations.top -= document.body.offsetTop;
+					}
+	
+				}
+				return locations;
+			}
+		}
+
+
+
+		function showMenu(menu, x, y) {//메뉴색깔을 진하게 해보자
+			<%
+			for(int i=0; i<menuAl.size(); i++){ 
+				map = (Map)menuAl.get(i);
+				out.println("			eval(\"div"+map.get("MENU_CD")+".style.display = 'none';\");");
+				out.println("			document.getElementById('"+map.get("MENU_CD")+"').className = '';");
+			}
+			%> 			
+		    
+		    //object의 위치를 가져온다.
+		    var obj = getBoundsObject(document.getElementById('menu'+menu));//location
+
+			eval('div' + menu + '.style.left = '+obj.left);
+		    eval('div' + menu + '.style.top = "40px"');
+			eval('div' + menu + '.style.display = ""');
+			
+			document.getElementById(menu).className = "active";
+			//document.getElementById("hdnMenuIndex").value = index2;
+		}
+ 
+		function goSetMenu(fileUrl) {
+			hideAllMenu();
+ 
+			// 컨텐츠 부분
+			document.all["tagetFrm"].src = fileUrl;
+		}
+ 
+		function hideAllMenu() {
+			<%
+			for(int i=0; i<menuAl.size(); i++){
+				map = (Map)menuAl.get(i);
+				out.println("			eval(\"div"+map.get("MENU_CD")+".style.display = 'none';\");");
+			}
+			%> 			
+		}
+
+		function allblur() {
+			for (i = 0; i < document.links.length; i++) {
+				var obj = document.links[i];
+				if (obj.addEventListener) obj.addEventListener("focus", oneblur, false);
+				else if (obj.attachEvent) obj.attachEvent("onfocus", oneblur);
+			}
+		}
+ 
+		function oneblur(e) {
+			var evt = e ? e : window.event;
+			
+			if (evt.target) evt.target.blur();
+			else if (evt.srcElement) evt.srcElement.blur();
+		}
+ 
+ 
+ 
+		function autoHeight() {
+			//var the_height = document.all['tagetFrm'].contentWindow.document.body.scrollHeight;
+			var the_height = document.body.clientHeight;
+			//alert(the_height);
+ 
+			the_height = the_height - 70;
+ 
+			document.all['tagetFrm'].height = the_height;
+		}
+		
+		
+		function SetHeight() {
+			var defh = document.body.clientHeight - 70;
+ 
+ 
+		    if (defh <= 100) {
+		        document.getElementById('tagetFrm').style.height = 480;
+		    } else {
+		        document.getElementById('tagetFrm').style.height = defh;
+			}
+ 
+		}
+ 
+		function WindowResize() {
+			SetHeight();
+ 			try {
+				//tagetFrm.SheetResize();
+				//tagetFrm.LoadPage();
+				
+			}
+			catch (E) {
+			}
+		}
+	</script>
+<body onload="SetHeight();" style="overflow:auto;" onresize="WindowResize();">
+
+	<div id="warp">
+		<div id="header">
+			<ul>
+				<li style="padding-left:15px;padding-top:0px;float:left;">
+					<a href="javascript:goPage('AAB');"><img src="/s03/img/itsm.gif" alt="ITSM"/></a>
+				</li>
+			</ul>
+			<ul id="lnb">
+        		<li class='liLL'>
+        			<a href="#"><img src='/s03/img/menu/icon.gif' align="bottom" id="login"> <font color="#9acd32"><%=user.getLoginUserVO().getUserNm()+"("+user.getUserId()+")"%></font></a>
+        		</li>
+<%
+
+for(int i=0; i<menuAl.size(); i++){
+	map = (Map)menuAl.get(i);
+	out.println("				<li class='li"+map.get("MENU_CD")+"'>");
+	if(i==0){
+	out.println("					<a onmousedown=\"showMenu('"+map.get("MENU_CD")+"', event.clientX, event.clientY)\"; id='"+map.get("MENU_CD")+"' class='active'>");
+	}else{
+		out.println("					<a onmousedown=\"showMenu('"+map.get("MENU_CD")+"', event.clientX, event.clientY)\"; id='"+map.get("MENU_CD")+"'>");
+	}
+	out.println("						<img src='/s03/img/icon_pop1.gif' align='bottom' id='menu"+map.get("MENU_CD")+"'> ");
+	out.println("						&nbsp;"+map.get("MENU_NM")+"&nbsp; ");
+	out.println("					</a> ");
+	out.println("				</li>");
+}
+
+%>          		
+
+			</ul>
+<%
+Map map2 = new HashMap();
+String strTmpMiMenuCd = "";
+
+for(int i=0; i<menuAl.size(); i++){
+	map = (Map)menuAl.get(i);
+	subMenuAl = (ArrayList)menuLMap.get((String)map.get("MENU_CD"));
+	out.println("			<div id='div"+map.get("MENU_CD")+"' class='select-free' style='position:absolute;display:none;'>");
+	out.println("				<ul id='showmenu'>");
+	for(int j=0; j<subMenuAl.size(); j++){
+		map2 = (Map)subMenuAl.get(j);
+		if(!"AAA".equals((String)map2.get("WIN_CD"))){
+			
+			// 중간메뉴
+			if(!ConChar.isNull((String)map2.get("MENU_MI_CD")) 
+					&& !strTmpMiMenuCd.equals((String)map2.get("MENU_MI_CD"))){
+				strTmpMiMenuCd = (String)map2.get("MENU_MI_CD");
+				out.println("					<li class='st'>"+map2.get("MENU_MI_NM")+"</li>");
+			}
+			
+			out.println("					<li class='st'><a href=\"javascript:goSetMenu('../../page/f1/"+map2.get("WIN_CD")+"');\">"+map2.get("WIN_NM")+"</a></li>");
+		}
+	}
+	out.println("					<li class='foot'><img src='/s03/com/menu/images/downmenu_puter.gif' height='7'></li>");
+	out.println("				</ul>");
+	out.println("				<iframe class='iframe"+map.get("MENU_CD")+"'></iframe>");
+	out.println("			</div>");
+}
+
+%>     			
+
+			<h2 class="display">
+				</h2>
+ 
+		</div>
+		<div class="cbo">
+		</div>
+		<div id="container">
+			<table width="100%">
+				<colgroup>
+					<col width="100%" />
+				</colgroup>
+				<tr>
+					<td>
+						<iframe src="../../page/f1/AAB" frameborder="0" width="100%" height="100%" scrolling="auto" align="left" name="tagetFrm" style="margin-left: 0px; margin-top: 0px;"></iframe>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<input type="hidden" name="hdnParentID" id="hdnParentID" value="A010" />
+	<input type="hidden" name="hdnMenuID" id="hdnMenuID" value="A01" />
+	<input type="hidden" name="hdnMenuPath" id="hdnMenuPath" value="" />
+	<input type="hidden" name="hdnMenuIndex" id="hdnMenuIndex" value="A010" />
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+@charset "utf-8";
+/* CSS Document */
+body{background:#f6f6f6}
+body,p,h1,h2,h3,h4,h5,h6,ul,ol,li,dl,dt,dd,table,th,td,form,fieldset,legend,input,textarea,button,select{margin:0;padding:0}
+body,input,textarea,select,button,table{font-family:NanumBarunGothic,'돋움',Dotum,AppleGothic,sans-serif;font-size:13px}
+img,fieldset{border:0}
+ul,ol{list-style:none}
+em,address{font-style:normal}
+a{text-decoration:none;color:#424242}
+a:hover,a:active,a:focus{text-decoration:none}
+@font-face{font-family:NanumBarunGothic;src:url(../font/NanumBarunGothic.eot);src:local(※), url(font/NanumBarunGothic.woff) format(‘woff’)}
+
+#wrap{width:100%;margin:0 auto}
+#header{width:100%;height:70px;border-bottom:2px solid #df2428;background:#FFF}
+#container{width:100%;height:100%;display:inline-block;border-top:1px solid #999;padding-top:10px}
+#container:after{display:block;clear:both;content:''}
+#contentArea{position:relative;width:1170px;margin:0 auto}
+.snb{float:left;width:160px}
+#content{margin-left:165px;min-height:836px;border:1px solid #e0e0e0;padding:20px;background:#fff;border-radius: 4px;}
+#footer{width:100%}
+
+/* 네비 */
+.lnb{position:relative;width:1170px;margin:0 auto}
+.lnb ul{font-family:NanumBarunGothic;src:url(../font/NanumBarunGothic.eot);font-size:17px;font-weight:600;color:#666;padding-top: 20px;}
+.lnb li{float:left;list-style:none;padding:0px 48px 0 48px;background: url(/images/bullet_gnb_line.png) no-repeat 0 65%;}
+.lnb li.logo{padding:0 0 0 0;margin-top: -2px;}
+.lnb a{color:#666;text-decoration:none}
+.lnb a:hover,a:active,a:focus{color:#dd2222;text-decoration:none}
+.lnb a.on{color:#dd2222;text-decoration:none}
+
+.lnb_v{width:160px;min-height:700px;background:#fff;border: 1px solid #e3e3e3;border-radius: 4px;}
+.lnb_v li{font-size:15px;font-weight:500;padding: 15px 0 0 10px;}
+.lnb_v li.first{height:55px;background-color: rgb(220,75,79);border-bottom: 1px solid #e3e3e3;padding: 15px 0 0 15px;color:#fff;font-weight: bold;}
+.lnb_v li.first span{ padding-top: 4px;float: left;margin-right: 5px;}
+.lnb_v li ul li{margin-left: 5px;font-size:13px;font-weight: 200;}
+.lnb_v li ul li.second{margin-left: 0px;font-size:15px;font-weight: 500;}
+.lnb_v a{display:block;padding:10px;color:#000;text-decoration:none}
+.lnb_v a:hover,a:active,a:focus{display:block;color:#ed1c24;text-decoration:none}
+.lnb_v a.on{color:#dd2222;text-decoration:none}
+
+.info{width:160px;border-left:1px solid #e0e0e0;border-bottom:2px solid #555;border-right:1px solid #e0e0e0;border-top:2px solid #555;background:#fff;padding:10px 0px 10px 0px;margin-bottom:5px;border-radius: 4px;}
+.info li{font-size:15px;font-weight:100;text-align:center;margin-bottom:1px;}
+.info li.btn{padding-top:8px}
+
+.tbtn_01{border:none;font-size:12px;font-family:'돋움',dotum;color:#fff;padding:4px 8px 3px 8px;cursor:pointer;background:#fc494f}
+.tbtn_01:focus {outline:none}
+.tbtn_02{border:none;font-size:12px;font-family:'돋움',dotum;color:#fff;padding:4px 8px 3px 8px;cursor:pointer;background:#666}
+.tbtn_02:focus {outline:none}
+
+/*모바일 배송관련*/
+.parcelNo {margin-top: -7px;}

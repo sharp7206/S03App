@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+-===============================================================================================================
+-===============================================================================================================
+-
+-===============================================================================================================
+-->
+<mapper namespace="cmn.File">
+	<select id="selectTbAplFileInfoByFileGrpIdAndSeq" resultType="map">
+        /* SQL_ID: cmn.File.selectTbAplFileInfoByFileGrpIdAndSeq */
+        SELECT
+                A.SYS_CD                                                         /*SYSTEM CODE*/
+               , A.FILE_GRP_ID                                                   /*FILE GROUP ID*/
+               , A.FILE_SEQ                                                      /*FILE SEQUENCE*/
+               , A.FILE_ORG_NM                                                   /*FILE ORG NAME*/
+               , A.FILE_NM                                                       /*FILE NAME*/
+               , A.FILE_SZ                                                       /*FILE SIZE*/
+               , A.FILE_TYPE                                                     /*FILE 유형*/
+               , A.FILE_PATH                                                     /*FILE 경로*/
+               , A.REF_DOC_ID                                                    /*FILE 첨조문서ID*/
+               , A.REF_CAT_ID                                                    /*FILE CATAGORY ID*/
+               , A.CNNT_IP                                                       /*CLIENT IP ADDR*/
+               , A.M_ADDR                                                        /*MAC ADDR*/
+               , A.FST_RGPR_ID                                                   /*최조 등록자ID*/
+               , A.FST_REG_ONCE                                                  /*최초 등록일시*/
+               , A.LT_CHPR_ID                                                    /*최종 수정자ID*/
+               , A.LT_CHPR_ONCE                                                  /*최종 수정일시*/
+          FROM TB_APL_FILE_INFO  A
+         WHERE 1 = 1 
+               AND A.SYS_CD                   = #{SYS_CD}                         /*SYSTEM CODE*/
+               AND A.FILE_GRP_ID              = #{FILE_GRP_ID}                     /*FILE GROUP ID*/
+         <if test="FILE_SEQ != null and FILE_SEQ !=''">
+               AND A.FILE_SEQ                 = #{FILE_SEQ}                       /*FILE SEQUENCE*/
+         </if>                
+         ORDER BY A.FILE_SEQ        
+	</select>
+	
+	<select id="selectTbAplFileInfoByFileGrpIdAndSeq2" resultType="map">
+        /* SQL_ID: cmn.File.selectTbAplFileInfoByFileGrpIdAndSeq2 */
+        SELECT
+                A.SYS_CD                                                         /*SYSTEM CODE*/
+               , A.FILE_GRP_ID                                                   /*FILE GROUP ID*/
+               , A.FILE_SEQ                                                      /*FILE SEQUENCE*/
+               , A.FILE_ORG_NM                                                   /*FILE ORG NAME*/
+               , A.FILE_NM                                                       /*FILE NAME*/
+               , A.FILE_SZ                                                       /*FILE SIZE*/
+               , A.FILE_TYPE                                                     /*FILE 유형*/
+               , A.FILE_PATH                                                     /*FILE 경로*/
+               , A.REF_DOC_ID                                                    /*FILE 첨조문서ID*/
+               , A.REF_CAT_ID                                                    /*FILE CATAGORY ID*/
+               , A.CNNT_IP                                                       /*CLIENT IP ADDR*/
+               , A.M_ADDR                                                        /*MAC ADDR*/
+               , A.FST_RGPR_ID                                                   /*최조 등록자ID*/
+               , A.FST_REG_ONCE                                                  /*최초 등록일시*/
+               , A.LT_CHPR_ID                                                    /*최종 수정자ID*/
+               , A.LT_CHPR_ONCE                                                  /*최종 수정일시*/
+          FROM TB_APL_FILE_INFO  A
+         WHERE 1 = 1 
+               AND A.SYS_CD                   = #{SYS_CD}                         /*SYSTEM CODE*/
+               AND A.FILE_GRP_ID              = #{FILE_GRP_ID}                     /*FILE GROUP ID*/
+         <if test="FILE_SEQ != null and FILE_SEQ !=''">
+               AND A.FILE_SEQ                 = #{FILE_SEQ}                       /*FILE SEQUENCE*/
+         </if>                
+         ORDER BY A.FILE_SEQ        
+	</select>
+	
+    <!--FileInfo 정보 조회 -->
+    <select id="selectTbAplFileInfoByFileGrpIdList"  resultType="map">
+        SELECT /* SQL_ID: cmn.File.selectTbAplFileInfoByFileGrpId */
+                A.SYS_CD                                                         /*SYSTEM CODE*/
+               , A.FILE_GRP_ID                                                   /*FILE GROUP ID*/
+               , A.FILE_SEQ                                                      /*FILE SEQUENCE*/
+               , A.FILE_ORG_NM                                                   /*FILE ORG NAME*/
+               , A.FILE_NM                                                       /*FILE NAME*/
+               , A.FILE_SZ                                                       /*FILE SIZE*/
+               , A.FILE_TYPE                                                     /*FILE 유형*/
+               , A.FILE_PATH                                                     /*FILE 경로*/
+               , A.REF_TABLE_ID                                                  /*FILEGRPID가 저장되는 TABLE*/
+               , A.REF_DOC_ID                                                    /*FILE 첨조문서ID*/
+               , A.REF_CAT_ID                                                    /*FILE CATAGORY ID*/
+               , A.CNNT_IP                                                       /*CLIENT IP ADDR*/
+               , A.M_ADDR                                                        /*MAC ADDR*/
+               , A.FST_RGPR_ID                                                   /*최조 등록자ID*/
+               , A.FST_REG_ONCE                                                  /*최초 등록일시*/
+               , A.LT_CHPR_ID                                                    /*최종 수정자ID*/
+               , A.LT_CHPR_ONCE                                                  /*최종 수정일시*/
+          FROM TB_APL_FILE_INFO  A
+         WHERE 1=1 
+           AND A.SYS_CD                                                          = #{SYS_CD}                         /*SYSTEM CODE*/
+           AND A.FILE_GRP_ID IN
+          <foreach collection="snList" item="item" index="index"  open="(" close=")" separator=",">
+            #{item}
+          </foreach>         
+    </select>    	
+    
+    <!--FileInfo 정보 조회 -->
+    <select id="selectTbAplFileInfoByFileGrpIdAndSnList"  resultType="commonMap">
+        SELECT /* SQL_ID: cmn.File.selectTbAplFileInfoByFileGrpId */
+               A.FILE_GRP_ID        -- 파일그룹ID
+             , A.FILE_SN AS SN      -- SN
+             , A.FILE_NM            -- 파일명    
+             , A.FILE_EXTN_NM       -- 파일확장자명
+             , A.FILE_OTXT_NM       -- 파일원본명
+             , A.FILE_SZ            -- 파일 size
+             , A.FILE_PATH_VAL      -- 첨부파일경로
+             , A.RFRN_DOC_ID        -- 참조 문서 KEY
+             , A.RFRN_COL_NM      -- 참조문서 필드
+             , A.RFRN_TBL_NM      -- 참조문서 테이블
+             , A.RFRN_FILE_CTGZ_ID  -- 참조 CAT_ID
+             , A.SCRN_ID            -- SCREEN ID
+             , A.PRVC_INCL_YN       -- 개인정보포함여부
+             , A.FILE_CRYP_YN       -- 암호화여부
+             , A.FRST_REG_USER_ID   -- 
+             , A.FRST_REG_DT        -- 
+             , A.LAST_CHG_USER_ID   -- 
+             , A.LAST_CHG_DT        -- 
+          FROM TSM_INTG_FILE_I A 
+         WHERE A.SYS_CD = #{SYS_CD}
+           AND A.FILE_GRP_ID||A.FILE_SN IN
+          <foreach collection="snList" item="item" index="index"  open="(" close=")" separator=",">
+            #{item}
+          </foreach>         
+    </select>    	
+    
+    <!-- FileGrpId 채번-->
+    <select id="selectFileGrpIdKey" resultType="java.lang.String">
+        SELECT /* SQL_ID: cmn.File.selectFileGrpIdKey */ 
+              TO_CHAR(SYSDATE, 'YYYYMMDD')||'-'||LPAD(NVL(MAX(TO_NUMBER(SUBSTR(FILE_GRP_ID, 10))), 0)+1, 4, '0') AS FILE_GRP_ID
+         FROM TB_APL_FILE_INFO A
+        WHERE SYS_CD =  #{SYS_CD}
+          AND FILE_GRP_ID LIKE TO_CHAR(SYSDATE, 'YYYYMMDD')||'%'
+    </select>     
+    
+    <!-- FileGrpId의 SN 채번-->
+    <select id="selectFileGrpSeq" resultType="string">
+        SELECT /* SQL_ID: cmn.File.selectFileGrpSeq */
+               TO_CHAR(NVL(MAX(FILE_SEQ), 0)+1) AS FILE_SEQ 
+        FROM TB_APL_FILE_INFO A
+        WHERE A.SYS_CD =  #{SYS_CD}
+          AND A.FILE_GRP_ID =  #{FILE_GRP_ID}
+    </select>  
+    
+    <insert id="insertTbAplFileInfo">
+        /* SQL_ID: cmn.File.insertTbAplFileInfo */
+        INSERT 
+          INTO TB_APL_FILE_INFO
+             ( 
+                 SYS_CD                                                           /*SYSTEM CODE  */
+               , FILE_GRP_ID                                                      /*FILE GROUP ID  */
+               , FILE_SEQ                                                         /*FILE SEQUENCE  */
+               , FILE_ORG_NM                                                      /*FILE ORG NAME  */
+               , FILE_NM                                                          /*FILE NAME  */
+               , FILE_SZ                                                          /*FILE SIZE  */
+               , FILE_TYPE                                                        /*FILE 유형  */
+               , FILE_PATH                                                        /*FILE 경로  */
+               , REF_DOC_ID                                                       /*FILE 첨조문서ID  */
+               , REF_CAT_ID                                                       /*FILE CATAGORY ID  */
+               , CNNT_IP                                                          /*CLIENT IP ADDR  */
+               , M_ADDR                                                           /*MAC ADDR  */
+               , FST_RGPR_ID                                                      /*최조 등록자ID  */
+               , FST_REG_ONCE                                                     /*최초 등록일시  */
+             ) VALUES ( 
+               #{SYS_CD}
+               ,#{FILE_GRP_ID}
+               ,#{FILE_SEQ}
+               ,#{FILE_ORG_NM}
+               ,#{FILE_NM}
+               ,#{FILE_SZ}
+               ,#{FILE_TYPE}
+               ,#{FILE_PATH}
+               ,#{REF_DOC_ID}
+               ,#{REF_CAT_ID}
+               ,#{CNNT_IP}
+               ,#{M_ADDR}
+               ,#{_SES.username}
+               ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+               )   
+    </insert>   
+    
+    <delete id="deleteTbAplFileInfoByFileGrpId">
+        /* SQL_ID: cmn.File.insertTbAplFileInfoAll */
+        DELETE 
+          FROM TB_APL_FILE_INFO A
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{SYS_CD}                         /*SYSTEM CODE*/
+           AND A.FILE_GRP_ID                                                     = #{FILE_GRP_ID}                     /*FILE GROUP ID*/
+    </delete>
+    
+    <delete id="deleteTbAplFileInfoByFileGrpIdAndSeq">
+        /* SQL_ID: cmn.File.insertTbAplFileInfoAll */
+        DELETE 
+          FROM TB_APL_FILE_INFO A
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{SYS_CD}                         /*SYSTEM CODE*/
+           AND A.FILE_GRP_ID                                                     = #{FILE_GRP_ID}                     /*FILE GROUP ID*/
+           AND A.FILE_SEQ                                                        = #{FILE_SEQ}                       /*FILE SEQUENCE*/
+    </delete>
+    
+    <delete id="deleteTbAplFileInfoByFileGrpIdList">
+        /* SQL_ID: cmn.File.deleteTbAplFileInfoByFileGrpIdList */
+        DELETE 
+          FROM TB_APL_FILE_INFO A
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{SYS_CD}                         /*SYSTEM CODE*/
+           AND A.FILE_GRP_ID IN
+          <foreach collection="snList" item="item" index="index"  open="(" close=")" separator=",">
+            #{item}
+          </foreach> 
+    </delete>
+    
+</mapper>

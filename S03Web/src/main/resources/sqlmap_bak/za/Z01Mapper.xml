@@ -1,0 +1,1019 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="z01.Z01Mapper">
+
+	<select id="searchSysList" resultType="commonMap">
+	/* SQL_ID: z01.Z01Mapper.searchSysList */	
+		SELECT A.SYS_CD, A.SYS_NM, A.DISP_ORD, A.USE_OPEN_YN, A.USE_PREVENT_YN, A.DB_USER_ID, A.DB_USER_PASSWD, A.DB_SVR_NM, A.IDLE_TIME, A.DEV_TOOL
+		     , A.A_REM, A.B_REM, A.C_REM, A.D_REM, A.E_REM, A.REM, A.SYS_INFO, A.LOGIN_INFO_YN, A.AUTO_ROLE, A.REG_ID, A.REG_TM, A.UPT_ID, A.UPT_TM
+		  FROM Z01_SYS A
+		 ORDER BY DISP_ORD
+	</select>  
+	
+	<insert id="createZ01Sys">
+	/* SQL_ID: z01.Z01Mapper.createZ01Sys */	
+		INSERT INTO Z01_SYS
+             ( 
+                 SYS_CD                                                           /*SYSTEM CODE  */
+               , SYS_NM                                                           /*SYSTEM NAME  */
+               , DISP_ORD                                                         /*ORDER NO  */
+               , USE_OPEN_YN                                                      /*OPEN Y/N  */
+               , USE_PREVENT_YN                                                   /*PREVENT Y/N  */
+               , DB_USER_ID                                                       /*DB USER ID  */
+               , DB_USER_PASSWD                                                   /*DB PWD  */
+               , DB_SVR_NM                                                        /*DB SERVER 이름  */
+               , IDLE_TIME                                                        /*IDLE TIME  */
+               , DEV_TOOL                                                         /*DevTool  */
+               , A_REM                                                            /*ARem  */
+               , B_REM                                                            /*BRem  */
+               , C_REM                                                            /*CRem  */
+               , D_REM                                                            /*DRem  */
+               , E_REM                                                            /*ERem  */
+               , REM                                                              /*Rem  */
+               , SYS_INFO                                                         /*SysInfo  */
+               , LOGIN_INFO_YN                                                    /*LoginInfoYn  */
+               , AUTO_ROLE                                                        /*AutoRole  */
+               , REG_ID                                                           /*RegId  */
+               , REG_TM                                                           /*RegTm  */
+             ) VALUES ( 
+               #{SYS_CD}
+               ,#{SYS_NM}
+               ,#{DISP_ORD}
+               ,#{USE_OPEN_YN}
+               ,#{USE_PREVENT_YN}
+               ,#{DB_USER_ID}
+               ,#{DB_USER_PASSWD}
+               ,#{DB_SVR_NM}
+               ,#{IDLE_TIME}
+               ,#{DEV_TOOL}
+               ,#{A_REM}
+               ,#{B_REM}
+               ,#{C_REM}
+               ,#{D_REM}
+               ,#{E_REM}
+               ,#{REM}
+               ,#{SYS_INFO}
+               ,#{LOGIN_INFO_YN}
+               ,#{AUTO_ROLE}
+               ,#{_SES.username}
+               ,CURRENT_TIMESTAMP
+               ) 
+	</insert>
+	
+	<update id="updateZ01Sys">
+	/* SQL_ID: z01.Z01Mapper.updateZ01Sys */	
+		UPDATE Z01_SYS A
+		   SET
+               A.DB_USER_ID            = #{DB_USER_ID}                      /*DB USER ID*/
+               , A.DB_USER_PASSWD      = #{DB_USER_PASSWD}                        /*DB PWD*/
+               , A.DB_SVR_NM           = #{DB_SVR_NM}                             /*DB SERVER 이름*/
+               , A.DEV_TOOL            = #{DEV_TOOL}                              /*DevTool*/
+               , A.A_REM               = #{A_REM}                                 /*ARem*/
+               , A.B_REM               = #{B_REM}                                 /*BRem*/
+               , A.C_REM               = #{C_REM}                                 /*CRem*/
+               , A.D_REM               = #{D_REM}                                 /*DRem*/
+               , A.E_REM               = #{E_REM}                                 /*ERem*/
+               , A.REM                 = #{REM}                                   /*Rem*/
+               , A.SYS_INFO            = #{SYS_INFO}                              /*SysInfo*/
+               , A.AUTO_ROLE           = #{AUTO_ROLE}                             /*AutoRole*/
+               , A.UPT_ID              = #{_SES.username}                         /*UptId*/
+               , A.UPT_TM              = CURRENT_TIMESTAMP                                  /*UptTm*/
+         WHERE 1 = 1 
+           AND A.SYS_CD        = #{SYS_CD}                        /*SYSTEM CODE*/
+	</update>
+	
+	<delete id="deleteZ01Sys">
+	/* SQL_ID: z01.Z01Mapper.deleteZ01Sys */	
+		DELETE FROM Z01_SYS
+		 WHERE SYS_CD = #{SYS_CD}
+	</delete>
+	
+	<select id="selectZ01Menu" resultType="map">
+	/* SQL_ID: z01.Z01Mapper.selectZ01Menu */	
+		WITH RECURSIVE MENU_HIERARCHY AS (
+		    SELECT A.SYS_CD, A.MENU_CD, A.MENU_NM, A.MENU_ENM, A.MENU_CNM, A.UP_MENU_CD, A.USE_YN, A.POP_YN, A.MW_CLSS, A.ORDER_NO, A.URL, A.IMG_SRC, A.ETC1, A.ETC2, A.ETC3, 0 AS LEVEL
+		      FROM Z01_MENU A
+		     INNER JOIN Z01_ROLE_ITEM B
+		        ON (A.MENU_CD = B.ROLE_ITEM OR A.MENU_CD = '00000000')
+		       AND A.SYS_CD = B.SYS_CD
+		    WHERE A.SYS_CD = #{C_SYS_CD}
+		      AND A.USE_YN = 'Y'
+		      AND A.POP_YN = 'N'
+		      AND A.MENU_CD = '00000000'
+		    UNION ALL
+		    SELECT A.SYS_CD, A.MENU_CD, A.MENU_NM, A.MENU_ENM, A.MENU_CNM, A.UP_MENU_CD, A.USE_YN, A.POP_YN, A.MW_CLSS, A.ORDER_NO, A.URL, A.IMG_SRC, A.ETC1, A.ETC2, A.ETC3, MH.LEVEL + 1
+		      FROM Z01_MENU A
+		     INNER JOIN MENU_HIERARCHY MH
+		        ON A.UP_MENU_CD = MH.MENU_CD
+		     WHERE A.SYS_CD = #{C_SYS_CD}
+		       AND A.USE_YN = 'Y'
+		       AND A.POP_YN = 'N'        
+		)
+		SELECT LEVEL, 
+			    LPAD(' ', 2 * (LEVEL - 1)) || MH.MENU_NM AS PATH_M, 
+			    MH.MENU_NM, 
+			    MH.MENU_ENM, 
+			    MH.MENU_CNM, 
+			    MH.USE_YN, 
+			    MH.POP_YN, 
+			    MH.ORDER_NO,
+			    MH.IMG_SRC,  
+			    CASE WHEN EXISTS (SELECT 1 FROM Z01_MENU WHERE UP_MENU_CD = MH.MENU_CD) THEN 'Y' ELSE 'N' END AS LEAF_YN,
+			    CASE WHEN EXISTS (SELECT 1 FROM Z01_MENU WHERE UP_MENU_CD = MH.MENU_CD) THEN 'M' ELSE 'W' END AS MW_CLSS,
+			    CASE WHEN EXISTS (SELECT 1 FROM Z01_MENU WHERE UP_MENU_CD = MH.MENU_CD) THEN '' ELSE '/page/' || LOWER(SUBSTRING(MH.MENU_CD, 1, 2)) || '/' || MH.MENU_CD || '.do' END AS URL,			        
+			    MH.MENU_CD,
+			    B.MENU_NM as UP_MENU_NM,
+			    COALESCE(MH.UP_MENU_CD, '') AS UP_MENU_CD, 
+			    MH.SYS_CD, MH.ETC1, MH.ETC2, MH.ETC3
+		  FROM MENU_HIERARCHY MH
+		  LEFT OUTER JOIN Z01_MENU B   
+	        ON B.SYS_CD = #{C_SYS_CD}
+	       and MH.UP_MENU_CD = B.MENU_CD
+		 GROUP BY MH.SYS_CD, MH.MENU_CD, MH.MENU_ENM, MH.MENU_CNM, MH.USE_YN, MH.POP_YN, MH.ORDER_NO, MH.UP_MENU_CD, LEVEL, MH.MENU_NM, B.MENU_NM, MH.IMG_SRC, MH.ETC1, MH.ETC2, MH.ETC3
+		 ORDER BY MH.MENU_CD		   
+	</select>
+	
+	<insert id="createZ01Menu">
+	/* SQL_ID: z01.Z01Mapper.createZ01Menu */	
+		INSERT 
+		  INTO Z01_MENU
+             ( 
+                 SYS_CD                                           /*SYSTEM CODE  */
+               , MENU_CD                                          /*MENU CODE  */
+               , MENU_NM                                          /*MENU NAME  */
+               , MENU_ENM                                         /*MENU ENG NAME  */
+               , MENU_CNM                                         /*MENU CHA NAME  */
+               , UP_MENU_CD                                       /*상위메뉴  */
+               , ETC1                                             /*기타1  */
+               , ETC2                                             /*기타2  */
+               , ETC3                                             /*기타3  */
+               , USE_YN                                           /*USE_YN  */
+               , URL                                              /*URL  */
+               , LEAF_YN                                          /*최종유무  */
+               , MW_CLSS                                          /*MENU OR WINDOW CLSS  */
+               , IMG_SRC                                          /*LINK IMAGE URL  */
+               , POP_YN                                           /*PopYn  */
+               , ORDER_NO                                         /*ORDER_NO  */
+               , REG_ID                                           /*RegId  */
+               , REG_TM                                           /*RegTm  */
+             ) VALUES ( 
+               #{sys_cd}
+               ,#{menu_cd}
+               ,#{menu_nm}
+               ,#{menu_enm}
+               ,#{menu_cnm}
+               ,#{up_menu_cd}
+               ,#{etc1}
+               ,#{etc2}
+               ,#{etc3}
+               ,#{use_yn}
+               ,#{url}
+               ,#{leaf_yn}
+               ,#{mw_clss}
+               ,#{img_src}
+               ,#{pop_yn}
+               ,#{order_no}
+               ,#{_SES.username}
+               ,CURRENT_TIMESTAMP
+               ) 
+	</insert>
+	
+	<update id="updateZ01Menu">
+	/* SQL_ID: z01.Z01Mapper.updateZ01Menu */	
+		UPDATE Z01_MENU
+		   SET 
+               MENU_NM       = #{menu_nm}                        /*MENU NAME*/
+               , MENU_ENM    = #{menu_enm}                      /*MENU ENG NAME*/
+               , MENU_CNM    = #{menu_cnm}                      /*MENU CHA NAME*/
+               , UP_MENU_CD  = #{up_menu_cd}                    /*상위메뉴*/
+               , ETC1        = #{etc1}                          /*기타1*/
+               , ETC2        = #{etc2}                          /*기타2*/
+               , ETC3        = #{etc3}                          /*기타3*/
+               , USE_YN      = #{use_yn}                        /*USE_YN*/
+               , URL         = #{url}                           /*URL*/
+               , LEAF_YN     = #{leaf_yn}                       /*최종유무*/
+               , MW_CLSS     = #{mw_clss}                       /*MENU OR WINDOW CLSS*/
+               , IMG_SRC     = #{img_src}                       /*LINK IMAGE URL*/
+               , POP_YN      = #{pop_yn}                        /*PopYn*/
+               , ORDER_NO    = #{order_no}                      /*ORDER_NO*/
+               , UPT_ID      = #{_SES.username}                 /*UptId*/
+               , UPT_TM      = CURRENT_TIMESTAMP                          /*UptTm*/
+		 WHERE SYS_CD = #{sys_cd}
+		   AND MENU_CD = #{menu_cd}
+	</update>
+	
+	<delete id="deleteZ01Menu">
+	/* SQL_ID: z01.Z01Mapper.deleteZ01Menu */	
+		DELETE FROM Z01_MENU
+		 WHERE SYS_CD = #{sys_cd} 
+		   AND MENU_CD = #{menu_cd}
+	</delete>
+
+	
+	<select id="searchRoleList" resultType="commonMap">
+	/*searchRoleList*/
+		SELECT A.*
+		  FROM Z01_ROLE A
+		 WHERE A.SYS_CD = #{SYS_CD}
+		 ORDER BY A.APPL_ORD
+	</select>
+	
+	<insert id="createZ01Role">
+	/* SQL_ID: z01.Z01Mapper.createZ01Role */	
+		INSERT INTO Z01_ROLE
+             ( 
+                 SYS_CD                                           /*SYSTEM CODE  */
+               , ROLE_CD                                          /*ROLE CODE  */
+               , ROLE_NM                                          /*ROLE NAME  */
+               , APPL_ORD                                         /*APPLY ORDER 적용순서  */
+               , REGI_ENABLE_YN                                   /*REGI_ENABLE_YN  */
+               , USE_OPEN_YN                                      /*UseOpenYn  */
+               , REM                                              /*Rem  */
+               , REG_ID                                           /*RegId  */
+               , REG_TM                                           /*RegTm  */
+             ) VALUES ( 
+               #{SYS_CD}
+               ,#{ROLE_CD}
+               ,#{ROLE_NM}
+               ,#{APPL_ORD}
+               ,#{REGI_ENABLE_YN}
+               ,#{USE_OPEN_YN}
+               ,#{REM}
+               ,#{_SES.username}
+               ,CURRENT_TIMESTAMP
+               ) 
+	</insert>
+	
+	<update id="updateZ01Role">
+	/* SQL_ID: z01.Z01Mapper.updateZ01Role */
+		UPDATE Z01_ROLE A
+		   SET
+               A.ROLE_NM               = #{ROLE_NM}                        /*ROLE NAME*/
+               , A.APPL_ORD            = #{APPL_ORD}                              /*APPLY ORDER 적용순서*/
+               , A.REGI_ENABLE_YN      = #{REGI_ENABLE_YN}                        /*REGI_ENABLE_YN*/
+               , A.REM                 = #{REM}                                   /*Rem*/
+               , A.UPT_ID              = #{_SES.username}                         /*UptId*/
+               , A.UPT_TM              = CURRENT_TIMESTAMP                                  /*UptTm*/
+         WHERE 1 = 1 
+           AND A.SYS_CD        = #{SYS_CD}                        /*SYSTEM CODE*/
+           AND A.ROLE_CD       = #{ROLE_CD}                       /*ROLE CODE*/
+	</update>
+	
+	<delete id="deleteZ01Role">
+	/* SQL_ID: z01.Z01Mapper.deleteZ01Role */
+		DELETE FROM Z01_ROLE
+		 WHERE SYS_CD = #{SYS_CD}
+		   AND ROLE_CD = #{ROLE_CD}
+	</delete>
+	
+	<select id="searchSysMenuForRole" resultType="commonMap">
+	/*searchSysMenuForRole*/
+		WITH MENU_INFO AS
+		(
+		SELECT DISTINCT A.SYS_CD, A.MENU_CD, A.MENU_NM, A.MENU_ENM, A.MENU_CNM, A.UP_MENU_CD, A.ORDER_NO, A.URL
+		     , CASE WHEN B.ROLE_ITEM IS NULL THEN 'N' ELSE 'Y' END EXIST_YN 
+		 FROM Z01_MENU A
+		 LEFT OUTER JOIN Z01_ROLE_ITEM B 
+		   ON A.SYS_CD  = B.SYS_CD
+		  AND A.SYS_CD = #{SYS_CD}
+		  AND B.ROLE_CD = #{ROLE_CD}
+		  AND A.MENU_CD = B.ROLE_ITEM		 
+		WHERE A.SYS_CD = #{SYS_CD}
+		  AND A.USE_YN = 'Y'
+		ORDER BY A.MENU_CD 
+		)
+		SELECT Level, LPAD(' ', 2*(LEVEL-1)) || A.MENU_NM AS PATH_M, A.MENU_NM, A.MENU_ENM, A.MENU_CNM, A.ORDER_NO
+			   , A.MENU_CD AS ITEM_CD, A.MENU_NM AS ITEM_NM
+			   , CASE WHEN B.MENU_NM IS NULL THEN 'Y' ELSE A.EXIST_YN END EXIST_YN 
+			   , CASE WHEN CONNECT_BY_ISLEAF=0 THEN 'Y' ELSE 'N' END LEAF_YN
+			   , CASE WHEN CONNECT_BY_ISLEAF=0 THEN 'M' ELSE 'W' END ITEM_CLSS 
+			   , CASE WHEN CONNECT_BY_ISLEAF=0 THEN ''
+			          ELSE (CASE WHEN A.URL IS NULL THEN '/page/'||LOWER(SUBSTR(A.MENU_CD, 1,2))||'/'||A.MENU_CD||'.do' ELSE A.URL END) END URL			        
+			   , A.MENU_CD, NVL(A.UP_MENU_CD, '') UP_MENU_CD, B.MENU_NM AS UP_MENU_NM, A.SYS_CD
+	      FROM MENU_INFO A
+	      LEFT OUTER JOIN MENU_INFO B 
+	        ON A.UP_MENU_CD = B.MENU_CD
+		 START WITH A.MENU_CD = '00000000'
+	   CONNECT BY PRIOR A.MENU_CD = A.UP_MENU_CD   
+	</select>	
+	
+	<select id="searchPeoplePersonal" resultType="commonMap">
+	/* SQL_ID: z01.Z01Mapper.searchPeoplePersonal */
+	  SELECT M.*
+	    FROM (	
+		SELECT USER_ID CODE, USER_NM KOR_NAME, '사용자' CLSS, '0' ITEM_CLSS, B.ROLE_CD
+		  FROM Z01_USER A
+		  LEFT OUTER JOIN Z01_SYS_USER B
+		    ON A.USER_ID = B.USER_ITEM
+		   AND B.SYS_CD = #{SYS_CD}
+		 WHERE A.USER_NM LIKE '%'||#{cond}||'%'
+		    OR A.USER_ID LIKE '%'||#{cond}||'%'
+		     )M
+	   WHERE ROLE_CD IS NULL
+	</select>
+	<select id="searchPeopleTeam" resultType="commonMap">
+	/* SQL_ID: z01.Z01Mapper.searchPeopleTeam */
+		SELECT DEPT_CD CODE, DEPT_NM KOR_NAME, DEPT_NM,  '팀' CLSS, '1' ITEM_CLSS
+		  FROM dbo.Z01_DEPT  A
+		 WHERE DEPT_NM LIKE '%'+#{cond}+'%'
+		   AND USE_FG = 'Y'
+		 ORDER BY CODE
+	</select>
+	
+	<select id="searchZ01SysUser" resultType="commonMap">
+	/* SQL_ID: z01.Z01Mapper.searchZ01SysUser */
+		SELECT A.SYS_CD, A.ROLE_CD, A.ITEM_CLSS,
+		       CASE A.ITEM_CLSS WHEN '0' THEN '사용자'
+		                        WHEN '1' THEN '팀'
+		       END ITEM_CLSS_NM,
+		       A.USER_ITEM,
+		       B.USER_NM AS USER_ITEM_NM,
+               A.INCL_CLSS, A.SYS_STAFF_YN, A.REM, A.UPT_TM
+		  FROM Z01_SYS_USER A
+		  LEFT OUTER JOIN Z01_USER B 
+		    ON A.USER_ITEM = B.USER_ID
+		 WHERE A.SYS_CD = #{SYS_CD}
+		   AND A.ROLE_CD = #{ROLE_CD}
+	</select>
+
+	<insert id="mergeZ01SysUser">
+	/* SQL_ID: z01.Z01Mapper.mergeZ01SysUser */
+		    MERGE   
+			 INTO Z01_SYS_USER A  
+			USING (SELECT 1 FROM DUAL)
+               ON (A.SYS_CD = #{SYS_CD} AND A.ROLE_CD = #{ROLE_CD} AND A.ITEM_CLSS = #{ROLE_CD} AND A.USER_ITEM = #{USER_ITEM} 
+			      )			   			   
+			 WHEN MATCHED THEN
+			      UPDATE
+			         SET  
+		               A.INCL_CLSS             = #{inclClss}                      /*INCL CLSS*/
+		               , A.SYS_STAFF_YN        = #{SYS_STAFF_YN}                          /*SYS STAFF YN*/
+		               , A.REM                 = #{REM}                                   /*REMARK*/
+		               , A.REG_ID              = #{_SES.username}                         /*RegId*/
+		               , A.REG_TM              = CURRENT_TIMESTAMP                                  /*RegTm*/
+		               , A.UPT_ID              = #{_SES.username}                         /*UptId*/
+		               , A.UPT_TM              = CURRENT_TIMESTAMP                                  /*UptTm*/
+			 WHEN NOT MATCHED THEN
+			      INSERT  
+				 ( 
+					 SYS_CD                                           /*SYSTEM CODE  */
+				   , ROLE_CD                                          /*ROLE CODE  */
+				   , ITEM_CLSS                                        /*ITEM CLSS  */
+				   , USER_ITEM                                        /*USER ITEM  */
+				   , INCL_CLSS                                        /*INCL CLSS  */
+				   , SYS_STAFF_YN                                     /*SYS STAFF YN  */
+				   , REM                                              /*REMARK  */
+				   , REG_ID                                           /*RegId  */
+				   , REG_TM                                           /*RegTm  */
+				 ) VALUES ( 
+				   #{SYS_CD}
+				   ,#{ROLE_CD}
+				   ,#{ITEM_CLSS}
+				   ,#{USER_ITEM}
+				   ,#{INCL_CLSS}
+				   ,#{SYS_STAFF_YN}
+				   ,#{REM}
+				   ,#{_SES.username}
+				   ,CURRENT_TIMESTAMP
+				   )   
+	</insert>
+		
+	<insert id="createZ01SysUser">
+	/* SQL_ID: z01.Z01Mapper.createZ01SysUser */
+		INSERT INTO Z01_SYS_USER
+             ( 
+                 SYS_CD                                           /*SYSTEM CODE  */
+               , ROLE_CD                                          /*ROLE CODE  */
+               , ITEM_CLSS                                        /*ITEM CLSS  */
+               , USER_ITEM                                        /*USER ITEM  */
+               , INCL_CLSS                                        /*INCL CLSS  */
+               , SYS_STAFF_YN                                     /*SYS STAFF YN  */
+               , REM                                              /*REMARK  */
+               , REG_ID                                           /*RegId  */
+               , REG_TM                                           /*RegTm  */
+             ) VALUES ( 
+               #{SYS_CD}
+               ,#{ROLE_CD}
+               ,#{ITEM_CLSS}
+               ,#{USER_ITEM}
+               ,#{INCL_CLSS}
+               ,#{SYS_STAFF_YN}
+               ,#{REM}
+               ,#{_SES.username}
+               ,CURRENT_TIMESTAMP
+               ) 
+	</insert>
+	
+	<select id="existZ01RoleItem" resultType="string">
+	/* SQL_ID: z01.Z01Mapper.existZ01RoleItem */
+		SELECT COUNT(*) CNT
+		  FROM Z01_SYS_USER
+		 WHERE SYS_CD = #{SYS_CD}
+		   AND USER_ITEM = #{USER_ITEM}
+	</select>
+	
+	<update id="updateZ01SysUser">
+	/* SQL_ID: z01.Z01Mapper.updateZ01SysUser */
+		UPDATE Z01_SYS_USER A
+		   SET
+               A.INCL_CLSS     = #{inclClss}                      /*INCL CLSS*/
+               , A.SYS_STAFF_Y = #{SYS_STAFF_YN}                  /*SYS STAFF YN*/
+               , A.REM         = #{REM}                           /*REMARK*/
+               , A.UPT_ID      = #{_SES.username}                 /*UptId*/
+               , A.UPT_TM      = CURRENT_TIMESTAMP                          /*UptTm*/
+         WHERE 1 = 1 
+           AND A.SYS_CD        = #{SYS_CD}                        /*SYSTEM CODE*/
+           AND A.ROLE_CD       = #{ROLE_CD}                       /*ROLE CODE*/
+           AND A.ITEM_CLSS     = #{ITEM_CLSS}                     /*ITEM CLSS*/
+           AND A.USER_ITEM     = #{USER_ITEM}                     /*USER ITEM*/
+	</update>
+	
+	<delete id="deleteZ01SysUser">
+	/* SQL_ID: z01.Z01Mapper.deleteZ01SysUser */
+		DELETE FROM Z01_SYS_USER
+		 WHERE SYS_CD = #{SYS_CD}
+		   AND ROLE_CD = #{ROLE_CD}
+		   AND ITEM_CLSS = #{ITEM_CLSS}
+		   AND USER_ITEM = #{USER_ITEM}
+	</delete>
+	
+	<select id="searchZ01RoleItem" resultType="commonMap">
+	/* SQL_ID: z01.Z01Mapper.searchZ01RoleItem */
+		 SELECT A.SYS_CD, A.ROLE_CD, A.ITEM_CLSS, B.ROLE_NM,
+		        CASE A.ITEM_CLSS WHEN 'W' THEN 'WIN'
+		                       WHEN 'M' THEN 'MENU'
+		         END ITEM_CLSS_NM,
+		        A.ROLE_ITEM,
+		        C.MENU_NM ,
+		        A.WIN_PRIV,
+		        CASE WHEN POSITION('C' IN A.WIN_PRIV) > 0 THEN '1' ELSE '0' END AS C,
+		        CASE WHEN POSITION('R' IN A.WIN_PRIV) > 0 THEN '1' ELSE '0' END AS R,
+		        CASE WHEN POSITION('U' IN A.WIN_PRIV) > 0 THEN '1' ELSE '0' END AS U,
+		        CASE WHEN POSITION('D' IN A.WIN_PRIV) > 0 THEN '1' ELSE '0' END AS D,
+		        CASE WHEN POSITION('E' IN A.WIN_PRIV) > 0 THEN '1' ELSE '0' END AS E,
+		        CASE WHEN POSITION('A' IN A.WIN_PRIV) > 0 THEN '1' ELSE '0' END AS A,
+		        CASE WHEN POSITION('B' IN A.WIN_PRIV) > 0 THEN '1' ELSE '0' END AS B
+		   FROM Z01_ROLE_ITEM A
+		   LEFT OUTER JOIN Z01_ROLE B 
+		     ON A.SYS_CD = B.SYS_CD 
+		    AND A.ROLE_CD = B.ROLE_CD
+		   LEFT OUTER JOIN Z01_MENU C 
+		     ON A.SYS_CD = C.SYS_CD  
+		    AND A.ROLE_ITEM = C.MENU_CD 		     
+		  WHERE A.SYS_CD = #{SYS_CD}
+		    AND A.ROLE_CD = #{ROLE_CD}
+		  ORDER BY A.ROLE_ITEM  
+	</select>
+
+	<insert id="mergeZ01RoleItem">
+	/* SQL_ID: z01.Z01Mapper.mergeZ01RoleItem */
+		    MERGE   
+			 INTO Z01_ROLE_ITEM A  
+			USING (SELECT 1 FROM DUAL)
+               ON (A.SYS_CD = #{SYS_CD} AND A.ROLE_CD = #{ROLE_CD} AND A.ITEM_CLSS = #{ITEM_CLSS} AND A.ROLE_ITEM = #{ROLE_ITEM} 
+			      )			   			   
+			 WHEN MATCHED THEN
+			      UPDATE
+			         SET  
+		                 A.WIN_PRIV = #{WIN_PRIV}
+					   , A.UPT_ID      = #{_SES.username}                 /*수정자*/
+					   , A.UPT_TM      = CURRENT_TIMESTAMP                          /*수정시간*/                          /*OTP암호화코드*/
+			 WHEN NOT MATCHED THEN
+			      INSERT ( 
+                 SYS_CD                                           /*시스템코드  */
+					   , ROLE_CD                                          /*ROLE CODE  */
+					   , ITEM_CLSS                                        /*값('W', 'M')  */
+					   , ROLE_ITEM                                        /*화면코드  */
+					   , WIN_PRIV                                         /*화면권한('C','R','U', 'D')  */
+					   , REG_ID                                           /*등록자  */
+					   , REG_TM                                           /*등록시간  */
+					 ) VALUES ( 
+					   #{SYS_CD}
+					   , #{ROLE_CD}
+					   , #{ITEM_CLSS}
+					   , #{ROLE_ITEM}
+					   , #{WIN_PRIV}
+					   , #{_SES.username}
+					   , CURRENT_TIMESTAMP
+					   )  
+	</insert>
+		
+	<insert id="createZ01RoleItem">
+	/* SQL_ID: z01.Z01Mapper.createZ01RoleItem */
+		INSERT INTO Z01_ROLE_ITEM
+             ( 
+                 SYS_CD                                           /*시스템코드  */
+               , ROLE_CD                                          /*ROLE CODE  */
+               , ITEM_CLSS                                        /*값('W', 'M')  */
+               , ROLE_ITEM                                        /*화면코드  */
+               , WIN_PRIV                                         /*화면권한('C','R','U', 'D')  */
+               , REG_ID                                           /*등록자  */
+               , REG_TM                                           /*등록시간  */
+             ) VALUES ( 
+               #{SYS_CD}
+               ,#{ROLE_CD}
+               ,#{ITEM_CLSS}
+               ,#{ROLE_ITEM}
+               ,#{WIN_PRIV}
+               ,#{_SES.username}
+               ,CURRENT_TIMESTAMP
+               ) 
+	</insert>
+	
+	<update id="updateZ01RoleItem">
+	/* SQL_ID: z01.Z01Mapper.updateZ01RoleItem */
+		UPDATE Z01_ROLE_ITEM
+		   SET 
+                 WIN_PRIV = #{WIN_PRIV}
+               , UPT_ID      = #{_SES.username}                 /*수정자*/
+               , UPT_TM      = CURRENT_TIMESTAMP                          /*수정시간*/
+         WHERE 1 = 1 
+           AND SYS_CD        = #{SYS_CD}                        /*시스템코드*/
+           AND ROLE_CD       = #{ROLE_CD}                       /*ROLE CODE*/
+           AND ITEM_CLSS     = #{ITEM_CLSS}                     /*값('W', 'M')*/
+           AND ROLE_ITEM     = #{ROLE_ITEM}                     /*화면코드*/
+	</update>
+	
+	<delete id="deleteZ01RoleItem">
+	/* SQL_ID: z01.Z01Mapper.deleteZ01RoleItem */
+		DELETE FROM Z01_ROLE_ITEM
+		 WHERE SYS_CD = #{SYS_CD}
+		   AND ROLE_CD = #{ROLE_CD}
+		   AND ITEM_CLSS = #{ITEM_CLSS}
+		   AND ROLE_ITEM = #{ROLE_ITEM}
+	</delete>
+	
+	<select id="searchS03_BATCH_LOG" resultType="commonMap">
+	/* SQL_ID: z01.Z01Mapper.searchS03_BATCH_LOG */
+		SELECT A.*
+		  FROM S03_BATCH_LOG  A
+		 WHERE 1=1
+		 <if test='v_serviceNm != null and v_serviceNm != ""'>
+		   AND A.SERVICE_NM = #{v_serviceNm}
+		 </if>
+		 <if test='v_fromYMD != null and v_fromYMD != ""'>
+		   AND DATEDIFF(D, #{v_fromYMD}, REG_TM) &gt;= 0
+		   AND DATEDIFF(D, #{v_toYMD}, REG_TM) &lt;= 0
+		 </if>
+		 ORDER BY REG_TM DESC
+	</select>
+		
+			
+	<select id="selectS01User" resultType="commonMap">
+        /* SQL_ID: z01.Z01Mapper.selectS01User */
+        SELECT
+                A.SYS_CD                                                         /*시스템코드*/
+               , A.USER_ID                                                       /*사용자ID*/
+               , A.USER_NM                                                       /*사용자명*/
+               , A.PASSWORD                                                      /*패스워드*/
+               , A.USE_YN                                                        /*활성화유무*/
+               , A.ACCOUNTNONEXPIRED                                             /*계정비만료*/
+               , A.CREDENTIALSNONEXPIRED                                         /*만료되지않은자격증명*/
+               , A.ACCOUNTNONLOCKED                                              /*계정미잠금*/
+               , A.PWSETYN                                                       /*패스워드리셋*/
+               , A.PWSETDTTM                                                     /*패스워드수정일*/
+               , A.PWFAILCNT                                                     /*패스워드실패횟수*/
+               , A.MAIL                                                          /*메일*/
+               , A.EX_MAIL                                                       /*추가메일*/
+               , A.TEL                                                           /*전화*/
+               , A.MOBILE                                                        /*휴대폰*/
+               , A.POST                                                          /*우편번호*/
+               , A.ADDRESS                                                       /*주소*/
+               , A.JUMIN_NO                                                      /*주민번호*/
+               , A.KAKAO_ID                                                      /*KAKAOID*/
+               , A.SSO_YN                                                        /*SSO여부*/
+               , A.LANG_CD                                                       /*사용언어*/
+               , A.GMT_CD                                                        /*GMT접속CD*/
+               , A.OTP_SECR_KEY                                                  /*OTP암호화코드*/
+               , A.LASTLOGINDTTM                                                 /*최근 접속시간*/
+               , A.REG_ID                                                        /*등록자*/
+               , A.REG_TM                                                        /*등록시간*/
+               , A.UPT_ID                                                        /*수정자*/
+               , A.UPT_TM                                                        /*수정시간*/
+          FROM Z01_USER_INFO  A
+         WHERE 1 = 1 
+		<if test='SYS_CD != null and SYS_CD != ""'>
+           AND A.SYS_CD                   = #{SYS_CD}                         /*SYSTEM CODE*/
+		</if>         
+		<if test='USER_ID != null and USER_ID != ""'>
+           AND A.USER_ID                  = #{USER_ID}                       /*사용자ID*/
+		</if>         
+		 ORDER BY A.SYS_CD
+	</select>
+	
+	<insert id="saveZ01UserInfo">
+	    /* SQL_ID: z01.Z01Mapper.saveZ01UserInfo */
+		MERGE   
+			 INTO Z01_USER_INFO A  
+			USING (SELECT 1 FROM DUAL) AS B
+               ON (A.SYS_CD = #{SYS_CD} AND A.USER_ID = #{USER_ID})			   			   
+			 WHEN MATCHED THEN
+			      UPDATE
+			         SET  
+		                 A.LASTLOGINDTTM                                                 = #{lastlogindttm}                 /*최근 접속시간*/
+		               , A.REG_ID                                                        = #{_SES.username} 
+		               , A.REG_TM                                                        = CURRENT_TIMESTAMP                          /*등록시간*/
+		               , A.UPT_ID                                                        = #{UPT_ID}                                  /*수정자*/
+		               , A.UPT_TM                                                        = CURRENT_TIMESTAMP                          /*수정시간*/
+		               , A.PASSWORD                                                      = #{PASSWORD}                                /*패스워드*/
+		               , A.USE_YN                                                        = #{USE_YN}                                  /*활성화유무*/
+		               , A.ACCOUNTNONEXPIRED                                             = #{ACCOUNTNONEXPIRED}                       /*계정비만료*/
+		               , A.CREDENTIALSNONEXPIRED                                         = #{CREDENTIALSNONEXPIRED}                   /*만료되지않은자격증명*/
+		               , A.ACCOUNTNONLOCKED                                              = #{ACCOUNTNONLOCKED}                        /*계정미잠금*/
+		               , A.PWSETYN                                                       = #{PWSETYN}                                 /*패스워드리셋*/
+		               , A.PWSETDTTM                                                     = CURRENT_TIMESTAMP                          /*패스워드수정일*/
+		               , A.PWFAILCNT                                                     = #{PWFAILCNT}                               /*패스워드실패횟수*/
+		               , A.MAIL                                                          = #{MAIL}                                    /*메일*/
+		               , A.EX_MAIL                                                       = #{EX_MAIL}                                 /*추가메일*/
+		               , A.TEL                                                           = #{TEL}                                     /*전화*/
+		               , A.MOBILE                                                        = #{MOBILE}                                  /*휴대폰*/
+		               , A.POST                                                          = #{POST}                                    /*우편번호*/
+		               , A.ADDRESS                                                       = #{ADDRESS}                                 /*주소*/
+		               , A.JUMIN_NO                                                      = #{JUMIN_NO}                                /*주민번호*/
+		               , A.KAKAO_ID                                                      = #{KAKAO_ID}                                /*KAKAOID*/
+		               , A.SSO_YN                                                        = #{SSO_YN}                                  /*SSO여부*/
+		               , A.LANG_CD                                                       = #{LANG_CD}                                 /*사용언어*/
+		               , A.GMT_CD                                                        = #{GMT_CD}                                  /*GMT접속CD*/
+		               , A.OTP_SECR_KEY                                                  = #{OTP_SECR_KEY}                            /*OTP암호화코드*/
+			 WHEN NOT MATCHED THEN
+			      INSERT (
+		                 SYS_CD                                                           /*시스템코드  */
+		               , USER_ID                                                          /*사용자ID  */
+		               , USER_NM                                                          /*사용자명  */
+		               , PASSWORD                                                         /*패스워드  */
+		               , USE_YN                                                           /*활성화유무  */
+		               , ACCOUNTNONEXPIRED                                                /*계정비만료  */
+		               , CREDENTIALSNONEXPIRED                                            /*만료되지않은자격증명  */
+		               , ACCOUNTNONLOCKED                                                 /*계정미잠금  */
+		               , PWSETYN                                                          /*패스워드리셋  */
+		               , PWSETDTTM                                                        /*패스워드수정일  */
+		               , PWFAILCNT                                                        /*패스워드실패횟수  */
+		               , MAIL                                                             /*메일  */
+		               , EX_MAIL                                                          /*추가메일  */
+		               , TEL                                                              /*전화  */
+		               , MOBILE                                                           /*휴대폰  */
+		               , POST                                                             /*우편번호  */
+		               , ADDRESS                                                          /*주소  */
+		               , JUMIN_NO                                                         /*주민번호  */
+		               , KAKAO_ID                                                         /*KAKAOID  */
+		               , SSO_YN                                                           /*SSO여부  */
+		               , LANG_CD                                                          /*사용언어  */
+		               , GMT_CD                                                           /*GMT접속CD  */
+		               , OTP_SECR_KEY                                                     /*OTP암호화코드  */
+		               , LASTLOGINDTTM                                                    /*최근 접속시간  */
+		               , REG_ID                                                           /*등록자  */
+		               , REG_TM                                                           /*등록시간  */
+		             ) VALUES ( 
+		               #{SYS_CD}
+		               ,#{USER_ID}
+		               ,#{USER_NM}
+		               ,#{PASSWORD}
+		               ,#{USE_YN}
+		               ,#{ACCOUNTNONEXPIRED}
+		               ,#{CREDENTIALSNONEXPIRED}
+		               ,#{ACCOUNTNONLOCKED}
+		               ,#{PWSETYN}
+		               ,CURRENT_TIMESTAMP
+		               ,#{PWFAILCNT}
+		               ,#{MAIL}
+		               ,#{EX_MAIL}
+		               ,#{TEL}
+		               ,#{MOBILE}
+		               ,#{POST}
+		               ,#{ADDRESS}
+		               ,#{JUMIN_NO}
+		               ,#{KAKAO_ID}
+		               ,#{SSO_YN}
+		               ,#{LANG_CD}
+		               ,#{GMT_CD}
+		               ,#{OTP_SECR_KEY}
+		               ,CURRENT_TIMESTAMP
+		               ,#{_SES.username}
+		               ,CURRENT_TIMESTAMP
+		               ) 
+	</insert>
+	
+	
+	<delete id="deleteZ01UserInfo">
+		/* SQL_ID: z01.Z01Mapper.deleteZ01UserInfo */
+		DELETE FROM Z01_USER_INFO
+		 WHERE SYS_CD = #{SYS_CD}
+		   AND USER_ID = #{USER_ID}
+	</delete>		
+	
+	<resultMap type="map" id="SystemLog">
+		<result property="MSG_TXT" column="MSG_TXT" jdbcType="CLOB" javaType="java.lang.String"/>
+	</resultMap>			
+	<select id="selectZ01SystemLog" resultType="commonMap" resultMap="z01.Z01Mapper.SystemLog">
+        /* SQL_ID: z01.Z01Mapper.selectZ01SystemLog */
+        SELECT
+                A.SYS_CD                                                         /*시스템코드*/
+               , A.CREATE_DT                                                     /*발생일시*/
+               , A.MENU_CD                                                       /*메뉴코드*/
+               , B.MENU_NM
+               , A.REG_ID                                                        /*발생자*/
+               , C.USER_NM AS REG_NM
+               , A.REQ_URI                                                       /*요청uri*/
+               , A.ISSUE_DATE                                                    /*발생일자*/
+               , A.MSG_TXT                                                       /*오류내용*/
+          FROM Z01_SYSTEM_LOG  A
+          LEFT OUTER JOIN Z01_MENU B
+            ON A.MENU_CD = B.MENU_CD
+          LEFT OUTER JOIN Z01_USER C
+            ON A.REG_ID = C.USER_ID  
+         WHERE 1 = 1 
+           AND A.SYS_CD                   = #{SYS_CD}                         /*SYSTEM CODE*/
+		<if test='REG_ID != null and REG_ID != ""'>
+           AND A.REG_ID                  = #{REG_ID}                       /*사용자ID*/
+		</if>         
+		<if test='MENU_CD != null and MENU_CD != ""'>
+           AND A.MENU_CD                 = #{MENU_CD}                       /*사용자ID*/
+		</if>         
+		<if test='FROM_YMD != null and FROM_YMD != ""'>
+           AND A.ISSUE_DATE BETWEEN REPLACE(#{FROM_YMD}, '-','') AND REPLACE(#{TO_YMD}, '-','') 
+		</if>         
+		 ORDER BY A.SYS_CD
+	</select>
+
+	<insert id="insertZ01SystemLog">
+        /* SQL_ID: z01.Z01Mapper.insertZ01SystemLog */
+        INSERT 
+          INTO Z01_SYSTEM_LOG
+             ( 
+                 SYS_CD                                           /*시스템코드  */
+               , CREATE_DT                                        /*발생일시  */
+               , MENU_CD                                          /*메뉴코드  */
+               , REG_ID                                           /*발생자  */
+               , REQ_URI                                          /*요청uri  */
+               , ISSUE_DATE                                       /*발생일자  */
+               , MSG_TXT                                          /*오류내용  */
+             ) VALUES ( 
+               #{SYS_CD}
+               ,CURRENT_TIMESTAMP
+               ,#{MENU_CD}
+               ,#{_SES.username}
+               ,#{REQ_URI}
+               ,TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDD')
+               ,#{MSG_TXT}
+               )         
+	</insert>
+	<select id="searchZ01CodeMaster" resultType="commonMap">
+        /* SQL_ID: z01.Z01Mapper.searchZ01CodeMaster */
+        SELECT
+                A.SYS_CD                                                         /*SysCd*/
+               , A.CLASS_CD                                                      /*ClassCd*/
+               , A.CLASS_NM                                                      /*ClassNm*/
+               , A.CLASS_E_NM                                                    /*ClassENm*/
+               , A.CLASS_C_NM                                                    /*ClassCNm*/
+               , A.ORDER_NO                                                      /*OrderNo*/
+               , A.CLASS_DESC                                                    /*ClassDesc*/
+               , A.USE_YN                                                        /*UseYn*/
+               , A.REG_ID                                                        /*RegId*/
+               , B.USER_NM
+               , A.REG_TM                                                        /*RegTm*/
+               , A.UPDATE_ID                                                     /*UpdateId*/
+               , A.UPDATE_TM                                                     /*UpdateTm*/
+          FROM Z01_CODE_MASTER  A
+          LEFT OUTER JOIN Z01_USER B
+            ON A.REG_ID = B.USER_ID
+         WHERE 1 = 1 
+               AND A.SYS_CD                   = #{SYS_CD}                        /*SysCd*/
+               <if test='USE_YN != null and USE_YN != ""'>
+               AND A.USE_YN                   = #{USE_YN}                        /*UseYn*/
+               </if>        
+	</select>
+	
+	<insert id="insertZ01CodeMaster">
+        /* SQL_ID: z01.Z01Mapper.insertZ01CodeMaster */
+        INSERT 
+          INTO Z01_CODE_MASTER
+             ( 
+                 SYS_CD                                           /*SysCd  */
+               , CLASS_CD                                         /*ClassCd  */
+               , CLASS_NM                                         /*ClassNm  */
+               , CLASS_E_NM                                       /*ClassENm  */
+               , CLASS_C_NM                                       /*ClassCNm  */
+               , ORDER_NO                                         /*OrderNo  */
+               , CLASS_DESC                                       /*ClassDesc  */
+               , USE_YN                                           /*UseYn  */
+               , REG_ID                                           /*RegId  */
+               , REG_TM                                           /*RegTm  */
+             ) VALUES ( 
+               #{SYS_CD}
+               ,#{CLASS_CD}
+               ,#{CLASS_NM}
+               ,#{CLASS_E_NM}
+               ,#{CLASS_C_NM}
+               ,#{ORDER_NO}
+               ,#{CLASS_DESC}
+               ,#{USE_YN}
+               ,#{_SES.username}
+               ,CURRENT_TIMESTAMP
+               ) 	
+	</insert>
+	<update id="updateZ01CodeMaster">
+        /* SQL_ID: z01.Z01Mapper.updateZ01CodeMaster */
+        UPDATE Z01_CODE_MASTER A
+           SET
+               A.CLASS_NM              = #{classNm}                       /*ClassNm*/
+               , A.CLASS_E_NM          = #{CLASS_E_NM}                            /*ClassENm*/
+               , A.CLASS_C_NM          = #{CLASS_C_NM}                            /*ClassCNm*/
+               , A.ORDER_NO            = #{ORDER_NO}                              /*OrderNo*/
+               , A.CLASS_DESC          = #{CLASS_DESC}                            /*ClassDesc*/
+               , A.USE_YN              = #{USE_YN}                                /*사용유무*/
+               , A.UPDATE_ID           = #{_SES.username}                         /*UpdateId*/
+               , A.UPDATE_TM           = CURRENT_TIMESTAMP                                  /*UpdateTm*/
+         WHERE 1 = 1 
+           AND A.SYS_CD        = #{SYS_CD}                        /*SysCd*/
+           AND A.CLASS_CD      = #{CLASS_CD}                      /*ClassCd*/
+	</update>
+	
+	<delete id="deleteZ01CodeMaster">
+        /* SQL_ID: z01.Z01Mapper.deleteZ01CodeMaster */
+        DELETE FROM Z01_CODE_MASTER A
+         WHERE 1 = 1 
+           AND A.SYS_CD        = #{SYS_CD}                        /*SysCd*/
+           AND A.CLASS_CD      = #{CLASS_CD}                      /*ClassCd*/
+	</delete>
+		
+	<select id="searchZ01CodeDetail" resultType="commonMap">
+        /* SQL_ID: z01.Z01Mapper.searchZ01CodeDetail */
+        SELECT
+                A.SYS_CD                                                         /*SysCd*/
+               , A.CLASS_CD                                                      /*ClassCd*/
+               , B.CLASS_NM
+               , A.CLASS_DTL_CD                                                  /*ClassDtlCd*/
+               , A.CLASS_DTL_NM                                                  /*ClassDtlNm*/
+               , A.CLASS_DTL_ENM                                                 /*ClassDtlEnm*/
+               , A.CLASS_DTL_CNM                                                 /*ClassDtlCnm*/
+               , A.ORDER_NO                                                      /*OrderNo*/
+               , A.ETC_CD1                                                       /*EtcCd1*/
+               , A.ETC_CD2                                                       /*EtcCd2*/
+               , A.ETC_CD3                                                       /*EtcCd3*/
+               , A.ETC_CD4                                                       /*EtcCd4*/
+               , A.USE_YN                                                        /*UseYn*/
+               , A.REG_ID                                                        /*RegId*/
+               , B.USER_NM
+               , A.REG_TM                                                        /*RegTm*/
+               , A.UPDATE_ID                                                     /*UpdateId*/
+               , A.UPDATE_TM                                                     /*UpdateTm*/
+          FROM Z01_CODE_DETAIL  A
+          LEFT OUTER JOIN Z01_CODE_MASTER B 
+            ON A.SYS_CD = B.SYS_CD
+           AND A.CLASS_CD = B.CLASS_CD
+          LEFT OUTER JOIN Z01_USER B
+            ON A.REG_ID = B.USER_ID
+         WHERE 1 = 1 
+               AND A.SYS_CD                   = #{SYS_CD}                        /*SysCd*/
+               <if test='CLASS_CD != null and CLASS_CD != ""'>
+               AND A.CLASS_CD                 = #{CLASS_CD}                      /*ClassCd*/
+               </if>
+               <if test='USE_YN != null and USE_YN != ""'>
+               AND A.USE_YN                   = #{USE_YN}                        /*UseYn*/
+               </if>        
+	</select>
+	<insert id="insertZ01CodeDetail">
+        /* SQL_ID: z01.Z01Mapper.insertZ01CodeDetail */
+        INSERT 
+          INTO Z01_CODE_DETAIL
+             ( 
+                 SYS_CD                                           /*SysCd  */
+               , CLASS_CD                                         /*ClassCd  */
+               , CLASS_DTL_CD                                     /*ClassDtlCd  */
+               , CLASS_DTL_NM                                     /*ClassDtlNm  */
+               , CLASS_DTL_ENM                                    /*ClassDtlEnm  */
+               , CLASS_DTL_CNM                                    /*ClassDtlCnm  */
+               , ORDER_NO                                         /*OrderNo  */
+               , ETC_CD1                                          /*EtcCd1  */
+               , ETC_CD2                                          /*EtcCd2  */
+               , ETC_CD3                                          /*EtcCd3  */
+               , ETC_CD4                                          /*EtcCd4  */
+               , USE_YN                                           /*UseYn  */
+               , REG_ID                                           /*RegId  */
+               , REG_TM                                           /*RegTm  */
+             ) VALUES ( 
+               #{SYS_CD}
+               ,#{CLASS_CD}
+               ,#{CLASS_DTL_CD}
+               ,#{CLASS_DTL_NM}
+               ,#{CLASS_DTL_ENM}
+               ,#{CLASS_DTL_CNM}
+               ,#{ORDER_NO}
+               ,#{ETC_CD1}
+               ,#{ETC_CD2}
+               ,#{ETC_CD3}
+               ,#{ETC_CD4}
+               ,#{USE_YN}
+               ,#{_SES.username}
+               ,CURRENT_TIMESTAMP
+               ) 
+	</insert>
+	<update id="updateZ01CodeDetail">
+        /* SQL_ID: z01.Z01Mapper.updateZ01CodeDetail */
+        UPDATE Z01_CODE_DETAIL A
+           SET
+               A.CLASS_DTL_NM       = #{CLASS_DTL_NM}                         /*ClassDtlnm*/
+               , A.CLASS_DTL_ENM       = #{CLASS_DTL_ENM}                         /*ClassDtlEnm*/
+               , A.CLASS_DTL_CNM       = #{CLASS_DTL_CNM}                         /*ClassDtlCnm*/
+               , A.ORDER_NO            = #{ORDER_NO}                              /*OrderNo*/
+               , A.ETC_CD1             = #{ETC_CD1}                               /*EtcCd1*/
+               , A.ETC_CD2             = #{ETC_CD2}                               /*EtcCd2*/
+               , A.ETC_CD3             = #{ETC_CD3}                               /*EtcCd3*/
+               , A.ETC_CD4             = #{ETC_CD4}                               /*EtcCd4*/
+               , A.UPDATE_ID           = #{_SES.username}                         /*UpdateId*/
+               , A.UPDATE_TM           = CURRENT_TIMESTAMP                                  /*UpdateTm*/
+         WHERE 1 = 1 
+           AND A.SYS_CD        = #{SYS_CD}                        /*SysCd*/
+           AND A.CLASS_CD      = #{CLASS_CD}                      /*ClassCd*/
+           AND A.CLASS_DTL_CD  = #{CLASS_DTL_CD}                  /*ClassDtlCd*/           
+	</update>	
+	
+	<delete id="deleteZ01CodeDetail">
+        /* SQL_ID: z01.Z01Mapper.deleteZ01CodeDetail */
+        DELETE FROM Z01_CODE_DETAIL A
+         WHERE 1 = 1 
+           AND A.SYS_CD        = #{SYS_CD}                        /*SysCd*/
+           AND A.CLASS_CD      = #{CLASS_CD}                      /*ClassCd*/
+           AND A.CLASS_DTL_CD  = #{CLASS_DTL_CD}                  /*ClassDtlCd*/           
+	</delete>	
+	
+    <!-- 담보대출번호 채번-->
+    <select id="createJobId" resultType="java.lang.String">
+        SELECT /* SQL_ID: z01.Z01Mapper.createLoanId */ 
+              #{SYS_CD}||'_JOB_'||TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDD')||'-'||LPAD(NVL(MAX(TO_NUMBER(SUBSTR(JOB_ID, 18))), 0)+1, 4, '0') AS JOB_ID
+         FROM Z01_SCH_INFO A
+        WHERE A.SYS_CD        = #{SYS_CD}                        /*SysCd*/
+          AND A.JOB_ID LIKE #{SYS_CD}||'_JOB_'||TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDD')||'%'
+    </select> 
+    	
+	<select id="searchZ01SchInfo" resultType="commonMap">
+        /* SQL_ID: z01.Z01Mapper.searchZ01SchInfo */
+        SELECT
+                A.SYS_CD                                                         /*시스템CD*/
+               , A.JOB_ID                                                        /*JOB ID*/
+               , A.JOB_NM                                                        /*JOB NAME*/
+               , A.CRON_EXP                                                      /*cron expression */
+               , A.REM                                                           /*REMARK */
+               , A.RUN_YN                                                        /*실행유무*/
+               , A.USE_YN                                                        /*사용유무*/
+               , A.REG_ID                                                        /*등록자*/
+               , A.REG_TM                                                        /*등록시간*/
+               , A.UPT_ID                                                        /*수정자*/
+               , A.UPT_TM                                                        /*수정시간*/
+          FROM Z01_SCH_INFO  A
+         WHERE 1 = 1 
+               AND A.SYS_CD                   = #{SYS_CD}                        /*시스템CD*/
+               AND A.USE_YN                   = 'Y'      	                     /*사용유무*/
+	</select>
+	
+	<insert id="mergeZ01SchInfo">
+	/* SQL_ID: z01.Z01Mapper.mergeZ01SchInfo */
+		    MERGE   
+			 INTO Z01_SCH_INFO A  
+			USING (SELECT 1 FROM DUAL)
+               ON (A.SYS_CD = #{SYS_CD} AND A.JOB_ID = #{JOB_ID} 
+			      )			   			   
+			 WHEN MATCHED THEN
+			      UPDATE
+			         SET A.RUN_YN              = #{RUN_YN}                          /*사용유무*/
+		               , A.USE_YN              = #{USE_YN}                          /*사용유무*/
+		               , A.JOB_NM              = #{JOB_NM}                         /*JOB NAME*/
+		               , A.CRON_EXP            = #{CRON_EXP}                       /*cron expression*/
+		               , A.REM                 = #{REM}                            /*REMARK*/
+		               , A.UPT_ID              = #{_SES.username}                  /*수정자*/
+		               , A.UPT_TM              = CURRENT_TIMESTAMP                           /*수정시간*/
+			 WHEN NOT MATCHED THEN
+			      INSERT  
+		             ( 
+		                 SYS_CD                                           /*시스템CD  */
+		               , JOB_ID                                           /*JOB ID  */
+		               , JOB_NM                                           /*JOB NAME  */
+		               , CRON_EXP                                         /*cron expression   */
+		               , REM                                              /*REMARK   */
+		               , RUN_YN                                           /*실행유무   */
+		               , USE_YN                                           /*사용유무  */
+		               , REG_ID                                           /*등록자  */
+		               , REG_TM                                           /*등록시간  */
+		             ) VALUES ( 
+		               #{SYS_CD}
+		               ,#{JOB_ID}
+		               ,#{JOB_NM}
+		               ,#{CRON_EXP}
+		               ,#{REM}
+		               ,'N'
+		               ,'Y'
+		               ,#{_SES.username}
+		               ,CURRENT_TIMESTAMP
+		               ) 
+	</insert>	
+	
+	<delete id="deleteZ01SchInfo">
+        /* SQL_ID: z01.Z01Mapper.deleteZ01SchInfo */
+        DELETE 
+          FROM Z01_SCH_INFO A
+         WHERE 1 = 1 
+           AND A.SYS_CD        = #{SYS_CD}                        /*시스템CD*/
+           AND A.JOB_ID        = #{JOB_ID}                        /*JOB ID*/
+	</delete>
+
+</mapper>

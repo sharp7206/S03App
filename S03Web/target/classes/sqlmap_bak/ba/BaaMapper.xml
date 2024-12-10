@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+- 담보대출관련 Mapper
+-->
+<mapper namespace="ba.BaaMapper">
+	<select id="ba.BaaMapper.selectS03MortgageLoanList" resultType="commonMap">
+        /* SQL_ID: ba.BaaMapper.selectS03MortgageLoan */
+        SELECT
+                A.LOAN_ID                                                        /*대출ID*/
+               , A.LOAN_YMD                                                      /*대출일자*/
+               , A.GOOD_CLSS                                                     /*담보물권구분*/
+               , A.GOOD_REM                                                      /*담보물권특이사항*/
+               , A.REQ_AMT                                                       /*담보요청금액*/
+               , A.INTEREST_RATE                                                 /*이자율*/
+               , A.INTEREST_AMT                                                  /*이자금액*/
+               , A.SERVICE_AMT                                                   /*서비스이용료*/
+               , A.REPAY_AMT                                                     /*원금상환금*/
+               , A.GOOD_ADDR1||' '||A.GOOD_ADDR2 AS ADDR
+               , C.DEBTOR_NM 
+               , A.GOOD_POSTCD                                                   /*담보 우편번호*/
+               , A.GOOD_ADDR1                                                    /*담보 주소*/
+               , A.GOOD_ADDR2                                                    /*담보 상세주소*/
+               , A.GOOD_AMT                                                    /*부동산가격*/
+               , A.FILE_GID                                                      /*첨부문서*/
+               , A.PAY_MTH                                                       /*지불방식*/
+               , A.LOAN_AMT                                                      /*대출금액*/
+               , A.EXPIRE_YMD                                                    /*상환만기일*/
+               , CASE WHEN D.PAY_YM IS NULL THEN '이자납부요청' ELSE D.PAY_YM END AS PAY_YM
+               , D.PAY_AMT                                                       /*당월이자*/
+               , A.INVEST_ID                                                     /*투자자*/
+               , A.USE_YN                                                        /*사용유무*/
+               , A.REG_ID                                                        /*등록자*/
+               , B.USER_NM
+               , C.TEL1 AS TEL 
+               , A.REG_TM                                                        /*등록시간*/
+               , A.UPT_ID                                                        /*수정자*/
+               , A.UPT_TM                                                        /*수정시간*/
+          FROM S03_MORTGAGE_LOAN  A
+          LEFT OUTER JOIN Z01_USER B 
+            ON A.REG_ID = B.USER_ID 
+          LEFT OUTER JOIN S03_MORTGAGE_CONTACT C 
+            ON A.LOAN_ID = C.LOAN_ID 
+           AND C.DEBTOR_ID = (SELECT MAX(DEBTOR_ID) FROM S03_MORTGAGE_CONTACT WHERE LOAN_ID = C.LOAN_ID )
+          LEFT OUTER JOIN (SELECT DISTINCT LOAN_ID, PAY_YM, SUM(PAY_AMT) PAY_AMT
+						     FROM S03_MORTGAGE_PAY
+						    GROUP BY LOAN_ID, PAY_YM) D 
+            ON A.LOAN_ID = D.LOAN_ID 
+           AND TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMM') = D.PAY_YM 
+         WHERE 1 = 1 
+           AND A.USE_YN = 'Y'
+           AND A.LOAN_YMD BETWEEN REPLACE(#{FROM_YMD}, '-','') AND REPLACE(#{TO_YMD}, '-','') /*대출일자*/ 
+         <if test="LOAN_ID != null and LOAN_ID !=''">
+           AND A.LOAN_ID                  = #{LOAN_ID}                       /*대출ID*/
+         </if>      
+         ORDER BY A.LOAN_ID        
+	</select>
+	
+	<select id="ba.BaaMapper.selectS03MortgageLoan" resultType="map">
+        /* SQL_ID: ba.BaaMapper.selectS03MortgageLoan */
+		WITH REPAY_INFO
+		  AS ( 
+		  	SELECT LOAN_ID, NVL(SUM(REPAY_AMT), 0) REPAY_AMT
+		  	  FROM S03_MORTGAGE_PAY
+		  	 WHERE LOAN_ID = #{LOAN_ID} 
+		  	 GROUP BY LOAN_ID
+		  	 )        
+        SELECT
+                A.LOAN_ID                                                        /*대출ID*/
+               , TO_CHAR(TO_DATE(A.LOAN_YMD), 'YYYY-MM-DD') AS LOAN_YMD                                                      /*대출일자*/
+               , A.GOOD_CLSS                                                     /*담보물권구분*/
+               , A.GOOD_REM                                                      /*담보물권특이사항*/
+               , A.REQ_AMT                                                       /*담보요청금액*/
+               , A.INTEREST_RATE                                                 /*이자율*/
+               , A.INTEREST_AMT                                                  /*이자금*/
+               , C.REPAY_AMT                                                     /*원금상환금*/
+               , A.SERVICE_AMT                                                   /*서비스이용료*/
+               , A.GOOD_POSTCD                                                   /*담보 우편번호*/
+               , A.GOOD_ADDR1                                                    /*담보 주소*/
+               , A.GOOD_ADDR2                                                    /*담보 상세주소*/
+               , A.GOOD_AMT                                                    /*부동산가격*/
+               , A.FILE_GID                                                      /*첨부문서*/
+               , A.PAY_MTH                                                       /*지불방식*/
+               , A.LOAN_AMT                                                      /*대출금액*/
+               , TO_CHAR(TO_DATE(A.EXPIRE_YMD), 'YYYY-MM-DD') AS EXPIRE_YMD                                                    /*상환만기일*/
+               , A.INVEST_ID                                                     /*투자자*/
+               , A.USE_YN                                                        /*사용유무*/
+               , A.REG_ID                                                        /*등록자*/
+               , B.USER_NM
+               , A.REG_TM                                                        /*등록시간*/
+               , A.UPT_ID                                                        /*수정자*/
+               , A.UPT_TM                                                        /*수정시간*/
+          FROM S03_MORTGAGE_LOAN  A
+          LEFT OUTER JOIN Z01_USER B 
+            ON A.REG_ID = B.USER_ID 
+          LEFT OUTER JOIN REPAY_INFO C
+            ON A.LOAN_ID  = C.LOAN_ID            
+         WHERE 1 = 1 
+           AND A.LOAN_ID                  = #{LOAN_ID}                       /*대출ID*/
+         ORDER BY A.LOAN_ID        
+	</select>
+
+    <!-- 담보대출번호 채번-->
+    <select id="ba.BaaMapper.createLoanId" resultType="java.lang.String">
+        SELECT /* SQL_ID: ba.BaaMapper.createLoanId */ 
+              'LID'||TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDD')||'-'||LPAD(COALESCE(MAX(SUBSTRING(LOAN_ID, 13))::TEXT, '0')::TEXT, 4, '0') AS FILE_GRP_ID
+         FROM S03_MORTGAGE_LOAN A
+        WHERE LOAN_ID LIKE 'LID'||TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDD')||'%'
+    </select>    	
+	
+	<insert id="ba.BaaMapper.insertS03MortgageLoan">
+        /* SQL_ID: ba.BaaMapper.insertS03MortgageLoan */ 
+        INSERT 
+          INTO S03_MORTGAGE_LOAN
+             ( 
+                 LOAN_ID                                          /*대출ID  */
+               , LOAN_YMD                                         /*대출일자  */
+               , GOOD_CLSS                                        /*담보물권구분  */
+               , GOOD_REM                                         /*담보물권특이사항  */
+               , REQ_AMT                                          /*담보요청금액  */
+               , INTEREST_RATE                                    /*이자율  */
+               , INTEREST_AMT                                     /*이자금액  */
+               , SERVICE_AMT                                      /*서비스이용료  */
+               , REPAY_AMT                                        /*원금상환액  */
+               , GOOD_POSTCD                                      /*담보 우편번호  */
+               , GOOD_ADDR1                                       /*담보 주소  */
+               , GOOD_ADDR2                                       /*담보 상세주소  */
+               , GOOD_AMT                                       /*부동산가격  */
+               , FILE_GID                                         /*첨부문서  */
+               , PAY_MTH                                          /*지불방식  */
+               , LOAN_AMT                                         /*대출금액  */
+               , EXPIRE_YMD                                       /*상환만기일  */
+               , INVEST_ID                                        /*투자자*/
+               , USE_YN                                           /*사용유무  */
+               , REG_ID                                           /*등록자  */
+               , REG_TM                                           /*등록시간  */
+             ) VALUES ( 
+               #{LOAN_ID}
+               ,REPLACE(#{LOAN_YMD}, '-', '')
+               ,#{GOOD_CLSS}
+               ,#{GOOD_REM}
+               ,TO_NUMBER(REPLACE(#{REQ_AMT}, ',', ''))
+               ,#{INTEREST_RATE}
+               ,TO_NUMBER(REPLACE(#{INTEREST_AMT}, ',', ''))
+               ,TO_NUMBER(REPLACE(#{SERVICE_AMT}, ',', ''))
+               ,TO_NUMBER(REPLACE(#{REPAY_AMT}, ',', ''))
+               ,#{GOOD_POSTCD}
+               ,#{GOOD_ADDR1}
+               ,#{GOOD_ADDR2}
+               ,TO_NUMBER(REPLACE(#{GOOD_AMT}, ',', ''))
+               ,#{FILE_GID}
+               ,#{PAY_MTH}
+               ,TO_NUMBER(REPLACE(#{LOAN_AMT}, ',', ''))
+               ,REPLACE(#{EXPIRE_YMD}, '-', '')
+               ,#{INVEST_ID} 
+               ,'Y'
+               ,#{_SES.username}
+               ,CURRENT_TIMESTAMP
+               ) 
+	</insert>
+	
+	
+	<update id="ba.BaaMapper.updateS03MortgageLoan">
+		/* SQL_ID: ba.BaaMapper.updateS03MortgageLoan */
+        UPDATE S03_MORTGAGE_LOAN A
+           SET
+               A.GOOD_CLSS             = #{GOOD_CLSS}                      /*담보물권구분*/
+               , A.GOOD_REM            = #{GOOD_REM}                              /*담보물권특이사항*/
+               , A.REQ_AMT             = TO_NUMBER(REPLACE(#{REQ_AMT}, ',', ''))                               /*담보요청금액*/
+               , A.INTEREST_RATE       = #{INTEREST_RATE}                         /*이자율*/
+               , A.INTEREST_AMT        = TO_NUMBER(REPLACE(#{INTEREST_AMT}, ',', ''))                          /*이자금액*/
+               , A.SERVICE_AMT         = TO_NUMBER(REPLACE(#{SERVICE_AMT}, ',', ''))                           /*서비스이용료*/
+               , A.REPAY_AMT           = TO_NUMBER(REPLACE(#{REPAY_AMT}, ',', ''))                             /*원금상환액*/
+               , A.GOOD_POSTCD         = #{GOOD_POSTCD}                           /*담보 우편번호*/
+               , A.GOOD_ADDR1          = #{GOOD_ADDR1}                            /*담보 주소*/
+               , A.GOOD_ADDR2          = #{GOOD_ADDR2}                            /*담보 상세주소*/
+               , A.GOOD_AMT            = TO_NUMBER(REPLACE(#{GOOD_AMT}, ',', ''))                            /*부동산가격*/
+               , A.FILE_GID            = #{FILE_GID}                              /*첨부문서*/
+               , A.PAY_MTH             = #{PAY_MTH}                              /*지불방식*/
+               , A.LOAN_AMT            = TO_NUMBER(REPLACE(#{LOAN_AMT}, ',', ''))                              /*대출금액*/
+               , A.LOAN_YMD            = REPLACE(#{LOAN_YMD}, '-', '')                            /*대출일자*/
+               , A.EXPIRE_YMD          = REPLACE(#{EXPIRE_YMD}, '-', '')                            /*상환만기일*/
+               , A.INVEST_ID           = #{INVEST_ID}                           /*투자자*/
+               , A.USE_YN              = 'Y'                               /*사용유무*/
+               , A.UPT_ID              = #{_SES.username}                         /*수정자*/
+               , A.UPT_TM              = CURRENT_TIMESTAMP                                  /*수정시간*/
+         WHERE 1 = 1 
+           AND A.LOAN_ID       = #{LOAN_ID}                       /*대출ID*/
+	</update>
+	<delete id="ba.BaaMapper.deleteS03MortgageLoan">
+		/* SQL_ID: ba.BaaMapper.deleteS03MortgageLoan */
+        UPDATE S03_MORTGAGE_LOAN A
+           SET A.USE_YN = 'N'
+         WHERE 1 = 1 
+           AND A.LOAN_ID       = #{LOAN_ID}                       /*대출ID*/	
+	</delete>
+	
+	<select id="ba.BaaMapper.selectS03MortgageContact" resultType="map">
+		/* SQL_ID: ba.BaaMapper.selectS03MortgageContact */
+        SELECT
+                A.LOAN_ID                                                       /*대출ID*/
+               , A.DEBTOR_ID                                                     /*채무자ID*/
+               , A.DEBTOR_NM                                                     /*채무자이름*/
+               , A.JUMIN_NO                                                      /*JUMIN NO*/
+               , A.TEL1                                                          /*전화번호1*/
+               , A.TEL2                                                          /*전화번호2*/
+               , A.TEL3                                                          /*전화번호3*/
+               , A.BANK_CD                                                       /*은행코드*/
+               , A.ACNT_NO                                                       /*계좌번호*/
+               , A.ACNT_NM                                                       /*예금주*/
+               , A.POSTCD                                                        /*우편번호*/
+               , A.ADDR1                                                         /*주소*/
+               , A.ADDR2                                                         /*상세주소*/
+               , A.REM                                                           /*Rem*/
+               , A.EMAIL                                                         /*EMAIL*/
+               , A.USE_YN                                                        /*사용유무*/
+               , A.REG_ID                                                        /*등록자*/
+               , A.REG_TM                                                        /*등록시간*/
+               , A.UPT_ID                                                        /*수정자*/
+               , A.UPT_TM                                                        /*수정시간*/
+          FROM S03_MORTGAGE_CONTACT  A
+         WHERE 1 = 1 
+               AND A.LOAN_ID                  = #{LOAN_ID}                       /*대출ID*/	
+	</select>
+	
+    <!-- 담보대출번호 채번-->
+    <select id="ba.BaaMapper.createS03MortgageDebtorId" resultType="java.lang.String">
+        SELECT /* SQL_ID: ba.BaaMapper.createS03MortgageDebtorId */ 
+               LPAD(NVL(MAX(A.DEBTOR_ID), 0)+1, 3, '0') DEBTOR_ID
+          FROM S03_MORTGAGE_CONTACT A
+         WHERE 1 = 1 
+           AND A.LOAN_ID       = #{LOAN_ID}                       /*대출ID*/	
+    </select>    	
+
+	
+	<insert id="ba.BaaMapper.insertS03MortgageContact">
+        /* SQL_ID: ba.BaaMapper.insertS03MortgageContact */ 
+        INSERT 
+          INTO S03_MORTGAGE_CONTACT
+             ( 
+                 LOAN_ID                                          /*대출ID  */
+               , DEBTOR_ID                                        /*채무자ID  */
+               , DEBTOR_NM                                        /*채무자이름  */
+               , JUMIN_NO                                         /*JUMIN NO  */
+               , TEL1                                             /*전화번호1  */
+               , TEL2                                             /*전화번호2  */
+               , TEL3                                             /*전화번호3  */
+               , BANK_CD                                          /*은행코드  */
+               , ACNT_NO                                          /*계좌번호  */
+               , ACNT_NM                                          /*예금주  */
+               , POSTCD                                           /*우편번호  */
+               , ADDR1                                            /*주소  */
+               , ADDR2                                            /*상세주소  */
+               , REM                                              /*Rem  */
+               , EMAIL                                            /*EMAIL  */
+               , USE_YN                                           /*사용유무  */
+               , REG_ID                                           /*등록자  */
+               , REG_TM                                           /*등록시간  */
+             ) VALUES ( 
+               #{LOAN_ID}
+               ,#{DEBTOR_ID}
+               ,#{DEBTOR_NM}
+               ,#{JUMIN_NO}
+               ,#{TEL1}
+               ,#{TEL2}
+               ,#{TEL3}
+               ,#{BANK_CD}
+               ,#{ACNT_NO}
+               ,#{ACNT_NM}
+               ,#{POSTCD}
+               ,#{ADDR1}
+               ,#{ADDR2}
+               ,#{REM}
+               ,#{EMAIL}
+               ,'Y'
+               ,#{_SES.username}
+               ,CURRENT_TIMESTAMP
+               ) 
+	</insert>	
+	
+	<update id="ba.BaaMapper.updateS03MortgageContact">
+		/* SQL_ID: ba.BaaMapper.updateS03MortgageContact */
+        UPDATE S03_MORTGAGE_CONTACT A
+           SET
+               A.DEBTOR_NM             = #{DEBTOR_NM}                      /*채무자이름*/
+               , A.JUMIN_NO            = #{JUMIN_NO}                              /*JUMIN NO*/
+               , A.TEL1                = #{TEL1}                                  /*전화번호1*/
+               , A.TEL2                = #{TEL2}                                  /*전화번호2*/
+               , A.TEL3                = #{TEL3}                                  /*전화번호3*/
+               , A.BANK_CD             = #{BANK_CD}                               /*은행코드*/
+               , A.ACNT_NO             = #{ACNT_NO}                               /*계좌번호*/
+               , A.ACNT_NM             = #{ACNT_NM}                               /*예금주*/
+               , A.POSTCD              = #{POSTCD}                                /*우편번호*/
+               , A.ADDR1               = #{ADDR1}                                 /*주소*/
+               , A.ADDR2               = #{ADDR2}                                 /*상세주소*/
+               , A.REM                 = #{REM}                                   /*Rem*/
+               , A.EMAIL               = #{EMAIL}                                 /*EMAIL*/
+               , A.USE_YN              = 'Y'                                /*사용유무*/
+               , A.UPT_ID              = #{_SES.username}                         /*수정자*/
+               , A.UPT_TM              = CURRENT_TIMESTAMP                                  /*수정시간*/
+         WHERE 1 = 1 
+           AND A.LOAN_ID       = #{LOAN_ID}                       /*대출ID*/
+           AND A.DEBTOR_ID     = #{DEBTOR_ID}                     /*채무자ID*/
+	</update>	
+	
+	<delete id="ba.BaaMapper.deleteS03MortgageContact">
+		/* SQL_ID: ba.BaaMapper.deleteS03MortgageContact */
+        DELETE 
+          FROM S03_MORTGAGE_CONTACT A
+         WHERE 1 = 1 
+           AND A.LOAN_ID       = #{LOAN_ID}                       /*대출ID*/
+           AND A.DEBTOR_ID     = #{DEBTOR_ID}                     /*채무자ID*/
+	</delete>	
+	<delete id="ba.BaaMapper.deleteS03MortgageContactAll">
+		/* SQL_ID: ba.BaaMapper.deleteS03MortgageContact */
+        DELETE 
+          FROM S03_MORTGAGE_CONTACT A
+         WHERE 1 = 1 
+           AND A.LOAN_ID       = #{LOAN_ID}                       /*대출ID*/
+	</delete>	
+	
+	<select id="ba.BaaMapper.selectS03MortgagePayList" resultType="map">
+		/* SQL_ID: ba.BaaMapper.selectS03MortgagePayList */
+		WITH DATE_RANGE AS (
+		  SELECT LOAN_ID
+		       , TO_DATE(A.LOAN_YMD, 'YYYYMMDD') AS START_DATE
+		       , TO_DATE(A.EXPIRE_YMD, 'YYYYMMDD') AS END_DATE
+		  FROM S03_MORTGAGE_LOAN A
+		 WHERE LOAN_ID = #{LOAN_ID}
+		)
+		SELECT M.*, N.PAY_DAY, N.PAY_AMT, N.REPAY_AMT
+		  FROM (
+		SELECT A.LOAN_ID, TO_CHAR(A.START_DATE, 'YYYYMMDD') START_DATE, TO_CHAR(ADD_MONTHS(A.START_DATE, LEVEL - 1), 'YYYYMMDD') AS DUE_YMD
+		  FROM DATE_RANGE A
+		CONNECT BY LEVEL <![CDATA[<=]]> MONTHS_BETWEEN(END_DATE, START_DATE) + 1
+		       )M
+		LEFT OUTER JOIN S03_MORTGAGE_PAY N
+		  ON M.LOAN_ID = N.LOAN_ID 
+		 AND SUBSTR(M.DUE_YMD, 1, 6) = SUBSTR(N.PAY_DAY, 1, 6)
+	   ORDER BY M.DUE_YMD 
+	</select>	
+	
+	<select id="ba.BaaMapper.selectS03MortgagePayListD" resultType="map">
+		/* SQL_ID: ba.BaaMapper.selectS03MortgagePayListD */
+		WITH DATE_RANGE AS (
+		  SELECT LOAN_ID, PAY_MTH
+		       , TO_DATE(A.LOAN_YMD, 'YYYYMMDD') AS START_DATE
+		       , TO_DATE(A.EXPIRE_YMD, 'YYYYMMDD') AS END_DATE
+		  FROM S03_MORTGAGE_LOAN A
+		 WHERE LOAN_ID = #{LOAN_ID}
+		)
+		SELECT M.*, N.PAY_DAY, N.PAY_AMT, N.REPAY_AMT
+		  FROM (
+		SELECT A.LOAN_ID, TO_CHAR(A.START_DATE + LEVEL - 1, 'YYYYMMDD') AS DUE_YMD, A.PAY_MTH
+		  FROM DATE_RANGE A
+		CONNECT BY LEVEL <![CDATA[<=]]> A.END_DATE - A.START_DATE + 1  
+		       )M
+		LEFT OUTER JOIN S03_MORTGAGE_PAY N
+		  ON M.LOAN_ID = N.LOAN_ID
+		 AND SUBSTR(M.DUE_YMD, 1, (CASE WHEN M.PAY_MTH = 'REPAY_CD-M' THEN 6 ELSE 8 END)) = SUBSTR(N.PAY_DAY, 1, (CASE WHEN M.PAY_MTH = 'REPAY_CD-M' THEN 6 ELSE 8 END))
+	   ORDER BY M.DUE_YMD 
+	</select>	
+	
+	<insert id="ba.BaaMapper.insertS03MortgagePay">
+		/* SQL_ID: ba.BaaMapper.insertS03MortgagePay */
+		    MERGE   
+			 INTO S03_MORTGAGE_PAY A  
+			USING (SELECT 1 FROM DUAL)
+        <choose>
+            <when test="PAY_MTH == 'REPAY_CD-M'"> 
+               ON (A.LOAN_ID = #{LOAN_ID} AND A.PAY_YM = TO_CHAR(TO_DATE(REPLACE(#{PAY_DAY}, '-', '')), 'YYYYMM')
+            </when>
+            <otherwise> 
+               ON (A.LOAN_ID = #{LOAN_ID} AND A.PAY_DAY = REPLACE(#{PAY_DAY}, '-', '')
+            </otherwise>
+        </choose>			
+			      )			   			   
+			 WHEN MATCHED THEN
+			      UPDATE
+			         SET  
+		               A.PAY_AMT               = #{PAY_AMT}
+		              ,A.REPAY_AMT             = #{REPAY_AMT}
+			 WHEN NOT MATCHED THEN
+			      INSERT  
+             ( 
+                 LOAN_ID                                          /*대부ID  */
+               , PAY_YM
+               , PAY_DAY                                          /*지급일  */
+               , PAY_AMT                                          /*이자금  */
+               , REPAY_AMT                                        /*원금상환  */
+               , REG_ID                                           /*등록자  */
+               , REG_TM                                           /*등록시간  */
+             ) VALUES ( 
+               #{LOAN_ID}
+               ,TO_CHAR(TO_DATE(REPLACE(#{PAY_DAY}, '-', '')), 'YYYYMM')
+               ,REPLACE(#{PAY_DAY}, '-', '')
+               ,#{PAY_AMT}
+               ,#{REPAY_AMT}
+               ,#{_SES.username}
+               ,CURRENT_TIMESTAMP
+               )               
+	</insert>
+	
+	<delete id="ba.BaaMapper.deleteS03MortgagePay">
+		/* SQL_ID: ba.BaaMapper.ba.BaaMapper.deleteS03MortgagePay */
+		DELETE 
+		  FROM S03_MORTGAGE_PAY
+		 WHERE LOAN_ID = #{LOAN_ID}
+		   AND PAY_YM = TO_CHAR(TO_DATE(REPLACE(#{PAY_DAY}, '-', ''), 'YYYYMM')
+	</delete>
+	<delete id="ba.BaaMapper.deleteS03MortgagePayAll">
+		/* SQL_ID: ba.BaaMapper.ba.BaaMapper.deleteS03MortgagePayAll*/
+		DELETE 
+		  FROM S03_MORTGAGE_PAY
+		 WHERE LOAN_ID = #{LOAN_ID}
+	</delete>
+</mapper>

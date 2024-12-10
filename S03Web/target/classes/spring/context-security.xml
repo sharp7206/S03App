@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+             http://www.springframework.org/schema/beans/spring-beans.xsd
+             http://www.springframework.org/schema/security
+             http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<!-- 보안예외목록정의 -->
+	<http pattern="/**/*.js" security="none"/><!-- js 파일권한체크 안함 -->
+	<http pattern="/**/*.css" security="none"/><!-- css 파일권한체크 안함 -->
+	<http pattern="/res/**/*" security="none"/><!-- APPz 정적 파일 권한체크 안함  -->
+	<http pattern="/plug/**/*" security="none"/><!-- 외부js,css 모듈 권한체크안함  -->
+	<http pattern="/page/tiles/*" security="none"/><!-- 외부js,css 모듈 권한체크안함  -->
+	<http pattern="/api/cmn/common/message.do" security="none"/><!-- 메세지공통 체크안함  -->
+	<http pattern="/api/cmn/SQL/executeSql.do" security="none"/><!-- 임시로 API 체크안함  -->
+	<!-- 보안 관련 정의   -->
+	<http use-expressions="true" auto-config="true" access-decision-manager-ref="accessDecisionManager" >
+
+		<headers>
+			<frame-options policy="SAMEORIGIN" /><!-- frame options 사용가능하게 지정 현재 프로젝트내만 가능하도록설정  -->
+		</headers>
+
+		<intercept-url pattern="/login.do" access="permitAll()"/><!-- 로그인화면 -->
+		<intercept-url pattern="/page/cmn/include/*" access="permitAll()"/><!-- 공통 포함 모듈 권한체크예외  -->
+		<intercept-url pattern="/page/cmn/login/*" access="permitAll()"/><!-- 공통 포함 모듈 권한체크예외  -->
+		<!-- <intercept-url pattern="/page/co/main/*" access="permitAll()"/>공통 포함 모듈 권한체크예외  -->
+		<intercept-url pattern="/page/tiles/*" access="permitAll()"/><!-- 공통 포함 모듈 권한체크예외  -->
+		<intercept-url pattern="-*-yAuthenticated()" />
+		<intercept-url pattern="/**/*" access="isFullyAuthenticated()"/>
+
+		<form-login
+			authentication-success-handler-ref="comAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="comAuthenticationFailureHandler"
+			login-page="/login.do"
+			username-parameter="userid"
+			password-parameter="password"
+		/>
+
+		<logout delete-cookies="JSESSIONID" /><!-- 로그아웃 처리.. -->
+
+		<remember-me key="APPrememberme" user-service-ref="comUserDetailsService"/>
+
+		<session-management invalid-session-url="/page/cmn/login/invalidsession.do" session-fixation-protection="newSession" ><!-- session  -->
+			<concurrency-control max-sessions="1" error-if-maximum-exceeded="false" expired-url="/page/co/login/expired.do"/>
+			<!--  동시사용자 제어 1명 나중에 로그인 우선error-if-maximum-exceeded : false(나중로그인우선),true(처음로그인우선)  -->
+		</session-management>
+
+		<csrf disabled="false" /><!-- csrf 처리되게  -->
+
+		<access-denied-handler ref="comAccessDeniedHandler" />
+
+	</http>
+<!--
+	<beans:bean id="grantedAuthorityDefaults" class="org.springframework.security.config.core.GrantedAuthorityDefaults">
+    	<beans:constructor-arg value="" />  ROLE_ prefix 제거
+	</beans:bean>-->
+	<!--
+	<beans:bean id="defaultWebSecurityExpressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler">
+        <beans:property name="defaultRolePrefix" value=""></beans:property> ROLE_ prefix 제거
+	</beans:bean>-->
+<!--
+	<beans:bean id="defaultMethodSecurityExpressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+        <beans:property name="defaultRolePrefix" value=""></beans:property> ROLE_ prefix 제거
+	</beans:bean>-->
+
+	<!-- 인증 관리자  -->
+	<authentication-manager id="authenticationManager">
+	    <authentication-provider user-service-ref="comUserDetailsService"><!-- 사용자정보처리자 -->
+	        <password-encoder ref="passwordEncoder"/><!-- 비밀번호인코더 -->
+	    </authentication-provider>
+	</authentication-manager>
+
+	<!-- 로그인성공시처리 -->
+	<beans:bean id="comAuthenticationSuccessHandler" class="com.app.s03.cmn.security.ComAuthenticationSuccessHandler">
+		<beans:property name="defaultUrl" value="intro.do"/>
+	</beans:bean>
+
+	<!-- 로그인실패시처리 -->
+	<beans:bean id="comAuthenticationFailureHandler" class="com.app.s03.cmn.security.ComAuthenticationFailureHandler"/>
+
+	<!-- 접근관리자설정 -->
+	<beans:bean id="accessDecisionManager" class="com.app.s03.cmn.security.ComAccessDecisionManager">
+		<beans:constructor-arg>
+		    <beans:list>
+		    	<beans:bean class="org.springframework.security.web.access.expression.WebExpressionVoter"/>
+            	<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
+            	<beans:bean class="org.springframework.security.access.vote.RoleVoter">
+            		<beans:property name="rolePrefix" value=""></beans:property><!-- ROLE_ prefix 제거 -->
+            	</beans:bean>
+		    </beans:list>
+		</beans:constructor-arg>
+		<beans:property name="notCheckPattern">
+			<beans:list>
+				<beans:value>/login.do</beans:value><!-- 로그인화면 접근제어 예외 -->
+				<beans:value>/sideTree.do</beans:value><!-- 로그인화면 접근제어 예외 -->
+				<beans:value>/page/cmn/include/*</beans:value><!-- 공통 포함 모듈 접근제어 예외  -->
+				<beans:value>/page/cmn/login/*</beans:value><!-- 공통 포함 모듈 접근제어 예외  -->
+				<beans:value>/page/tiles/*</beans:value><!-- tiles template 제외  -->
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+	<!-- 사용자 인증을 위한 비밀번호 인코더  -->
+	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+	<!-- 사용자정보처리자 -->
+	<beans:bean id="comUserDetailsService" class="com.app.s03.cmn.security.ComUserDetailsService"/>
+
+	<!-- 접근거부처리설정 -->
+	<beans:bean id="comAccessDeniedHandler" class="com.app.s03.cmn.security.ComAccessDeniedHandler">
+		<!-- access-denied-page 페이지도 적용하고 싶다면 아래와 같이 추가하면 된다. -->
+		<beans:property name="errorPage" value="/page/cmn/common/accessDenied.do" />
+	</beans:bean>
+
+</beans:beans>

@@ -1,0 +1,20 @@
+@charset "utf-8";
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td { margin:0; padding:0; }
+h1,h2,h3,h4,h5,h6 { font-size : 100%; }
+ol,ul { list-style : none; }
+address, caption, cite, code, dfn, em, strong, th, var { font-style : normal; font-weight : normal; }
+table { border-collapse : collapse; border-spacing : 0; }
+fieldset, img, input { border : 0; }
+hr, caption, legend { height: 0; width: 0; line-height: 0; visibility: hidden; overflow: hidden; }
+
+/* body */
+body, * { font-size: 12px; color: #575757; font-family: "arial", "Tahoma";}
+a { text-decoration: none; color: #575757;}
+a:hover { color:#575757; cursor:pointer; }
+strong { font-weight:bold; }
+select { border:1px solid #dddddd; padding: 4px 0;}
+textarea { padding: 10px 14px 14px 14px; border:1px solid #ccc; line-height: 20px;}
+h2, hr { display: none;}
+
+body { background: #f6f6f6;}

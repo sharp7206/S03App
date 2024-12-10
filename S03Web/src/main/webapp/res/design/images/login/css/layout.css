@@ -1,0 +1,11 @@
+@charset "utf-8";
+
+/* ( css - layout - style ) */
+.loginbox { width: 800px; height: 451px; position: absolute; top: 50%; left: 50%; margin-left: -400px; margin-top: -225px; background: url("../img/bg_loginbox.jpg") no-repeat left top; overflow: hidden;}
+.loginbox .article { margin: 192px 0 0 134px; width: 600px; position: relative;}
+.loginbox .article .idbox { position: absolute; left: 0; top: 0;}
+.loginbox .article .pwbox { position: absolute; left: 221px; top: 0;}
+.loginbox .article .btnbox { position: absolute; left: 440px; top: 22px;}
+.loginbox .article .typetxt { height: 22px; color: #575757; font-weight: bold;}
+.loginbox .article .idbox span, .loginbox .article .pwbox span { display: block; width: 210px; height: 44px; background: url("../img/bg_input.gif") no-repeat left top;}
+.loginbox .article .idbox span input, .loginbox .article .pwbox span input { width: 190px; height: 23px; margin: 15px 0 0 10px; vertical-align: middle;}

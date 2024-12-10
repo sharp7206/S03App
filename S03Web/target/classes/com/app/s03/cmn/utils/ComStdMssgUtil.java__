@@ -1,0 +1,359 @@
+/**
+ * Copyright KOBC. All Rights Reserved.
+ */
+package com.app.s03.cmn.utils;
+
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionTimedOutException;
+
+import com.app.s03.cmn.annotations.SuppressFBWarnings;
+import com.app.s03.cmn.constant.ComConstants.HeaderReqResType;
+import com.app.s03.cmn.context.ContextHolder;
+import com.app.s03.cmn.context.util.ContextErrorUtil;
+import com.app.s03.cmn.context.vo.ComContentsVO;
+import com.app.s03.cmn.dto.ErrorResDTO;
+import com.app.s03.cmn.dto.StdMssgDTO;
+import com.app.s03.cmn.exception.BizException;
+import com.app.s03.cmn.exception.ComSysException;
+import com.app.s03.cmn.exception.CommonBusinessException;
+import com.app.s03.cmn.request.ComRequestWrapper;
+import com.app.s03.cmn.type.ProcessResultType;
+import com.app.s03.cmn.type.SystemMessage;
+import com.app.s03.cmn.vo.HeaderVO;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * <pre>
+ * 패키지명: com.app.s03.cmn.util
+ * 클래스명: KobcStdMssgUtil
+ * 설명: 표준전문관련 Utility Class
+ *
+ * ==================================================================
+ * 변경일자       변경자      변경내용
+ * ------------------------------------------------------------------
+ * 2021.11.04     ADMIN      1.0 최초작성
+ * </pre>
+ */
+@Slf4j
+@Component
+public class ComStdMssgUtil {
+
+    private static ObjectMapper objectMapper;
+
+    @SuppressWarnings("static-access")
+    @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification = "Utility Class")
+    @Autowired
+    public ComStdMssgUtil(ObjectMapper objectMapper) {
+        // [PMD] AssignmentToNonFinalStatic 예외
+        this.objectMapper = objectMapper;
+    }
+
+    // 표준헤더 필수항목
+    private static enum RequiredHeaderValues {
+        DLNG_ID ("dlngId", "거래ID"),
+        SRVC_URI_ADDR ("srvcUriAddr", "서비스URI주소"),
+        CALL_SSTM_ID ("callSstmId", "호출시스템ID"),
+        PRCS_SSTM_ID ("prcsSstmId", "처리시스템ID"),
+        SSTM_ENVR_CLSS_VAL ("sstmEnvrClssVal", "시스템환경구분값"),;
+
+        private String item;
+        private String itemName;
+
+        private RequiredHeaderValues(String item, String itemName) {
+            this.item = item;
+            this.itemName = itemName;
+        }
+
+        public String getItem() {
+            return item;
+        }
+
+        public String getItemName() {
+            return itemName;
+        }
+
+    }
+
+    /**
+     * 표준전문인지 확인
+     * 
+     * @param bodyData
+     * @return boolean
+     * @throws ComSysException
+     */
+    public static boolean isStdMssg(String bodyData) throws CommonBusinessException {
+        try {
+            JsonNode hNode = objectMapper.readTree(bodyData).get("header");
+            JsonNode dNode = objectMapper.readTree(bodyData).get("data");
+            if (hNode == null || dNode == null)
+                throw new CommonBusinessException("header정보가 없습니다.");
+
+            // 표준헤더 필수항목 체크
+            checkRequired(hNode);
+
+        } catch (CommonBusinessException sysEx) {
+            throw sysEx;
+        } catch (Exception e) {
+            // log.error(e.getMessage(), e);
+            throw new CommonBusinessException(e);
+        }
+        return true;
+    }
+
+    /**
+     * 표준헤더 필수항목 체크
+     * 
+     * @param headerNode
+     * @throws Exception
+     */
+    private static void checkRequired(JsonNode headerNode) throws Exception {
+        StringBuffer sbError = new StringBuffer();
+        for (RequiredHeaderValues values : RequiredHeaderValues.values()) {
+            if (headerNode.get(values.getItem()) == null
+                    || StringUtils.isBlank(headerNode.get(values.getItem()).asText(""))) {
+                if (sbError.length() > 0)
+                    sbError.append(", ");
+                sbError.append(String.format("%s[%s]", values.getItemName(), values.getItem()));
+            }
+        }
+
+        if (sbError.length() > 0)
+            throw new CommonBusinessException(sbError.toString());
+    }
+    /**
+     * 표준헤더부 반환
+     * 
+     * @param bodyData
+     * @return HeaderVO
+     * @throws Exception
+     */
+    public static HeaderVO getStdHeader(String bodyData) throws Exception {
+        JsonNode hNode = objectMapper.readTree(bodyData).get("header");
+        HeaderVO stdHeader = objectMapper.treeToValue(hNode, HeaderVO.class);
+
+        // 표준헤더부가 없는 경우는 표준전문이 아님
+        if (stdHeader == null)
+            throw new ComSysException(SystemMessage.SYS0020);
+
+        return stdHeader;
+    }
+
+    /**
+     * System Error Response DTO 반환 (Context Area 없음)
+     * 
+     * @param request
+     * @param sysEx
+     * @param resultType
+     * @return ErrorResDTO
+     * @throws Exception
+     */
+    public static ErrorResDTO getSysErrResDto(HttpServletRequest request, ComSysException sysEx,
+            ProcessResultType resultType) throws Exception {
+    	ComRequestWrapper reqWrapper = new ComRequestWrapper(request);
+        HeaderVO resHeader = getStdHeader(reqWrapper.getBodyData());
+        resHeader.setDlngPrcsRsltClssVal(resultType.getCode());
+        setSysErrResHeader(resHeader, sysEx);
+        return ErrorResDTO.create().header(resHeader);
+    }
+
+    /**
+     * System Exception Error Header VO 반환
+     * 
+     * @param sysEx
+     * @return HeaderVO
+     */
+    public static HeaderVO createErrHeader(ComSysException sysEx) {
+        HeaderVO resHeader = new HeaderVO();
+        resHeader.setDlngPrcsRsltClssVal(ProcessResultType.SYS_ERROR.getCode());
+        setSysErrResHeader(resHeader, sysEx);
+        return resHeader;
+    }
+
+    /**
+     * Response Header 값 설정
+     * 
+     * @param resHeader
+     * @param sysEx
+     */
+    public static void setSysErrResHeader(HeaderVO resHeader, ComSysException sysEx) {
+        // 현재일시
+        String currentDt = DateTimeUtil.getCurrentTimestamp();
+        resHeader.setDmndRspnsClssVal(HeaderReqResType.RESPONSE.getCode());
+        resHeader.setRspnsMssgCd(sysEx.getSystemMessage().name());
+        resHeader.setRspnsMssgCn(sysEx.getSystemMessage().getMessage());
+        resHeader.setPrcsBgngDt(currentDt);
+        resHeader.setPrcsEndDt(currentDt);
+        // 추가메시지내용
+        String addMssg = sysEx.getAdditionalMessage();
+        if (StringUtils.isNotBlank(addMssg))
+            resHeader.setSpplMssgCn(addMssg);
+    }
+
+    /**
+     * 본처리(업무단) 중에 발생한 Error Response DTO 반환
+     * 
+     * @param ex
+     * @return ErrorResDTO
+     * @throws Exception
+     */
+    public static ErrorResDTO getErrResDto(Exception ex) throws Exception {
+        HeaderVO resHeader = ContextHolder.convertStdHeader(HeaderReqResType.RESPONSE);
+        setErrResHeader(resHeader, ex);
+        return ErrorResDTO.create().header(resHeader);
+    }
+
+    /**
+     * 본처리(업무단) 중에 발생한 Error Response Header 값 설정
+     * 
+     * @param resHeader
+     * @param ex
+     */
+    private static void setErrResHeader(HeaderVO resHeader, Exception ex) {
+        // 현재일시
+        String currentDt = DateTimeUtil.getCurrentTimestamp();
+        String mssgCd = null;
+        String mssgCn = null;
+        if (ex instanceof BizException) {
+            resHeader.setDlngPrcsRsltClssVal(ProcessResultType.BIZ_ERROR.getCode());
+            mssgCd = ((BizException) ex).getMssgCd();
+            mssgCn = ((BizException) ex).getMessage();
+        } else if (ex instanceof ComSysException) {
+            resHeader.setDlngPrcsRsltClssVal(ProcessResultType.SYS_ERROR.getCode());
+            mssgCd = ((ComSysException) ex).getSystemMessage().name();
+            mssgCn = ((ComSysException) ex).getSystemMessage().getMessage();
+        } else if (ex instanceof TransactionTimedOutException) {
+            resHeader.setDlngPrcsRsltClssVal(ProcessResultType.SYS_ERROR.getCode());
+            mssgCd = SystemMessage.SYS0100.name();
+            mssgCn = SystemMessage.SYS0100.getMessage();
+        } else if (ex instanceof AuthenticationException) {
+            resHeader.setDlngPrcsRsltClssVal(ProcessResultType.BIZ_ERROR.getCode());
+            mssgCd = SystemMessage.SYS0003.name();
+            mssgCn = SystemMessage.SYS0003.getMessage();
+        }
+
+        if (mssgCd == null) {
+            resHeader.setDlngPrcsRsltClssVal(ProcessResultType.SYS_ERROR.getCode());
+            mssgCd = SystemMessage.SYS0000.name();
+            mssgCn = SystemMessage.SYS0000.getMessage();
+        }
+
+        resHeader.setRspnsMssgCd(mssgCd);
+        resHeader.setRspnsMssgCn(mssgCn);
+
+        // 처리시작일시 값이 없는 경우 현재시간으로 설정
+        if (StringUtils.isBlank(resHeader.getPrcsBgngDt()))
+            resHeader.setPrcsBgngDt(currentDt);
+        resHeader.setPrcsEndDt(currentDt);
+
+        // Context Area 설정
+        setContextAreaResInfo(resHeader, mssgCd, mssgCn);
+    }
+
+    /**
+     * Request 기준으로 표준전문 DTO 반환
+     * 
+     * @param request
+     * @return StdMssgDTO
+     * @throws Exception
+     */
+    public static StdMssgDTO getStdMssgFromRequest(HttpServletRequest request) throws Exception {
+        ComRequestWrapper reqWrapper = new ComRequestWrapper(request);
+        return getStdMssgFromBody(reqWrapper.getBodyData());
+    }
+
+    /**
+     * Body 문자열 기준으로 표준전문 DTO 반환
+     * 
+     * @param bodyData
+     * @return StdMssgDTO
+     * @throws Exception
+     */
+    public static StdMssgDTO getStdMssgFromBody(String bodyData) throws Exception {
+        StdMssgDTO stdMssg = null;
+        try {
+            stdMssg = new StdMssgDTO(getStdHeader(bodyData));
+            JsonNode dNode = objectMapper.readTree(bodyData).get("data");
+            stdMssg.setBody(dNode.toString());
+        } catch (JsonParseException jpe) {
+            throw new ComSysException(SystemMessage.SYS0101, jpe);
+        } catch (Exception e) {
+            throw new ComSysException(SystemMessage.SYS0020, e);
+        }
+        return stdMssg;
+    }
+
+    /**
+     * Error Response Header 반환
+     * 
+     * @param sysEx
+     * @return HeaderVO
+     */
+    public static HeaderVO getErrHeader(ComSysException sysEx) {
+        HeaderVO resHeader;
+        try {
+            // ComSysException 인 경우 추가메시지내용 확인
+            String addMssg = sysEx.getAdditionalMessage();
+            if (StringUtils.isNotBlank(addMssg))
+                ContextHolder.get().setSpplMssgCn(addMssg);
+            resHeader = ContextHolder.convertStdHeader(HeaderReqResType.RESPONSE);
+            setErrResHeader(resHeader, sysEx);
+        } catch (Exception e) {
+            resHeader = createErrHeader(sysEx);
+        }
+
+        // Context Area 설정
+        if (!ContextHolder.isEmpty()) {
+            setContextAreaResInfo(resHeader, sysEx.getSystemMessage().name(), sysEx.getSystemMessage().getMessage());
+
+            if (sysEx.getWrappedException() != null)
+                ContextErrorUtil.addContextAreaErrInfo(sysEx.getWrappedException());
+
+            ContextErrorUtil.addContextAreaErrInfo(sysEx);
+        }
+        return resHeader;
+    }
+
+    /**
+     * Context Area 응답정보 설정
+     * 
+     * @param resHeader
+     * @param mssgCd
+     * @param mssgCn
+     */
+    private static void setContextAreaResInfo(HeaderVO resHeader, String mssgCd, String mssgCn) {
+        if (!ContextHolder.isEmpty()) {
+            ComContentsVO ctx = ContextHolder.get();
+
+            // 처리시작일시 (Context Area 정보를 공통헤더에 설정)
+            if (StringUtils.isNotBlank(ctx.getPrcsBgngDt()))
+                resHeader.setPrcsBgngDt(ctx.getPrcsBgngDt());
+            // 처리종료일시
+            ctx.setPrcsEndDt(resHeader.getPrcsEndDt());
+            // 처리시간 (밀리세컨드단위)
+            ctx.setPrcsHr(DateTimeUtil.getDateTimeGap(resHeader.getPrcsBgngDt(), resHeader.getPrcsEndDt(),
+                    TimeUnit.MILLISECONDS));
+
+            // 진행일련번호
+            ctx.setPrgrsSn(ctx.getPrgrsSn() + 1);
+
+            // 거래처리결과구분값
+            ctx.setDlngPrcsRsltClssVal(resHeader.getDlngPrcsRsltClssVal());
+            // 응답메시지코드
+            ctx.setRspnsMssgCd(mssgCd);
+            // 응답메시지내용
+            ctx.setRspnsMssgCn(mssgCn);
+        }
+    }
+
+}

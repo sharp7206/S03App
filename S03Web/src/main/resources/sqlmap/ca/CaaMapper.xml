@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+- 담보대출관련 Mapper
+-->
+<mapper namespace="ca.CaaMapper">
+	<select id="searchZ01IOTList" resultType="map">
+        /* SQL_ID: ca.CaaMapper.searchZ01IOTList */
+		SELECT A.SITE_CD, A.FACTORY_CD, A.IOT_ID, A.IOT_NM, A.FILE_PATHA, A.FILE_PATHA, A.FILE_PATHB, A.FILE_PATHC, A.FILE_PATHD, A.CAT_ID 
+		     , B.IMG_GID1, CASE WHEN C.FILE_PATH IS NULL THEN '' ELSE REPLACE(C.FILE_PATH||'/'||C.FILE_NM, '/', '@') END IMG_PATH
+		     , A.LOC_INFO, A.STATUS, A.CONTENT, A.USE_YN
+		     , B.UP_CAT_ID, E.CAT_ID FAB_CAT_ID, E.IMG_GID1
+		     , CASE WHEN D.FILE_PATH IS NULL THEN '' ELSE REPLACE(D.FILE_PATH||'/'||D.FILE_NM, '/', '@') END FAB_IMG
+		FROM Z01_IOT_INFO A
+		LEFT OUTER JOIN Z01_IMG_CAT B --장비유형
+		  ON B.SYS_CD = 's03'
+		 AND B.GRP_CD = 'IOT_INFO'
+		 AND B.CAT_ID = A.CAT_ID 
+		 AND B.USE_YN = 'Y'
+		LEFT OUTER JOIN TB_APL_FILE_INFO C 
+		  ON B.SYS_CD   = C.SYS_CD 
+		 AND B.IMG_GID1 = C.FILE_GRP_ID
+		LEFT OUTER JOIN Z01_IMG_CAT E --공장도면
+		  ON E.SYS_CD = 's03'
+		 AND E.GRP_CD = 'IOT_INFO'
+		 AND E.CAT_ID = B.UP_CAT_ID 
+		LEFT OUTER JOIN TB_APL_FILE_INFO D 
+		  ON E.SYS_CD   = D.SYS_CD 
+		 AND E.IMG_GID1 = D.FILE_GRP_ID	 
+	   WHERE A.USE_YN   = 'Y'
+		 AND A.SITE_CD    = #{SITE_CD}  
+		 AND A.FACTORY_CD = #{FAB_CD}
+	</select>
+	
+	<!-- shortCut update -->
+	<update id="updateZ01IOTInfo" parameterType="Map">
+		/* SQL_ID: ca.CaaMapper.updateZ01IOTInfo */
+		UPDATE Z01_IOT_INFO
+		   SET LOC_INFO = #{LOC_INFO}
+		 WHERE SITE_CD = #{SITE_CD}
+		   AND FACTORY_CD = #{FACTORY_CD}
+		   AND IOT_ID  = #{IOT_ID}
+	</update>
+	
+	<select id="searchZ01ImgCat" resultType="commonMap">
+        /* SQL_ID: ca.CaaMapper.searchZ01ImgCat */
+		SELECT SYS_CD, GRP_CD, LEVEL, LPAD(' ', 2*(LEVEL-1)) || CAT_NM AS PATH_M,
+		       LPAD(' ', 2*LEVEL-1) || SYS_CONNECT_BY_PATH(CAT_NM, '>>') PATH,
+		       LPAD(' ', 2*LEVEL-1) || SYS_CONNECT_BY_PATH(CAT_ID, '|') PATH_INFO, 
+		       CONNECT_BY_ISLEAF AS LEAF_YN,
+		       GRP_CD, CAT_ID, CAT_NM, UP_CAT_ID, ETC1, ETC2, ETC3, IMG_GID1, IMG_GID2, IMG_GID3 
+		  FROM Z01_IMG_CAT
+		 WHERE SYS_CD = #{C_SYS_CD}
+		   AND GRP_CD = #{GRP_CD}
+		 START WITH UP_CAT_ID = 'SITE_CD'
+       CONNECT BY PRIOR CAT_ID = UP_CAT_ID
+	</select>	
+	
+	<insert id="insertZ01IOTCat" parameterType="Map">
+		/* SQL_ID: ca.CaaMapper.insertZ01IOTCat */
+        INSERT 
+          INTO Z01_IMG_CAT
+             ( 
+                 SYS_CD                                                           /*SysCd  */
+               , GRP_CD                                                           /*GrpCd  */
+               , CAT_ID                                                           /*CatId  */
+               , CAT_NM                                                           /*CatNm  */
+               , UP_CAT_ID                                                        /*UpCatId  */
+               , ETC1                                                             /*Etc1  */
+               , ETC2                                                             /*Etc2  */
+               , ETC3                                                             /*Etc3  */
+               , IMG_GID1                                                         /*ImgGid1  */
+               , IMG_GID2                                                         /*ImgGid2  */
+               , IMG_GID3                                                         /*ImgGid3  */
+               , USE_YN                                                           /*UseYn  */
+               , REG_ID                                                           /*RegId  */
+               , REG_TM                                                           /*RegTm  */
+             ) VALUES ( 
+               #{sysCd}
+               ,#{grpCd}
+               ,#{catId}
+               ,#{catNm}
+               ,#{upCatId}
+               ,#{etc1}
+               ,#{etc2}
+               ,#{etc3}
+               ,#{imgGid1}
+               ,#{imgGid2}
+               ,#{imgGid3}
+               ,#{useYn}
+               ,#{_SES.username}
+               ,SYSDATE
+               )  
+	</insert>
+                	
+	<update id="updateZ01IOTCat" parameterType="Map">
+		/* SQL_ID: ca.CaaMapper.updateZ01IOTCat */
+        UPDATE Z01_IMG_CAT A
+           SET
+               A.ETC1                                                            = #{etc1}                          /*Etc1*/
+               , A.ETC2                                                          = #{etc2}                          /*Etc2*/
+               , A.ETC3                                                          = #{etc3}                          /*Etc3*/
+               , A.IMG_GID1                                                      = #{imgGid1}                       /*ImgGid1*/
+               , A.IMG_GID2                                                      = #{imgGid2}                       /*ImgGid2*/
+               , A.IMG_GID3                                                      = #{imgGid3}                       /*ImgGid3*/
+               , A.USE_YN                                                        = #{useYn}                         /*UseYn*/
+               , A.UPT_ID                                                        = #{_SES.username}
+               , A.UPT_TM                                                        = SYSDATE                          /*UptTm*/
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*SysCd*/
+           AND A.GRP_CD                                                          = #{grpCd}                         /*GrpCd*/
+           AND A.CAT_ID                                                          = #{catId}                         /*CatId*/
+           AND A.UP_CAT_ID                                                       = #{upCatId}                       /*UpCatId*/
+	</update>
+	
+    <delete id="deleteZ01IOTCat">
+        /* SQL_ID: ca.CaaMapper.deleteZ01IOTCat */
+        DELETE 
+          FROM Z01_IMG_CAT A
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*SysCd*/
+           AND A.GRP_CD                                                          = #{grpCd}                         /*GrpCd*/
+           AND A.CAT_ID                                                          = #{catId}                         /*CatId*/
+           AND A.UP_CAT_ID                                                       = #{upCatId}                       /*UpCatId*/
+    </delete>            	
+</mapper>

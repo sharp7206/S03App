@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="cmn.CommonCode">
+
+	<select id="getGrpcdTree" resultType="commonMap">
+	/* cmn.CommonCode.getGrpcdTree - 그룹코드 */
+    SELECT A.SYS_CD, A.CLASS_CD, B.CLASS_NM, B.CLASS_E_NM, B.CLASS_C_NM, A.CLASS_DTL_CD, A.CLASS_DTL_NM, A.CLASS_DTL_ENM, A.CLASS_DTL_CNM, A.ORDER_NO,
+           A.ETC_CD1, A.ETC_CD2, A.ETC_CD3, A.ETC_CD4, NVL(A.USE_YN, 'Y') USE_YN, A.REG_ID, TO_CHAR(A.REG_TM, 'YYYY/MM/DD HH24:MM:SS') REG_TM, A.UPDATE_ID,
+           TO_CHAR(A.UPDATE_TM, 'YYYY/MM/DD HH24:MM:SS') UPDATE_TM
+      FROM Z01_CODE_DETAIL A
+      LEFT OUTER JOIN Z01_CODE_MASTER B
+        ON A.SYS_CD = B.SYS_CD
+       AND A.CLASS_CD = B.CLASS_CD
+     WHERE 1=1   
+       AND A.SYS_CD = #{syscd}
+     ORDER BY A.CLASS_CD, TO_NUMBER(A.ORDER_NO)
+	</select>
+
+	<select id="getCodeList" resultType="commonMap">
+	/* cmn.CommonCode.getCodeList - 그룹코드 */
+    SELECT A.SYS_CD, A.CLASS_CD, B.CLASS_NM, B.CLASS_E_NM, B.CLASS_C_NM, A.CLASS_DTL_CD, A.CLASS_DTL_NM, A.CLASS_DTL_ENM, A.CLASS_DTL_CNM, A.ORDER_NO,
+           A.ETC_CD1, A.ETC_CD2, A.ETC_CD3, A.ETC_CD4, NVL(A.USE_YN, 'Y') USE_YN
+      FROM Z01_CODE_DETAIL A
+      INNER JOIN Z01_CODE_MASTER B
+        ON A.SYS_CD = B.SYS_CD
+       AND A.CLASS_CD = B.CLASS_CD
+       AND B.USE_YN = 'Y'
+     WHERE A.SYS_CD = #{syscd}
+       AND A.USE_YN = 'Y'
+       AND A.CLASS_CD IN
+       <foreach item="item" index="index" collection="codeList" open="(" separator="," close=")">
+       	#{ item }
+       </foreach>
+     ORDER BY A.CLASS_CD, A.ORDER_NO
+	</select>
+
+	<select id="getCodeListN" resultType="commonMap">
+	/* cmn.CommonCode.getCodeListN - 그룹코드 */
+    SELECT A.SYS_CD, A.CLASS_CD, A.CLASS_NM, A.CLASS_VAL, A.CLASS_DTL_CD, A.CLASS_DTL_NM, A.CLASS_DTL_ENM, A.CLASS_DTL_CNM
+         , A.ORDER_NO, A.ETC_CD1, A.ETC_CD2, A.ETC_CD3, A.ETC_CD4, A.USE_YN
+      FROM Z01_CODE_VW A
+     WHERE A.SYS_CD = #{syscd}
+       AND A.USE_YN = 'Y'
+       AND A.CLASS_CD IN
+       <foreach item="item" index="index" collection="codeList" open="(" separator="," close=")">
+       	#{ item }
+       </foreach>
+     ORDER BY A.CLASS_CD, A.ORDER_NO
+	</select>
+
+	<select id="getAllCodeList" resultType="commonMap">
+	/* cmn.CommonCode.getAllCodeList - 그룹코드 */
+    SELECT A.SYS_CD, A.CLASS_CD, B.CLASS_NM, B.CLASS_E_NM, B.CLASS_C_NM, A.CLASS_DTL_CD, A.CLASS_DTL_NM, A.CLASS_DTL_ENM, A.CLASS_DTL_CNM, A.ORDER_NO,
+           A.ETC_CD1, A.ETC_CD2, A.ETC_CD3, A.ETC_CD4, COALESCE(A.USE_YN, 'Y') AS USE_YN, A.REG_ID, TO_CHAR(A.REG_TM, 'YYYY/MM/DD HH24:MM:SS') REG_TM, A.UPT_ID,
+           TO_CHAR(A.UPT_TM, 'YYYY/MM/DD HH24:MM:SS') UPDATE_TM
+      FROM Z01_CODE_DETAIL A
+      LEFT OUTER JOIN Z01_CODE_MASTER B
+        ON A.SYS_CD = B.SYS_CD
+       AND A.CLASS_CD = B.CLASS_CD
+       AND B.USE_YN = 'Y'
+     WHERE 1=1
+       AND A.SYS_CD = #{syscd}
+       AND A.USE_YN = 'Y'
+     ORDER BY A.CLASS_CD, A.ORDER_NO
+	</select>
+
+	<insert id="insertZ01CodeMaster">
+        /* SQL_ID: cmn.CommonCode.insertZ01CodeMaster - 그룹코드추가 */
+        INSERT INTO 
+             Z01_CODE_MASTER
+             ( 
+               , SYS_CD                                                           /*SysCd  */
+               , CLASS_CD                                                         /*ClassCd  */
+               , CLASS_NM                                                         /*ClassNm  */
+               , CLASS_E_NM                                                       /*ClassENm  */
+               , CLASS_C_NM                                                       /*ClassCNm  */
+               , ORDER_NO                                                         /*OrderNo  */
+               , CLASS_DESC                                                       /*ClassDesc  */
+               , USE_YN                                                           /*UseYn  */
+               , REG_ID                                                           /*RegId  */
+               , REG_TM                                                           /*RegTm  */
+             ) VALUES ( 
+               , #{sysCd}
+               , #{classCd}
+               , #{classNm}
+               , #{classENm}
+               , #{classCNm}
+               , #{orderNo}
+               , #{classDesc}
+               , #{useYn}
+               , #{_SESSION_USER.username}
+               , SYSDATE
+               ) 
+	</insert>
+
+	<insert id="updateZ01CodeMaster">
+        /* SQL_ID: cmn.CommonCode.updateZ01CodeMaster */
+        UPDATE Z01_CODE_MASTER A
+           SET
+                 A.CLASS_NM                                                      = #{classNm}                       /*ClassNm*/
+               , A.CLASS_E_NM                                                    = #{classENm}                      /*ClassENm*/
+               , A.CLASS_C_NM                                                    = #{classCNm}                      /*ClassCNm*/
+               , A.ORDER_NO                                                      = #{orderNo}                       /*OrderNo*/
+               , A.CLASS_DESC                                                    = #{classDesc}                     /*ClassDesc*/
+               , A.REG_ID                                                        = #{_SES.username} 
+               , A.REG_TM                                                        = SYSDATE                          /*RegTm*/
+               , A.UPDATE_ID                                                     = #{_SES.username} 
+               , A.UPDATE_TM                                                     = SYSDATE                          /*UpdateTm*/
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*SysCd*/
+           AND A.CLASS_CD                                                        = #{classCd}                       /*ClassCd*/
+           AND A.USE_YN                                                          = #{useYn}                         /*UseYn*/
+	</insert>
+
+	<delete id="deleteZ01CodeMaster">
+        /* SQL_ID: cmn.CommonCode.deleteZ01CodeMaster - 그룹코드삭제 */
+        DELETE 
+          FROM Z01_CODE_MASTER A
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*SysCd*/
+           AND A.CLASS_CD                                                        = #{classCd}                       /*ClassCd*/
+           AND A.USE_YN                                                          = #{useYn}                         /*UseYn*/
+	</delete>
+
+	<select id="selectZ01CodeMaster" resultType="commonMap">
+        /* SQL_ID: cmn.CommonCode.selectZ01CodeMaster- 마스터코드 */
+        SELECT
+                A.SYS_CD                                                         /*SysCd*/
+               , A.CLASS_CD                                                      /*ClassCd*/
+               , A.CLASS_NM                                                      /*ClassNm*/
+               , A.CLASS_E_NM                                                    /*ClassENm*/
+               , A.CLASS_C_NM                                                    /*ClassCNm*/
+               , A.ORDER_NO                                                      /*OrderNo*/
+               , A.CLASS_DESC                                                    /*ClassDesc*/
+               , A.USE_YN                                                        /*UseYn*/
+               , A.REG_ID                                                        /*RegId*/
+               , A.REG_TM                                                        /*RegTm*/
+               , A.UPDATE_ID                                                     /*UpdateId*/
+               , A.UPDATE_TM                                                     /*UpdateTm*/
+          FROM Z01_CODE_MASTER  A
+         WHERE 1 = 1 
+               AND A.SYS_CD                   = #{sysCd}                         /*SysCd*/
+               AND A.CLASS_CD                 = #{classCd}                       /*ClassCd*/
+               AND A.USE_YN                   = #{useYn}                         /*UseYn*/
+	</select>
+	<select id="selectZ01CodeDetail" resultType="commonMap">
+        /* SQL_ID: cmn.CommonCode.selectZ01CodeDetail- 상세코드 */
+        SELECT
+                A.SYS_CD                                                         /*SysCd*/
+               , A.CLASS_CD                                                      /*ClassCd*/
+               , A.CLASS_DTL_CD                                                  /*ClassDtlCd*/
+               , A.CLASS_DTL_NM                                                  /*ClassDtlNm*/
+               , A.CLASS_DTL_ENM                                                 /*ClassDtlEnm*/
+               , A.ORDER_NO                                                      /*OrderNo*/
+               , A.ETC_CD1                                                       /*EtcCd1*/
+               , A.ETC_CD2                                                       /*EtcCd2*/
+               , A.ETC_CD3                                                       /*EtcCd3*/
+               , A.ETC_CD4                                                       /*EtcCd4*/
+               , A.USE_YN                                                        /*UseYn*/
+               , A.REG_ID                                                        /*RegId*/
+               , A.REG_TM                                                        /*RegTm*/
+               , A.UPDATE_ID                                                     /*UpdateId*/
+               , A.UPDATE_TM                                                     /*UpdateTm*/
+               , A.CLASS_DTL_CNM                                                 /*ClassDtlCnm*/
+          FROM Z01_CODE_DETAIL  A
+         WHERE 1 = 1 
+               AND A.SYS_CD                   = #{sysCd}                         /*SysCd*/
+               AND A.CLASS_CD                 = #{classCd}                       /*ClassCd*/
+               AND A.CLASS_DTL_CD             = #{classDtlCd}                    /*ClassDtlCd*/
+               AND A.USE_YN                   = #{useYn}                         /*UseYn*/
+	</select>
+
+	<insert id="insertZ01CodeDetail">
+        /* SQL_ID: cmn.CommonCode.insertZ01CodeDetail - 상세코드추가 */
+        INSERT 
+          INTO Z01_CODE_DETAIL
+             ( 
+                 SYS_CD                                                           /*SysCd  */
+               , CLASS_CD                                                         /*ClassCd  */
+               , CLASS_DTL_CD                                                     /*ClassDtlCd  */
+               , CLASS_DTL_NM                                                     /*ClassDtlNm  */
+               , CLASS_DTL_ENM                                                    /*ClassDtlEnm  */
+               , ORDER_NO                                                         /*OrderNo  */
+               , ETC_CD1                                                          /*EtcCd1  */
+               , ETC_CD2                                                          /*EtcCd2  */
+               , ETC_CD3                                                          /*EtcCd3  */
+               , ETC_CD4                                                          /*EtcCd4  */
+               , USE_YN                                                           /*UseYn  */
+               , REG_ID                                                           /*RegId  */
+               , REG_TM                                                           /*RegTm  */
+               , UPDATE_ID                                                        /*UpdateId  */
+               , UPDATE_TM                                                        /*UpdateTm  */
+               , CLASS_DTL_CNM                                                    /*ClassDtlCnm  */
+             ) VALUES ( 
+               , #{sysCd}
+               , #{classCd}
+               , #{classDtlCd}
+               , #{classDtlNm}
+               , #{classDtlEnm}
+               , #{orderNo}
+               , #{etcCd1}
+               , #{etcCd2}
+               , #{etcCd3}
+               , #{etcCd4}
+               , #{useYn}
+               , #{_SES.username}
+               , SYSDATE
+               , #{_SES.username}
+               , SYSDATE
+               , #{classDtlCnm}
+               ) 
+	</insert>
+
+	<insert id="updateDtlcd">
+        /* SQL_ID: cmn.CommonCode.updateZ01CodeDetail - 상세코드수정 */
+        UPDATE Z01_CODE_DETAIL A
+           SET
+               A.CLASS_DTL_NM                                                    = #{classDtlNm}                    /*ClassDtlNm*/
+               , A.CLASS_DTL_ENM                                                 = #{classDtlEnm}                   /*ClassDtlEnm*/
+               , A.ORDER_NO                                                      = #{orderNo}                       /*OrderNo*/
+               , A.ETC_CD1                                                       = #{etcCd1}                        /*EtcCd1*/
+               , A.ETC_CD2                                                       = #{etcCd2}                        /*EtcCd2*/
+               , A.ETC_CD3                                                       = #{etcCd3}                        /*EtcCd3*/
+               , A.ETC_CD4                                                       = #{etcCd4}                        /*EtcCd4*/
+               , A.REG_ID                                                        = #{_SES.username} 
+               , A.REG_TM                                                        = SYSDATE                          /*RegTm*/
+               , A.UPDATE_ID                                                     = #{_SES.username} 
+               , A.UPDATE_TM                                                     = SYSDATE                          /*UpdateTm*/
+               , A.CLASS_DTL_CNM                                                 = #{classDtlCnm}                   /*ClassDtlCnm*/
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*SysCd*/
+           AND A.CLASS_CD                                                        = #{classCd}                       /*ClassCd*/
+           AND A.CLASS_DTL_CD                                                    = #{classDtlCd}                    /*ClassDtlCd*/
+	</insert>
+
+	<delete id="deleteDtlcd">
+        /* SQL_ID: cmn.CommonCode.deleteZ01CodeDetail - 상세코드삭제 */
+        DELETE 
+          FROM Z01_CODE_DETAIL A
+         WHERE 1 = 1 
+           AND A.SYS_CD                                                          = #{sysCd}                         /*SysCd*/
+           AND A.CLASS_CD                                                        = #{classCd}                       /*ClassCd*/
+           AND A.CLASS_DTL_CD                                                    = #{classDtlCd}                    /*ClassDtlCd*/
+           AND A.USE_YN                                                          = #{useYn}                         /*UseYn*/
+	</delete>
+</mapper>

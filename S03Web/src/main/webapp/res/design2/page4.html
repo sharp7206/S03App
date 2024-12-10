@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>샘플페이지4</title>
+    <script src="js/jquery.js"></script>
+    <script src="js/swiper.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="wrap">
+        <main>
+            <div class="content">
+                <div class="align both vm">
+                    <h2 class="h2">제품정보 조회/등록</h2>
+                    <div class="location">
+                        <ul>
+                            <li>HOME</li>
+                            <li>메뉴1</li>
+                            <li>메뉴1-1</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="search">
+                    <table>
+                        <colgroup>
+                            <col style="width:8rem">
+                            <col>
+                            <col style="width:8rem">
+                            <col>
+                            <col style="width:8rem">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>MAKER</th>
+                                <td>
+                                    <select name="" id="">
+                                        <option value="">전체</option>
+                                    </select>
+                                </td>
+                                <th>제품군</th>
+                                <td>
+                                    <select name="" id="">
+                                        <option value="">전체</option>
+                                    </select>
+                                </td>
+                                <th>적용차종</th>
+                                <td>
+                                    <input type="date" name="" id="" required data-placeholder="전체">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>OE PartNo</th>
+                                <td>
+                                    <input type="text" name="" id="">
+                                </td>
+                                <th>HCC PartNo</th>
+                                <td>
+                                    <input type="text" name="" id="">
+                                </td>
+                                <th>공용차종</th>
+                                <td>
+                                    <input type="date" name="" id="" required data-placeholder="전체">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>등록일</th>
+                                <td>
+                                    <div class="form-date">
+                                        <input type="date" name="" id="" data-placeholder="2022/01/01" required="">
+                                        ~
+                                        <input type="date" name="" id="" data-placeholder="2022/01/01" required="">
+                                    </div>
+                                </td>
+                                <th>제품명</th>
+                                <td>
+                                    <input type="text" name="" id="">
+                                </td>
+                                <th>공급여부</th>
+                                <td>
+                                    <select name="" id="">
+                                        <option value="">전체</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="align right">
+                    <div>
+                        <a href="" class="btn blue regular">조회</a>
+                        <a href="" class="btn white regular">신규</a>
+                        <a href="" class="btn white regular">저장</a>
+                        <a href="" class="btn white regular">엑셀</a>
+                    </div>
+                </div>
+                <div class="layout-type1 mt20 w30">
+                    <div style="background-color: cadetblue; color:white; align-items: center; display: flex; justify-content: center; font-size: 30px;">
+                        그리드 시스템 넣는곳
+                    </div>
+                    <div class="layout-type2">
+                        <div>
+                            <h3 class="h4">제품기본정보</h3>
+                            <div class="table-type1 mt10">
+                                <table>
+                                    <colgroup>
+                                        <col style="width:9rem">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <th>제품명<span aria-label="필수입력"></span></th>
+                                            <td><input type="text" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>제품명(한글)<span aria-label="필수입력"></span></th>
+                                            <td><input type="text" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>OE PartNo<span aria-label="필수입력"></span></th>
+                                            <td><input type="text" class="w100" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <th>HCC PartNo<span aria-label="필수입력"></span></th>
+                                            <td><input type="text" class="w100" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Plant<span aria-label="필수입력"></span></th>
+                                            <td>
+                                                <select name="" id="" class="w100">
+                                                    <option value="">선택</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>포장단위</th>
+                                            <td><input type="text" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>주문단위</th>
+                                            <td><input type="text" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>주문제한</th>
+                                            <td>
+                                                <select name="" id="" class="w100">
+                                                    <option value="">N</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="h4">제품특성정보</h3>
+                            <div class="table-type1 mt10">
+                                <table>
+                                    <colgroup>
+                                        <col style="width:9rem">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <th>용도분류1</th>
+                                            <td><input type="text" name="" id="" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>용도분류2</th>
+                                            <td><input type="text" name="" id="" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>용도분류3</th>
+                                            <td><input type="text" name="" id="" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>용도분류4</th>
+                                            <td><input type="text" name="" id="" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>용도분류5</th>
+                                            <td><input type="text" name="" id="" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>스펙분류1</th>
+                                            <td><input type="text" name="" id="" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>스펙분류2</th>
+                                            <td><input type="text" name="" id="" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>스펙분류3</th>
+                                            <td><input type="text" name="" id="" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>스펙분류4</th>
+                                            <td><input type="text" name="" id="" class="w100"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="h4">제품적용정보</h3>
+                            <div class="table-type1 mt10">
+                                <table>
+                                    <colgroup>
+                                        <col style="width:9rem">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <th>취급시작일<span aria-label="필수입력"></span></th>
+                                            <td><input type="text" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>취급종료일<span aria-label="필수입력"></span></th>
+                                            <td><input type="text" class="w100"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>공급여부<span aria-label="필수입력"></span></th>
+                                            <td>
+                                                <select name="" id="" class="w100">
+                                                    <option value="">N</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>호환제품</th>
+                                            <td><button class="btn white small">호환제품조회</button></td>
+                                        </tr>
+                                        <tr>
+                                            <th>제품이미지</th>
+                                            <td><button class="btn white small">제품이미지관리</button></td>
+                                        </tr>
+                                        <tr>
+                                            <th>공급판매점</th>
+                                            <td><button class="btn white small">판매점지정제품 등록</button></td>
+                                        </tr>
+                                        <tr>
+                                            <th>포장규격</th>
+                                            <td>
+                                                <div class="form-tel">
+                                                    <input type="text" name="" id="">
+                                                    <input type="text" name="" id="">
+                                                    <input type="text" name="" id="">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="h4">제품분류정보</h3>
+                            <div class="table-type1 mt10">
+                                <table>
+                                    <colgroup>
+                                        <col style="width:9rem">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <th>MAKER<span aria-label="필수입력"></span></th>
+                                            <td>
+                                                <select name="" id="" class="w100">
+                                                    <option value="">MAKER 선택</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>제품군<span aria-label="필수입력"></span></th>
+                                            <td>
+                                                <select name="" id="" class="w100">
+                                                    <option value="">제품군 선택</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>적용차종<span aria-label="필수입력"></span></th>
+                                            <td>
+                                                <div class="form-search">
+                                                    <input type="text" class="w100" readonly>
+                                                    <button class="btn white regular">검색</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="h4">제품가격정보</h3>
+                            <div class="table-type1 mt10">
+                                <table>
+                                    <colgroup>
+                                        <col style="width:9rem">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <th>HCC판매가</th>
+                                            <td><input type="text" name="" id="" class="w100" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <th>총판판매가</th>
+                                            <td><input type="text" name="" id="" class="w100" readonly></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="h4">시판품정보</h3>
+                            <div class="table-type1 mt10">
+                                <table>
+                                    <colgroup>
+                                        <col style="width:9rem">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <th>구매업체</th>
+                                            <td>[show this]</td>
+                                        </tr>
+                                        <tr>
+                                            <th>시판품구분</th>
+                                            <td>
+                                                <select name="" id="" class="w100">
+                                                    <option value="">N</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-type1 mt10">
+                        <table>
+                            <colgroup>
+                                <col style="width:9rem">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>공용차종</th>
+                                    <td><input type="text" class="w100"></td>
+                                </tr>
+                                <tr>
+                                    <th>비고</th>
+                                    <td><input type="text" class="w100"></td>
+                                </tr>
+                                <tr>
+                                    <th>판매점 비고</th>
+                                    <td>
+                                        <div class="form-search">
+                                            <input type="text" class="w100">
+                                            <button class="btn white regular">저장</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

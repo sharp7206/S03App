@@ -1,0 +1,14 @@
+
+/* b2c 관리자 */
+.fnt_blue{color:blue;font-weight:bold;}
+.text_r{text-align:right;}
+
+
+
+/* 우편번호검색 팝업 */
+.pop_post{position:relative;padding:0 20px 0;}
+.pop_post h3{padding-top:3px;}
+.post_box{border:3px solid gray;padding:20px;margin-bottom:30px;}
+.post_box p{margin-bottom:20px;}
+.post_box .search_input {width:300px;padding:3px;}
+.pop_post .pop_close{position:absolute;right:20px;top:0;}

@@ -1,0 +1,349 @@
+@charset "utf-8";
+
+/**
+* =================================================================================
+* INFORMATION
+* ---------------------------------------------------------------------------------
+* @Author : Kim, Kyu, Jung (kyujung83@naver.com)
+* @File Name : common.css
+* @Description : Style Sheet
+* @Version : 1.0
+* @Create Date : 2014-05-23
+* @Update Date : N/A
+* @History : N/A
+* =================================================================================
+*/
+
+/* `XHTML, HTML4, HTML5 Reset
+----------------------------------------------------------------------------------------------------*/
+
+a,
+abbr,
+acronym,
+address,
+applet,
+article,
+aside,
+audio,
+b,
+big,
+blockquote,
+body,
+canvas,
+caption,
+center,
+cite,
+code,
+dd,
+del,
+details,
+dfn,
+dialog,
+/* div, */
+dl,
+dt,
+em,
+embed,
+fieldset,
+figcaption,
+figure,
+font,
+footer,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+header,
+hgroup,
+hr,
+html,
+i,
+iframe,
+img,
+ins,
+kbd,
+label,
+legend,
+li,
+mark,
+menu,
+meter,
+nav,
+object,
+ol,
+output,
+p,
+pre,
+progress,
+q,
+rp,
+rt,
+ruby,
+s,
+samp,
+section,
+small,
+span,
+strike,
+strong,
+sub,
+summary,
+sup,
+table,
+tbody,
+td,
+tfoot,
+th,
+thead,
+time,
+tr,
+tt,
+u,
+ul,
+var,
+video,
+xmp {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 100%;
+	font-family: "arial" !important;
+}
+
+body, * {
+	-webkit-text-size-adjust: none;
+	font-size: 12px;
+}
+
+html,
+body {
+	/*height: 100%;*/
+}
+
+/* HTML5 Reset
+----------------------------------------------------------------------------------------------------*/
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+/*
+  Override the default (display: inline) for
+  browsers that do not recognize HTML5 tags.
+
+  IE8 (and lower) requires a shiv:
+  http://ejohn.org/blog/html5-shiv
+*/
+	display: block;
+}
+
+/* bold Reset
+----------------------------------------------------------------------------------------------------*/
+
+b,
+strong {
+/*
+  Makes browsers agree.
+  IE + Opera = font-weight: bold.
+  Gecko + WebKit = font-weight: bolder.
+*/
+	font-weight: bold;
+}
+
+/* img Reset
+----------------------------------------------------------------------------------------------------*/
+
+img {
+	color: transparent;
+	font-size: 0;
+	vertical-align: middle;
+	/*
+	For IE.
+	http://css-tricks.com/ie-fix-bicubic-scaling-for-images
+	*/
+	-ms-interpolation-mode: bicubic;
+}
+
+/* list Reset
+----------------------------------------------------------------------------------------------------*/
+
+li {
+/*
+  For IE6 + IE7.
+*/
+	display: list-item;
+	list-style: none;
+}
+
+/* board Reset
+----------------------------------------------------------------------------------------------------*/
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
+}
+
+th,
+td,
+caption {
+	font-weight: normal;
+	vertical-align: top;
+	text-align: left;
+}
+
+caption {
+	display: none;
+}
+
+q {
+	quotes: none;
+}
+
+q:before,
+q:after {
+	content: '';
+	content: none;
+}
+
+sub,
+sup,
+small {
+	font-size: 75%;
+}
+
+sub,
+sup {
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+
+sub {
+	bottom: -0.25em;
+}
+
+sup {
+	top: -0.5em;
+}
+
+svg {
+/*
+  For IE9.
+*/
+	overflow: hidden;
+}
+
+
+/* link Reset
+----------------------------------------------------------------------------------------------------*/
+
+a:link, a:visited {
+	color: #d9cfb3;
+	text-decoration: none;
+}
+
+a:active, a:hover {
+	color: #2f2e2e;
+	text-decoration: none;
+}
+
+input[type="button"], input[type="submit"], input[type="reset"] {
+	-webkit-appearance: none;
+	cursor:pointer;
+}
+
+*:focus { outline:none;}
+
+/* form Reset
+----------------------------------------------------------------------------------------------------*/
+
+form {
+	margin: 0px;
+	padding: 0px;
+}
+
+legend {
+	display: none;
+}
+
+fieldset {
+	border: 0 none;
+	margin: 0px;
+	padding: 0px;
+}
+
+input {
+	font-size: 100%;
+	vertical-align: middle;
+}
+
+select {
+	font-size: 100%;
+	vertical-align: middle;
+	border: 1px solid #e4e4e4;
+	padding: 1px 0;
+	font-family: "Nanum Gothic" !important;
+}
+
+textarea {
+	font-size: 100%;
+	padding: 0;
+	border: 1px solid #696969;
+}
+
+
+/* etc Reset
+----------------------------------------------------------------------------------------------------*/
+
+address, caption, cite, code, dfn, em, th, var {
+	font-style : normal;
+	font-weight : normal;
+}
+
+
+/* web font
+----------------------------------------------------------------------------------------------------*/
+@font-face {
+	font-family: 'Radley';
+	src: url('../font/Radley-Regular.eot');
+	src: url('../font/Radley-Regular.eot?#iefix') format('embedded-opentype'),
+		 url('../font/Radley-Regular.woff') format('woff'),
+		 url('../font/Radley-Regular.ttf') format('truetype'),
+		 url('../font/Radley-Regular.svg#Radley') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+.Radley {
+    font-family: Radley !important;
+    font-style: normal;
+    font-weight: normal;
+}
+.Helvetica {
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face {
+	font-family: 'Radley';
+	src: url('../font/Radley-Regular.eot');
+	src: url('../font/Radley-Regular.eot?#iefix') format('embedded-opentype'),
+		 url('../font/Radley-Regular.woff') format('woff'),
+		 url('../font/Radley-Regular.ttf') format('truetype'),
+		 url('../font/Radley-Regular.svg#Radley') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.mg { font-weight: bold; font-family: "�������", "Malgun Gothic" !important;}

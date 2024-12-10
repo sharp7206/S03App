@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스타일가이드</title>
+    <script src="js/jquery.js"></script>
+    <script src="js/swiper.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+<body>
+    <div class="wrap">
+        <!-- <header class="header">
+            <h1 class="h1"><a href="">로고자리</a></h1>
+            <nav>
+                <ul class="gnb">
+                    <li><a href="">HSitemap</a></li>
+                    <li class="active"><a href="">기준정보</a></li>
+                    <li><a href="">물류관리</a></li>
+                    <li><a href="">영업관리</a></li>
+                    <li><a href="">실적분석</a></li>
+                    <li><a href="">커뮤니티</a></li>
+                    <li><a href="">카다로그</a></li>
+                    <li><a href="">시스템관리</a></li>
+                </ul>
+            </nav>
+        </header>
+        <aside>            
+        <div class="snb__controls">
+                <button class="btn-snb-toggle" aria-label="메뉴제어"></button>
+            </div>
+
+            <nav>
+                <ul class="snb">
+                    <li>
+                        <a href="" class="active">제품정보<span></span></a>
+                        <ul style="display: block;">
+                            <li>
+                                <a href="">메뉴1-1</a>
+                                <ul>
+                                    <li><a href="">메뉴1-1-1</a></li>
+                                    <li><a href="">메뉴1-1-2</a></li>
+                                    <li><a href="">메뉴1-1-3</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="">메뉴1-2</a>
+                                <ul>
+                                    <li><a href="">메뉴1-2-1</a></li>
+                                    <li><a href="">메뉴1-2-2</a></li>
+                                    <li><a href="">메뉴1-2-3</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="">메뉴1-3</a></li>
+                            <li><a href="">메뉴1-4</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="">코드관리<span></span></a>
+                        <ul>
+                            <li><a href="">메뉴2-1</a></li>
+                            <li><a href="">메뉴2-2</a></li>
+                            <li><a href="">메뉴2-3</a></li>
+                            <li><a href="">메뉴2-4</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="">판매점정보<span></span></a>
+                        <ul>
+                            <li><a href="">메뉴3-1</a></li>
+                            <li><a href="">메뉴3-2</a></li>
+                            <li><a href="">메뉴3-3</a></li>
+                            <li><a href="">메뉴3-4</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="">가격정보<span></span></a>
+                        <ul>
+                            <li><a href="">메뉴4-1</a></li>
+                            <li><a href="">메뉴4-2</a></li>
+                            <li><a href="">메뉴4-3</a></li>
+                            <li><a href="">메뉴4-4</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </aside> -->
+        <main>
+            <!-- <nav class="main-tab align both">
+                <ul class="tab-type1">
+                    <li><a href="">탭1</a><button aria-label="닫기"></button></li>
+                    <li><a href="">탭2</a><button aria-label="닫기"></button></li>
+                    <li class="active"><a href="">탭3</a><button aria-label="닫기"></button></li>
+                    <li><a href="">탭4</a><button aria-label="닫기"></button></li>
+                </ul>
+                <div><button class="btn-closeall">전체닫기</button></div>
+            </nav> -->
+            <div class="content">
+
+                <div class="location">
+                    <ul>
+                        <li>HOME</li>
+                        <li>메뉴1</li>
+                        <li>메뉴1-1</li>
+                    </ul>
+                </div>
+                <div class="ex-wrap">
+    <h2 class="h2" id="guide1">Heading</h2>
+    <div class="ex-box">
+        <div>
+            <h2 class="h2">.h2</h2>
+            <h3 class="h3">.h3</h3>
+            <h4 class="h4">.h4</h4>
+            <h5 class="h5">.h5</h5>
+        </div>
+    </div>
+    </div>
+
+    <div class="ex-wrap">
+
+    <h2 class="h2" id="guide2">Button</h2>
+    <h3 class="h3">Button Size</h3>
+    <div class="ex-box">
+        <div>
+            <button class="btn small white">.btn.small</button>
+            <button class="btn regular white">.btn.regular</button>
+            <button class="btn large white">.btn.large</button>
+        </div>
+    </div>
+    <h3 class="h3">Button Color</h3>
+    <div class="ex-box">
+        <div>
+            <button class="btn regular white">.btn.white</button>
+            <button class="btn regular blue">.btn.blue</button>
+            <button class="btn regular black">.btn.black</button>
+            <button class="btn regular black disabled">.btn.black disabled</button>
+        </div>
+    </div>
+    <h3 class="h3">paging</h3>
+    <div class="ex-box">
+        <div>
+            <nav class="paging">
+                <a href="" class="btn-prev" aria-label="이전페이지"></a>
+                <ol>
+                    <li class="paging--active"><a href="">1</a></li>
+                    <li><a href="">2</a></li>
+                    <li><a href="">3</a></li>
+                    <li><a href="">4</a></li>
+                    <li><a href="">5</a></li>
+                    <li><a href="">6</a></li>
+                    <li><a href="">7</a></li>
+                    <li><a href="">8</a></li>
+                    <li><a href="">9</a></li>
+                    <li><a href="">10</a></li>
+                </ol>
+                <a href="" class="btn-next" aria-label="다음페이지"></a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="ex-wrap">
+        <h2 class="h2" id="guide3">Align</h2>
+        <div class="ex-box">
+            <div class="align both">
+                <div>.align.both</div>
+                <div>.align.both</div>
+            </div>
+            <div class="align left">
+                <div>.align.left</div>
+            </div>
+            <div class="align right">
+                <div>.align.right</div>
+            </div>
+            <div class="align center">
+                <div>.align.center</div>
+            </div>
+            <div class="align left vm">
+                <div>.align.vm</div>
+                <div>.align.vm</div>
+            </div>
+            <div class="align left vt">
+                <div>.align.vt</div>
+                <div>.align.vt</div>
+            </div>
+            <div class="align left vb">
+                <div>.align.vb</div>
+                <div>.align.vb</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ex-wrap">
+
+        <h2 class="h2">Space</h2>
+        <div class="ex-box">
+            <div>
+                <h3 class="h3">클래스로 여백을 조절할 수 있습니다. ( 10 ~ 100까지 10배수만 가능)</h3>
+                <ul style="display: grid; gap:15px; padding:20px 0;">
+                    <li>margin-top 👉 &nbsp;&nbsp;&nbsp; .mt10 ~ .mt100</li>
+                    <li>margin-bottom 👉 &nbsp;&nbsp;&nbsp; .mb10 ~ .mb100</li>
+                    <li>margin-left 👉 &nbsp;&nbsp;&nbsp; .ml10 ~ .ml100</li>
+                    <li>margin-right 👉 &nbsp;&nbsp;&nbsp; .mr10 ~ .mr100</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="ex-wrap">
+
+        <h2 class="h2" id="guide5">Form</h2>
+        <div class="ex-box">
+            <div>
+                <input type="text" placeholder="텍스트">
+                <input type="text" value="텍스트">
+                <input type="date" data-placeholder="달력" required>
+                <select>
+                    <option>제목</option>
+                </select>
+                <br>
+                <input type="radio" name="rag1" id="ra1_1" checked><label for="ra1_1">선택1</label>
+                <input type="radio" name="rag1" id="ra1_2"><label for="ra1_2">선택2</label>
+                <input type="checkbox" id="chk"><label for="chk">선택</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="checkbox" id="chk2"><label for="chk2" aria-label="선택"></label>
+            </div>
+            <div>
+                <div class="form-address">
+                    <input type="number" placeholder="우편번호">
+                    <button class="btn white regular">우편번호</button>
+                    <input type="text" title="기본주소" placeholder="기본주소">
+                    <input type="text" title="상세주소" placeholder="상세주소">
+                </div>
+            </div>
+            <div>
+                <div class="form-date">
+                    <input type="date" name="" id="" data-placeholder="2022/01/01" required="">
+                    ~
+                    <input type="date" name="" id="" data-placeholder="2022/01/01" required="">
+                </div>
+            </div>
+            <div>
+                <div class="form-tel">
+                    <select name="" id="">
+                        <option value="">010</option>
+                    </select>
+                    <input type="number" name="" id="">
+                    <input type="number" name="" id="">
+                </div>
+            </div>
+            <div>
+                <div class="form-code">
+                    <input type="number" name="" id="">
+                    <input type="number" name="" id="">
+                    <input type="number" name="" id="">
+                </div>
+            </div>
+            <div>
+                <div class="form-search">
+                    <input type="text" class="w100" readonly>
+                    <button class="btn white regular">검색</button>
+                </div>
+            </div>
+            <div>
+                <ul class="form-file">
+                    <li>
+                        <input type="text" name="" id=""> <input type="checkbox" id="chk1_1"><label
+                            for="chk1_1">삭제여부</label><button class="btn white small">보기</button>
+                    </li>
+                    <li>
+                        <input type="text" name="" id=""> <input type="checkbox" id="chk1_2"><label
+                            for="chk1_2">삭제여부</label><button class="btn white small">보기</button>
+                    </li>
+                </ul>
+                <input type="file" name="" id=""><button class="btn white small">첨부</button>
+            </div>
+            <div>
+                <div class="form-file2">
+                    <select name="" id="">
+                        <option value="">1</option>
+                        <option value="">2</option>
+                        <option value="">3</option>
+                    </select>
+                    <ul>
+                        <li><input type="file" name="" id=""></li>
+                        <li><input type="file" name="" id=""></li>
+                        <li><input type="file" name="" id=""></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ex-wrap">
+        <h2 class="h2">Popup</h2>
+
+        <div class="align vm">
+            <button class="btn white regular"  data-bs-toggle="modal"  data-bs-target="#popup1">팝업열기</button>
+            <button class="btn white regular" onclick="$('.modal-backdrop').remove()" data-bs-toggle="modal"  data-bs-target="#popup2">딤드제거</button>
+        </div>
+
+        <div class="modal fade" id="popup1" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal nodimmed modal-dialog-centered shadow"  id="popup2" tabindex="-1" style="display: none;" data-mdb-backdrop="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="ex-wrap">
+
+        <h2 class="h2">Table</h2>
+        <div class="ex-box">
+            <div>
+                <div class="search">
+                    <table>
+                        <colgroup>
+                            <col style="width:8rem">
+                            <col>
+                            <col style="width:8rem">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>총판</th>
+                                <td>
+                                    <select name="" id="">
+                                        <option value="">전체</option>
+                                    </select>
+                                </td>
+                                <th>판매점</th>
+                                <td>
+                                    <select name="" id="">
+                                        <option value="">전체</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>주문기간</th>
+                                <td>
+                                    <div class="form-date">
+                                        <input type="date" name="" id="" data-placeholder="2022/01/01" required="">
+                                        ~
+                                        <input type="date" name="" id="" data-placeholder="2022/01/01" required="">
+                                    </div>
+                                </td>
+                                <th>차종</th>
+                                <td><input type="text" name="" id=""></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <div class="table-type1">
+                    <table>
+                        <colgroup>
+                            <col style="width:10rem">
+                            <col>
+                            <col style="width:10rem">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>판매점명<span aria-label="필수입력"></span></th>
+                                <td>일반텍스트</td>
+                                <th>IRISCode<span aria-label="필수입력"></span></th>
+                                <td>
+                                    <input type="text">
+                                    <input type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>휴대전화<span aria-label="필수입력"></span></th>
+                                <td>
+                                    <div class="form-tel">
+                                        <select name="" id="">
+                                            <option value="">010</option>
+                                        </select>
+                                        <input type="number" name="" id="">
+                                        <input type="number" name="" id="">
+                                    </div>
+                                </td>
+                                <th>IRISCode<span aria-label="필수입력"></span></th>
+                                <td>
+                                    <select name="" id="">
+                                        <option value="">판매점</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="vt">주소<span aria-label="필수입력"></span></th>
+                                <td colspan="3">
+                                    <div class="form-address">
+                                        <input type="number" placeholder="우편번호">
+                                        <button class="btn white regular">우편번호</button>
+                                        <input type="text" title="기본주소" placeholder="기본주소">
+                                        <input type="text" title="상세주소" placeholder="상세주소">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <table class="table-type2">
+                    <caption>
+                        <div>공지사항 리스트</div>
+                    </caption>
+                    <colgroup>
+                        <col>
+                        <col style="width:150px;">
+                        <col style="width:120px;">
+                        <col style="width:120px;">
+                        <col style="width:150px;">
+                        <col style="width:110px;">
+                        <col style="width:100px;">
+                        <col style="width:150px;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>제목</th>
+                            <th>분류</th>
+                            <th>게시일</th>
+                            <th>종료일</th>
+                            <th>게시자</th>
+                            <th>조회수</th>
+                            <th>첨부파일</th>
+                            <th>등록일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="" class="title">제목입니다.</a>
+                            </td>
+                            <td>기타</td>
+                            <td>2022/12/01</td>
+                            <td>2023/12/31</td>
+                            <td>한온시스템</td>
+                            <td>9</td>
+                            <td><a href="" class="btn-down" aria-label="파일다운로드"></a></td>
+                            <td>2022/12/01 13:32</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+        </main>
+    </div>
+    <style>
+        html { scroll-behavior: smooth;}
+        .ex-wrap { position: relative;}
+        .ex-box > div { margin:20px 0; font-size:20px; border:1px dashed #ccc; padding:10px; background-color: #fff;}
+        .ex-box > div.align > div { border:1px solid #333; padding:8px;}
+        .ex-box .vt,
+        .ex-box .vb,
+        .ex-box .vm {height:120px;}
+        .guide { position: sticky; top:0; z-index: 100;}
+        .guide ul { grid-template-columns: repeat(10, 1fr);}
+        .guide .active a { background-color: #94C0E9; color:#fff;}
+        .ex-wrap > .h2 {position: sticky; height: 50px; top:0; background-color: #f5f5f5; z-index: 10;}
+        .h2+ * { margin-top: 10px;}
+        .h3 { padding:10px 0 0;}
+    </style>
+</body>
+</html>
