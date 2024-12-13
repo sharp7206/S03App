@@ -160,27 +160,6 @@
 		      			</c:if>		      			
 						</c:forEach>							
 						</ul>		      			
-						<!-- 
-					    <ul class="dropdown-menu">
-						  <li><a class="dropdown-item" href="#"> Dropdown item 1 </a></li>
-						  <li><a class="dropdown-item" href="#"> Dropdown item 2 &raquo </a>
-						  	 <ul class="submenu dropdown-menu">
-							    <li><a class="dropdown-item" href="">Submenu item 1</a></li>
-							    <li><a class="dropdown-item" href="">Submenu item 2</a></li>
-							    <li><a class="dropdown-item" href="">Submenu item 3 &raquo </a>
-							    	<ul class="submenu dropdown-menu">
-									    <li><a class="dropdown-item" href="">Multi level 1</a></li>
-									    <li><a class="dropdown-item" href="">Multi level 2</a></li>
-									</ul>
-							    </li>
-							    <li><a class="dropdown-item" href="">Submenu item 4</a></li>
-							    <li><a class="dropdown-item" href="">Submenu item 5</a></li>
-							 </ul>
-						  </li>
-						  <li><a class="dropdown-item" href="#"> Dropdown item 3 </a></li>
-						  <li><a class="dropdown-item" href="#"> Dropdown item 4 </a>
-					    </ul>
-					     -->     
 					</li>
 				</c:if>
 			</c:forEach>
@@ -396,7 +375,6 @@ function userMenuInit(sideMenuL, curMenu){
 	APPz.cmn.ApiRequest("${pageContext.request.contextPath}/api/cmn/main/selectSideMenu.do"
 		, jsonParam,true
 		, function($result){
-		
 			userMenu = $result.Data;
 			let menuHtml = '',_privmenulvl = 0,_tagOpenCnt = 0,_data_cnt=userMenu.length;
 			$.each(userMenu, function (index, el) {
@@ -410,9 +388,11 @@ function userMenuInit(sideMenuL, curMenu){
 				}
 				
 				if (el.menulvl==0) {
-					menuHtml += '<li class="nav-header"><b><font class="text-info" size="3"> <i class="nav-icon "></i> '+el.menuNm+'</font></b></li>';
+					menuHtml += '<li class="nav-header"><b><font class="text-info" size="3"><i class="nav-icon "></i> '
+									+el.menuNm
+									+'</font></b></li>';
 				} else {
-					menuHtml += '<li class="nav-item">';
+					menuHtml += '<li class="nav-item">\n';
 					if(el.viewurl){
 						if(el.menuCd==g_curMenu){
 							menuHtml += '<a href="'+APPz.context()+el.viewurl+'" class="nav-link active">';
@@ -423,7 +403,7 @@ function userMenuInit(sideMenuL, curMenu){
 						menuHtml += '<a href="#" class="nav-link">';
 					}
 					menuHtml += '<i class="nav-icon "></i> <p>'+el.menuNm+'</p>';
-					if(el.leafYn ==='N'){
+					if(el.leafYn ==='Y'){
 						menuHtml += '<i class="right fas fa-angle-left"></i></a><ul class="nav nav-treeview">';
 						_tagOpenCnt++;
 					} else {
@@ -436,7 +416,7 @@ function userMenuInit(sideMenuL, curMenu){
 						menuHtml += '</li></ul>';
 					}
 					_tagOpenCnt = 0;
-					menuHtml += '</li>';
+					menuHtml += '</li>\n';
 				}
 				_privmenulvl = parseInt(el.menulvl);
 			});
