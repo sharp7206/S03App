@@ -9,7 +9,7 @@ import java.util.List;
 public class MP3Extractor {
 
 	public static void main(String[] args) {
-        String folderPath = "C:\\Temp\\2024년 07월 30일 신곡 [MP3]"; // 추출할 폴더 경로 입력
+        String folderPath = "D:\\01.기타\\2024년 12월 02일 신곡 [MP3]"; // 추출할 폴더 경로 입력
         String destinationFolderPath = "C:\\Temp\\mp3_ALL"; // mp3 파일을 옮길 폴더 경로 입력
         List<File> mp3Files = new ArrayList<>();
         extractMP3Files(new File(folderPath), mp3Files);
