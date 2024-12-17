@@ -142,10 +142,10 @@ function initPage(){
 };
 
     var blinkState = true;  // 깜빡임 상태를 저장하는 변수
-    var blinkInterval = 9000; // 1초 단위로 깜빡이기
+    var blinkInterval = 1000; // 1초 단위로 깜빡이기
 
     drawEquipment = function(equipmentList) {
-    	
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(factoryPlan, 0, 0, canvas.width, canvas.height);
 		
@@ -245,7 +245,8 @@ function initPage(){
     clearCanvas = function(iotList) {
     	equipment = [];
     	canvas = document.getElementById('factoryCanvas');
-    	var factoryImg = iotList[0].FILE_PATHA;
+    	//var factoryImg = iotList[0].FILE_PATHA;
+    	var factoryImg =  '${pageContext.request.contextPath}/api/cmn/file/GetImgVw.do?filePath='+iotList[0].FAB_IMG;
     	if(canvas.getContext){
     	    ctx = canvas.getContext('2d');
     	    factoryPlan = new Image();
@@ -266,8 +267,9 @@ function initPage(){
 	                    name: item.IOT_NM,
 	                    pathB : item.FILE_PATHB,
 	                    imgPath : item.IMG_PATH,
-	                    x: item ? (JSON.parse(item.LOC_INFO)).x : 0,  // Use first row's LOC_INFO for all equipment
-	                    y: item ? (JSON.parse(item.LOC_INFO)).y : 0,  // Use first row's LOC_INFO for all equipment
+	                    fabImg : item.FAB_IMG,
+	                    x: item.LOC_INFO ? (JSON.parse(item.LOC_INFO)).x : 100,  // Use first row's LOC_INFO for all equipment
+	                    y: item.LOC_INFO ? (JSON.parse(item.LOC_INFO)).y : 100,  // Use first row's LOC_INFO for all equipment
 	                    type: item.circle,
 	                    status: item.STATUS,
 	                    factory_cd: item.FACTORY_CD
@@ -461,7 +463,7 @@ function initPage(){
 		</div>
 		<div class="wrap">
 		<canvas id="factoryCanvas" width="1000" height="600"></canvas>
-   		<textarea id="txt_jsonOutput" name="txt_jsonOutput" style="width: 100%;height: 200px;">
+   		<textarea id="txt_jsonOutput" name="txt_jsonOutput" style="display:none">
 		</textarea>
 		</div>
 	</div>

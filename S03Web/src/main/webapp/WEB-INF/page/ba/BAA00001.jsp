@@ -17,12 +17,6 @@
 <html lang="ko">
 <head>
 <title><APPz:jsptitle prgmcd="${_prgmcd_}"/></title>
-<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-<script>
-  Kakao.init('3c4986586b3f7ff782c91a88f2f3ece1');
-</script>
 <script type="text/javascript">
 //===============================================================================================================
 //jQuery ready
@@ -33,6 +27,12 @@ $(()=>{
 });
 
 function initPage(){
+	document.querySelector('.search').addEventListener('keypress', function(event) {
+	    if (event.key === 'Enter') {
+	        doAction('R_Main');
+	    }
+	});
+	
 	/**공통코드작업 START**/
 	jsonParam = { param : {
 		          codeStr : "LOAN_CLSS" 
@@ -143,29 +143,7 @@ function mySheet1_OnDblClick(Row, Col, Value, CellX, CellY, CellW, CellH) {
 	return 
 }
 
-function shareKakao() {
-    Kakao.Link.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: '카카오톡 공유하기 테스트',
-        description: '카카오톡으로 공유하기 테스트를 진행합니다.',
-        imageUrl: '이미지 URL',
-        link: {
-          mobileWebUrl: '모바일 웹 URL',
-          webUrl: '웹 URL'
-        }
-      },
-      buttons: [
-        {
-          title: '웹으로 보기',
-          link: {
-            mobileWebUrl: '모바일 웹 URL',
-            webUrl: '웹 URL'
-          }
-        }
-      ]
-    });
-  }
+
 var windowHeight = $(window).height()-200;
 </script>
 

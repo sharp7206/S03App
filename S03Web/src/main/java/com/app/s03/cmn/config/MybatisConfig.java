@@ -59,6 +59,8 @@ public class MybatisConfig{
 		hikariConfig.setJdbcUrl(jdbcUrl);
 		hikariConfig.setUsername(username);
 		hikariConfig.setPassword(password);
+		hikariConfig.setMaximumPoolSize(10);
+		hikariConfig.setMinimumIdle(5);
 		
 		Properties databaseProperties = new Properties();
 		databaseProperties.setProperty("cachePrepStmts", "true");

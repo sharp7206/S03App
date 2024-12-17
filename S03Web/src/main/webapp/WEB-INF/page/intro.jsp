@@ -134,9 +134,9 @@
       		</li>      		
 			<c:forEach items="${sysMenu }" var="list">
 	   			<c:if test="${list.menulvl eq '1' && list.leafYn eq 'N'}">
-      		<li class="nav-item d-none d-sm-inline-block align-bottom text-secondary">
-        		<a id="${list.MENU_CD }" href="${pageContext.request.contextPath}${list.viewurl }" class="nav-link pt-2">${list.MENU_NM }</a>
-      		</li> 
+		      		<li class="nav-item d-none d-sm-inline-block align-bottom text-secondary">
+		        		<a id="${list.MENU_CD }" href="${pageContext.request.contextPath}${list.viewurl }" class="nav-link pt-2">${list.MENU_NM }</a>
+		      		</li> 
 	   			</c:if>
 	   			<c:if test="${list.menulvl eq '1' && list.leafYn eq 'Y'}">
 	      		<li class="nav-item dropdown">
@@ -243,7 +243,7 @@
 		         				<i class="nav-icon ${ menu.iconnm }"></i>
 		         				<p>${ menu.menuNm }</p>
 		         				<c:choose>
-		         					<c:when test="${ menu.leafYn eq 'N' }">
+		         					<c:when test="${menu.menulvl eq 1 && menu.leafYn eq 'Y' }">
 		         						<i class="fas fa-angle-left right"></i></a><ul class="nav nav-treeview">
 		         						<c:set var="_tagOpenCnt" value="${ _tagOpenCnt+1 }"/>
 		         					</c:when>
@@ -365,7 +365,6 @@ function modalCallback(returnVal){
 }
 
 function userMenuInit(sideMenuL, curMenu){
-	
 	g_curMenu = curMenu;
 	/**공통코드작업 START**/
 	jsonParam = { param : {
@@ -378,6 +377,7 @@ function userMenuInit(sideMenuL, curMenu){
 			userMenu = $result.Data;
 			let menuHtml = '',_privmenulvl = 0,_tagOpenCnt = 0,_data_cnt=userMenu.length;
 			$.each(userMenu, function (index, el) {
+				
 				if(_privmenulvl > parseInt(el.menulvl) ){
 					for(var i = 0 ; i <= (_privmenulvl-parseInt(el.menulvl));i++){
 						if(_tagOpenCnt > 0) {

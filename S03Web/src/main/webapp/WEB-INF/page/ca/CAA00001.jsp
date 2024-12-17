@@ -136,7 +136,7 @@ function initPage(){
             equip.status = Math.random() > 0.8 ? 'error' : 'normal';
         });
         drawEquipment(equipment);
-    }, 5000);
+    }, 1000);
 
     updateJSONOutput();
 };
